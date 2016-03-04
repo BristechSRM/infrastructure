@@ -1,0 +1,8 @@
+{
+  "name": "EcsClusterDeployer",
+  "version": "0.0.1",
+  "dependencies": {
+    "aws-sdk": "~2.2.39",
+    "promise": "~7.1.1"
+  }
+}

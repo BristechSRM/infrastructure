@@ -1,2 +1,5 @@
 node_modules
 credentials
+
+# Ubuntu trash folder on external dirs (i.e /workspace)
+.Trash-*

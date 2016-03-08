@@ -1,5 +1,6 @@
 var Promise = require("promise");
 var AWS = require('aws-sdk');
+var lib= require('./lib');
 AWS.config.update({region: 'eu-west-1'});
 var ECS = new AWS.ECS();
 
@@ -23,19 +24,7 @@ function gatherServiceParams(taskRevision) {
 }
 
 function ecsPromiseMaker(task, params, dataTransform, log) {
-    return promiseMaker(ECS, task, params, dataTransform, log);
-}
-
-function promiseMaker(taskOwner, task, params, dataTransform, log) {
-    return new Promise(function(resolve, reject) {
-        task.call(taskOwner, params, function(err,data) {
-            if (err) reject(err);
-            else {
-                console.log(log(data));
-                resolve(dataTransform(data));
-            }
-        });
-    })
+    return lib.promiseMaker(ECS, task, params, dataTransform, log);
 }
 
 function getTaskDescription(taskName) {

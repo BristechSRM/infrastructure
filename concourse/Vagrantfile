@@ -1,0 +1,20 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# 2 denotes the latest version of Vagrant
+Vagrant.configure(2) do |config|
+
+  config.vm.box = "concourse/lite"
+
+  config.vm.provider :aws do |aws|
+    aws.instance_type = "m3.medium"
+    aws.region = "us-east-1" # North Virginia
+    aws.access_key_id = "<insert here>"
+    aws.secret_access_key = "<insert here>"
+    # concourse-0.74.0 - there is currently no corresponding AMI in Ireland
+    # NB - the AMI for the latest version of concourse is regularly updated,
+    # so this ID can change
+    aws.ami = "ami-2df1cb47"
+  end
+
+end

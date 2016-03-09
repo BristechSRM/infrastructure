@@ -12,15 +12,15 @@ getTaskDescription(taskName)
     .then(listTasks)
     .then(stopTasks)
     .then(done)
-    .catch(error)
+    .catch(error);
 
 
 function gatherServiceParams(taskRevision) {
     return findService().then(function(serviceArns) {
         return new Promise(function(resolve,reject) {
             resolve({service: serviceArns[0], task: taskRevision});
-        })    
-    })
+        });
+    });
 }
 
 function ecsPromiseMaker(task, params, dataTransform, log) {
@@ -29,12 +29,12 @@ function ecsPromiseMaker(task, params, dataTransform, log) {
 
 function getTaskDescription(taskName) {
     console.log("Getting task description for:", taskName);
-    var params = { taskDefinition : taskName}
+    var params = { taskDefinition : taskName};
     return ecsPromiseMaker(
         ECS.describeTaskDefinition,
         params,
-        function(data){return data.taskDefinition},
-        function(data){return "Got task description for: " + data.taskDefinition.family}
+        function(data){return data.taskDefinition;},
+        function(data){return "Got task description for: " + data.taskDefinition.family;}
     );
 }
 
@@ -48,8 +48,8 @@ function newTaskVersion(oldTask) {
     return ecsPromiseMaker(
         ECS.registerTaskDefinition,
         params,
-        function(data){return data.taskDefinition},
-        function(data){return "Created new revision: " + data.taskDefinition.family + " : " + data.taskDefinition.revision}
+        function(data){return data.taskDefinition;},
+        function(data){return "Created new revision: " + data.taskDefinition.family + " : " + data.taskDefinition.revision;}
     );
 }
 
@@ -58,8 +58,8 @@ function findService() {
     return ecsPromiseMaker(
         ECS.listServices,
         {},
-        function(data){return data.serviceArns},
-        function(data){return "Found services: " + data.serviceArns}
+        function(data){return data.serviceArns;},
+        function(data){return "Found services: " + data.serviceArns;}
     );
 }
 
@@ -68,12 +68,12 @@ function updateService(serviceData) {
     var params = {
         service: serviceData.service,
         taskDefinition: serviceData.task.family + ":" + serviceData.task.revision
-    }
+    };
     return ecsPromiseMaker(
         ECS.updateService,
         params,
-        function(data){return data},
-        function(data){return "Updated service: " + serviceData.service + " with revision: " + serviceData.task.revision}
+        function(data){return data;},
+        function(data){return "Updated service: " + serviceData.service + " with revision: " + serviceData.task.revision;}
     );
 }
 
@@ -82,8 +82,8 @@ function listTasks() {
     return ecsPromiseMaker(
         ECS.listTasks,
         {},
-        function(data){return data.taskArns},
-        function(data){return "Found tasks:" + data.taskArns}
+        function(data){return data.taskArns;},
+        function(data){return "Found tasks:" + data.taskArns;}
     );
 }
 
@@ -97,8 +97,8 @@ function stopTask(taskArn) {
     return ecsPromiseMaker(
         ECS.stopTask,
         {task: taskArn},
-        function(data){return data},
-        function(data){return "Stopped task:" + taskArn}
+        function(data){return data;},
+        function(data){return "Stopped task:" + taskArn;}
     );
 }
 

@@ -9,8 +9,8 @@ var promiseMaker = function(taskOwner, task, params, dataTransform, log) {
                 resolve(dataTransform(data));
             }
         });
-    })
-}
+    });
+};
 
 
 module.exports.promiseMaker = promiseMaker;

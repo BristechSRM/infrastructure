@@ -8,8 +8,8 @@ AWS.config.update({region: 'eu-west-1'});
 var s3 = new AWS.S3();
 
 var args = process.argv.slice(2);
-var inputDir = args[0]
-var inputBucket = args[1]
+var inputDir = args[0];
+var inputBucket = args[1];
 
 var buildReader = createBuildReader(inputDir);
 var buildUploader = createFileUploader(inputBucket, inputDir);
@@ -18,7 +18,7 @@ buildReader("").catch(error);
 function createBuildReader(dir) {
     return function(subDir) {
         return readDirectory(dir, subDir).then(uploadDirectory);
-    }
+    };
 }
 
 function readDirectory(baseDir, subDir) {
@@ -29,7 +29,7 @@ function readDirectory(baseDir, subDir) {
         joinPaths(baseDir,subDir),
         function(data) {return {base: baseDir, sub: subDir, files:data};},
         function(data) {return "Read " + data.length + " files from build directory:  "  + data;}
-    )
+    );
 }
 
 function uploadDirectory(dir) {
@@ -40,8 +40,8 @@ function uploadDirectory(dir) {
 
 function createDirectoryProccessor(dir) {
     return function(fileName) {
-        return proccessDirectory(dir, fileName)
-    }
+        return proccessDirectory(dir, fileName);
+    };
 }
 
 function proccessDirectory(dir, fileName) {
@@ -58,7 +58,7 @@ function proccessDirectory(dir, fileName) {
 function createFileUploader(bucket, baseDir) {
     return function(fileName) {
         return uploadFile(bucket, baseDir, fileName);
-    }
+    };
 }
 
 function uploadFile(bucket, dir, fileName) {
@@ -77,7 +77,9 @@ function uploadFile(bucket, dir, fileName) {
 }
 
 function joinPaths(baseDir, subDir) {
-    if(/.*[^\/]$/.test(baseDir)){baseDir += "/"}
+    if(/.*[^\/]$/.test(baseDir)){
+        baseDir += "/";
+    }
     return baseDir + subDir;
 }
 

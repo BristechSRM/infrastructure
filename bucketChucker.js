@@ -13,6 +13,8 @@ var inputBucket = args[1];
 
 var buildReader = createBuildReader(inputDir);
 var buildUploader = createFileUploader(inputBucket, inputDir);
+
+//Empty string as this starts at the route of the build directory
 buildReader("").catch(error);
 
 function createBuildReader(dir) {

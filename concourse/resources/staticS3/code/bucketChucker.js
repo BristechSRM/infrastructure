@@ -2,7 +2,6 @@ var Promise = require("promise");
 var AWS = require('aws-sdk');
 var fs = require('fs');
 var mime = require('mime');
-var lib = require('./lib');
 
 AWS.config.update({region: 'eu-west-1'});
 
@@ -48,7 +47,7 @@ function createBuildReader(dir) {
 
 function readDirectory(baseDir, subDir) {
     console.error("Reading Directory:", baseDir, subDir);
-    return lib.promiseMaker(
+    return promiseMaker(
         fs,
         fs.readdir,
         joinPaths(baseDir,subDir),
@@ -92,13 +91,25 @@ function uploadFile(bucket, dir, fileName) {
     var file = require('fs').createReadStream(filePath);
     var mimeType = mime.lookup(joinPaths(dir, fileName));
     var params = {Bucket: bucket, Key: fileName, Body: file, ContentType: mimeType};
-    return lib.promiseMaker(
+    return promiseMaker(
         s3,
         s3.upload,
         params,
         function(data) {return data;},
         function(data) {return "Finished Uploading: "  + data.key;}
     );
+}
+
+function promiseMaker(taskOwner, task, params, dataTransform, log) {
+    return new Promise(function(resolve, reject) {
+        task.call(taskOwner, params, function(err,data) {
+            if (err) reject(err);
+            else {
+                console.error(log(data));
+                resolve(dataTransform(data));
+            }
+        });
+    });
 }
 
 function joinPaths(baseDir, subDir) {

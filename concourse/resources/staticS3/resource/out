@@ -1,0 +1,4 @@
+#! /bin/bash
+
+node /code/bucketChucker $@
+echo '{ "version": { "ref": "'$BUILD_ID'" } }'

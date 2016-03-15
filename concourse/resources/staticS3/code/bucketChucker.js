@@ -60,11 +60,11 @@ function readDirectory(baseDir, subDir) {
 
 function uploadDirectory(dir) {
     console.error("Starting upload from:", dir.base, dir.sub);
-    var directoryProccessor = createDirectoryProccessor(dir);
-    return new Promise.all(dir.files.map(directoryProccessor));
+    var directoryProcessor = createDirectoryProcessor(dir);
+    return new Promise.all(dir.files.map(directoryProcessor));
 }
 
-function createDirectoryProccessor(dir) {
+function createDirectoryProcessor(dir) {
     return function(fileName) {
         return proccessDirectory(dir, fileName);
     };

@@ -66,11 +66,11 @@ function uploadDirectory(dir) {
 
 function createDirectoryProcessor(dir) {
     return function(fileName) {
-        return proccessDirectory(dir, fileName);
+        return processDirectory(dir, fileName);
     };
 }
 
-function proccessDirectory(dir, fileName) {
+function processDirectory(dir, fileName) {
     var file = fs.lstatSync(dirToPath(dir,fileName));
     var longName =  joinPaths(dir.sub, fileName);
 

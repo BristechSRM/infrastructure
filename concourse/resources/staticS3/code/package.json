@@ -1,5 +1,5 @@
 {
-  "name": "EcsClusterDeployer",
+  "name": "StaticS3Pusher",
   "version": "0.0.1",
   "dependencies": {
     "aws-sdk": "~2.2.39",

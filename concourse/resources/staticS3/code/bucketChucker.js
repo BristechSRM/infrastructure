@@ -6,10 +6,8 @@ var mime = require('mime');
 AWS.config.update({region: 'eu-west-1'});
 
 var args = process.argv.slice(2);
-var inputDir = args[0];
-
-console.error("Reading from:", inputDir)
-var buildReader = createBuildReader(inputDir);
+var baseDir = args[0];
+var inputDir;
 
 var s3;
 var inputBucket;
@@ -33,6 +31,10 @@ function readConfig() {
         secretAccessKey : parsedData.source.secretAccessKey
     });
     s3 = new AWS.S3();
+
+    inputDir = joinPaths(baseDir, parsedData.params.build);
+    console.error("Reading from:", inputDir)
+    buildReader = createBuildReader(inputDir);
     buildUploader = createFileUploader(inputBucket, inputDir);
 
     //Empty string as this starts at the route of the build directory

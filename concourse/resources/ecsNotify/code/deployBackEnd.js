@@ -38,7 +38,7 @@ function runDasCode() {
 }
 
 function gatherServiceParams(taskRevision) {
-    console.log(JSON.stringify({version : { ref : taskRevision.revision}}))
+    console.log(JSON.stringify({version : { ref : taskRevision.revision.toString()}}))
     return findService().then(function(serviceArns) {
         return new Promise(function(resolve,reject) {
             resolve({service: serviceArns[0], task: taskRevision});

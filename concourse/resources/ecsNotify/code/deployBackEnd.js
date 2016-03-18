@@ -1,3 +1,4 @@
+var fs = require('fs');
 var Promise = require("promise");
 var AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-west-1'});
@@ -38,7 +39,11 @@ function runDasCode() {
 }
 
 function gatherServiceParams(taskRevision) {
-    console.log(JSON.stringify({version : { ref : taskRevision.revision.toString()}}))
+    var fd3 = fs.createWriteStream(null, {fd : 3});
+    fd3.write(JSON.stringify({version : { ref : taskRevision.revision.toString()}}))
+    // console.log()
+    
+
     return findService().then(function(serviceArns) {
         return new Promise(function(resolve,reject) {
             resolve({service: serviceArns[0], task: taskRevision});
@@ -51,7 +56,7 @@ function ecsPromiseMaker(task, params, dataTransform, log) {
 }
 
 function getTaskDescription(taskName) {
-    console.error("Getting task description for:", taskName);
+    console.log("Getting task description for:", taskName);
     var params = { taskDefinition : taskName};
     return ecsPromiseMaker(
         ECS.describeTaskDefinition,
@@ -62,7 +67,7 @@ function getTaskDescription(taskName) {
 }
 
 function newTaskVersion(oldTask) {
-    console.error("Creating new task revision from:", oldTask.family);
+    console.log("Creating new task revision from:", oldTask.family);
     var params = {
         family : oldTask.family,
         volumes: oldTask.volumes,
@@ -77,7 +82,7 @@ function newTaskVersion(oldTask) {
 }
 
 function findService() {
-    console.error("Finding services");
+    console.log("Finding services");
     return ecsPromiseMaker(
         ECS.listServices,
         {},
@@ -87,7 +92,7 @@ function findService() {
 }
 
 function updateService(serviceData) {
-    console.error("Updating service:", serviceData.service, "with revision:", serviceData.task.revision);
+    console.log("Updating service:", serviceData.service, "with revision:", serviceData.task.revision);
     var params = {
         service: serviceData.service,
         taskDefinition: serviceData.task.family + ":" + serviceData.task.revision
@@ -101,7 +106,7 @@ function updateService(serviceData) {
 }
 
 function listTasks() {
-    console.error("Listing tasks");
+    console.log("Listing tasks");
     return ecsPromiseMaker(
         ECS.listTasks,
         {},
@@ -111,12 +116,12 @@ function listTasks() {
 }
 
 function stopTasks(taskArns) {
-    console.error("Stopping tasks in:", taskArns);
+    console.log("Stopping tasks in:", taskArns);
     return new Promise.all(taskArns.map(stopTask));
 }
 
 function stopTask(taskArn) {
-    console.error("Stopping task:", taskArn);
+    console.log("Stopping task:", taskArn);
     return ecsPromiseMaker(
         ECS.stopTask,
         {task: taskArn},
@@ -130,7 +135,7 @@ function promiseMaker(taskOwner, task, params, dataTransform, log) {
         task.call(taskOwner, params, function(err,data) {
             if (err) reject(err);
             else {
-                console.error(log(data));
+                console.log(log(data));
                 resolve(dataTransform(data));
             }
         });
@@ -138,10 +143,10 @@ function promiseMaker(taskOwner, task, params, dataTransform, log) {
 };
 
 function done() {
-    console.error("DONE!");
+    console.log("DONE!");
 }
 
 function error(err) {
-    console.error("ERROR", err);
+    console.log("ERROR", err);
     process.exit(1);
 }

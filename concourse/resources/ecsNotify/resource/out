@@ -1,3 +1,8 @@
 #! /bin/bash
 
-node /code/deployBackEnd $@
+exec 3>&1 # make stdout available as fd 3 for ehe result
+exec 1>&2 # redirect all output to stderr for logging
+
+node /code/deployBackEnd 
+
+

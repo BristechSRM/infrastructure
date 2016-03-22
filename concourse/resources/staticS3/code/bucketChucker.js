@@ -33,7 +33,7 @@ function readConfig() {
     s3 = new AWS.S3();
 
     inputDir = joinPaths(baseDir, parsedData.params.build);
-    console.error("Reading from:", inputDir)
+    console.log("Reading from:", inputDir)
     buildReader = createBuildReader(inputDir);
     buildUploader = createFileUploader(inputBucket, inputDir);
 
@@ -48,7 +48,7 @@ function createBuildReader(dir) {
 }
 
 function readDirectory(baseDir, subDir) {
-    console.error("Reading Directory:", baseDir, subDir);
+    console.log("Reading Directory:", baseDir, subDir);
     return promiseMaker(
         fs,
         fs.readdir,
@@ -59,7 +59,7 @@ function readDirectory(baseDir, subDir) {
 }
 
 function uploadDirectory(dir) {
-    console.error("Starting upload from:", dir.base, dir.sub);
+    console.log("Starting upload from:", dir.base, dir.sub);
     var directoryProcessor = createDirectoryProcessor(dir);
     return new Promise.all(dir.files.map(directoryProcessor));
 }
@@ -88,7 +88,7 @@ function createFileUploader(bucket, baseDir) {
 }
 
 function uploadFile(bucket, dir, fileName) {
-    console.error("Uploading: ", bucket, dir, fileName);
+    console.log("Uploading: ", bucket, dir, fileName);
     var filePath = dir + "/" + fileName;
     var file = require('fs').createReadStream(filePath);
     var mimeType = mime.lookup(joinPaths(dir, fileName));
@@ -107,7 +107,7 @@ function promiseMaker(taskOwner, task, params, dataTransform, log) {
         task.call(taskOwner, params, function(err,data) {
             if (err) reject(err);
             else {
-                console.error(log(data));
+                console.log(log(data));
                 resolve(dataTransform(data));
             }
         });
@@ -126,6 +126,6 @@ function dirToPath(dir, file){
 }
 
 function error(err) {
-    console.error("ERROR", err);
+    console.log("ERROR", err);
     process.exit(1);
 }

@@ -1,21 +1,49 @@
+var fs = require('fs');
 var Promise = require("promise");
 var AWS = require('aws-sdk');
-var lib= require('./lib');
 AWS.config.update({region: 'eu-west-1'});
-var ECS = new AWS.ECS();
+var ECS;
 
-var taskName = "create-build-image";
-getTaskDescription(taskName)
-    .then(newTaskVersion)
-    .then(gatherServiceParams)
-    .then(updateService)
-    .then(listTasks)
-    .then(stopTasks)
-    .then(done)
-    .catch(error);
+var taskName;
 
+var stdin = process.stdin, inputChunks = [];
+stdin.resume();
+stdin.setEncoding('utf8');
+stdin.on('data', function(chunk) {
+    inputChunks.push(chunk);
+});
+stdin.on('end', readConfig);
+
+function readConfig() {
+    var parsedData = JSON.parse(inputChunks.join());
+
+    taskName = parsedData.source.task;
+    AWS.config.update({
+        accessKeyId: parsedData.source.accessKeyId,
+        secretAccessKey : parsedData.source.secretAccessKey
+    });
+    ECS = new AWS.ECS();
+
+    runDasCode();
+}
+
+function runDasCode() {
+    getTaskDescription(taskName)
+        .then(newTaskVersion)
+        .then(gatherServiceParams)
+        .then(updateService)
+        .then(listTasks)
+        .then(stopTasks)
+        .then(done)
+        .catch(error);
+}
 
 function gatherServiceParams(taskRevision) {
+    var fd3 = fs.createWriteStream(null, {fd : 3});
+    fd3.write(JSON.stringify({version : { ref : taskRevision.revision.toString()}}))
+    // console.log()
+    
+
     return findService().then(function(serviceArns) {
         return new Promise(function(resolve,reject) {
             resolve({service: serviceArns[0], task: taskRevision});
@@ -24,7 +52,7 @@ function gatherServiceParams(taskRevision) {
 }
 
 function ecsPromiseMaker(task, params, dataTransform, log) {
-    return lib.promiseMaker(ECS, task, params, dataTransform, log);
+    return promiseMaker(ECS, task, params, dataTransform, log);
 }
 
 function getTaskDescription(taskName) {
@@ -101,6 +129,18 @@ function stopTask(taskArn) {
         function(data){return "Stopped task:" + taskArn;}
     );
 }
+
+function promiseMaker(taskOwner, task, params, dataTransform, log) {
+    return new Promise(function(resolve, reject) {
+        task.call(taskOwner, params, function(err,data) {
+            if (err) reject(err);
+            else {
+                console.log(log(data));
+                resolve(dataTransform(data));
+            }
+        });
+    });
+};
 
 function done() {
     console.log("DONE!");

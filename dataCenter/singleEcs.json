@@ -1,0 +1,33 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+  	"instancei8c3cf706": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "IamInstanceProfile": "ecsInstanceRole",
+        "ImageId": "ami-76e95b05",
+        "InstanceType": "t2.micro",
+        "KeyName": "ecsKey",
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "backendserver"
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "DeviceIndex": 0,
+            "SubnetId": "subnet-b64844c1",
+            "GroupSet": [
+                "sg-b6e9d4d2"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

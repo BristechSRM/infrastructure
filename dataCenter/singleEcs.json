@@ -12,10 +12,12 @@
         "KeyName": "ecsKey",
         "Monitoring": "false",
         "Tags": [
-          {
-            "Key": "Name",
-            "Value": "backendserver"
-          }
+          {"Key": "Name","Value": "speakersServer"},
+          {"Key": "Product","Value": "bristechSRM"},
+          {"Key": "Environment","Value": "development"},
+          {"Key": "Cluster","Value": "speakers"},
+          {"Key": "Service","Value": "speakers"},
+          {"Key": "Purpose","Value": "docker"}
         ],
         "NetworkInterfaces": [
           {

@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Resources": {
-  	"instancei8c3cf706": {
+  	"speakersServer": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "DisableApiTermination": "false",

@@ -33,6 +33,22 @@
         },
         "speakersCluster": {
             "Type": "AWS::ECS::Cluster"
-        }
+        },
+        "speakersTaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "speakers",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/speakers:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 80, "ContainerPort" : 9000, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
     }
 }

@@ -30,6 +30,9 @@
                     }
                 ]
             }
+        },
+        "speakersCluster": {
+            "Type": "AWS::ECS::Cluster"
         }
     }
 }

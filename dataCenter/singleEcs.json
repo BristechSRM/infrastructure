@@ -1,35 +1,75 @@
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Resources": {
-  	"speakersServer": {
-      "Type": "AWS::EC2::Instance",
-      "Properties": {
-        "DisableApiTermination": "false",
-        "InstanceInitiatedShutdownBehavior": "stop",
-        "IamInstanceProfile": "ecsInstanceRole",
-        "ImageId": "ami-76e95b05",
-        "InstanceType": "t2.micro",
-        "KeyName": "ecsKey",
-        "Monitoring": "false",
-        "Tags": [
-          {"Key": "Name","Value": "speakersServer"},
-          {"Key": "Product","Value": "bristechSRM"},
-          {"Key": "Environment","Value": "development"},
-          {"Key": "Cluster","Value": "speakers"},
-          {"Key": "Service","Value": "speakers"},
-          {"Key": "Purpose","Value": "docker"}
-        ],
-        "NetworkInterfaces": [
-          {
-            "DeleteOnTermination": "true",
-            "DeviceIndex": 0,
-            "SubnetId": "subnet-b64844c1",
-            "GroupSet": [
-                "sg-b6e9d4d2"
-            ]
-          }
-        ]
-      }
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+      	"speakersServer": {
+              "Type": "AWS::EC2::Instance",
+              "Properties": {
+                "DisableApiTermination": "false",
+                "InstanceInitiatedShutdownBehavior": "stop",
+                "IamInstanceProfile": "ecsInstanceRole",
+                "ImageId": "ami-76e95b05",
+                "InstanceType": "t2.micro",
+                "KeyName": "ecsKey",
+                "Monitoring": "false",
+                "Tags": [
+                    {"Key": "Name","Value": "speakersServer"},
+                    {"Key": "Product","Value": "bristechSRM"},
+                    {"Key": "Environment","Value": "development"},
+                    {"Key": "Cluster","Value": "speakers"},
+                    {"Key": "Service","Value": "speakers"},
+                    {"Key": "Purpose","Value": "docker"}
+                ],
+                "NetworkInterfaces": [
+                    {
+                        "DeleteOnTermination": "true",
+                        "DeviceIndex": 0,
+                        "SubnetId": "subnet-b64844c1",
+                        "GroupSet": [
+                            "sg-b6e9d4d2"
+                        ]
+                    }
+                ],
+                "UserData" : {
+                    "Fn::Base64" : {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash\n",
+                                "echo ECS_CLUSTER=",
+                                { "Ref": "speakersCluster" },
+                                " >> /etc/ecs/ecs.config"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
+        "speakersCluster": {
+            "Type": "AWS::ECS::Cluster"
+        },
+        "speakersTaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "speakers",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/speakers:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 80, "ContainerPort" : 9000, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+        "service": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "speakersCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"speakersTaskDefinition"}
+            }
+        }
     }
-  }
 }

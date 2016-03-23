@@ -63,5 +63,13 @@
                 ]
             }
         },
+        "service": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "speakersCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"speakersTaskDefinition"}
+            }
+        }
     }
 }

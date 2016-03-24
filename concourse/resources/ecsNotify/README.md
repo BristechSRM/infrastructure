@@ -16,7 +16,7 @@ Can be used with a cloud formation stack with the following configuation
 
 ```
 
-Where those there names are the names in the cloud formation template and all manual
+Where those there names are the names in the cloud formation template
 
 ## Manual Stack
 

@@ -25,10 +25,6 @@ stdin.on('end', readConfig);
 function readConfig() {
     var parsedData = JSON.parse(inputChunks.join());
 
-    taskName = parsedData.source.task;
-    stackName = parsedData.source.stackName;
-    serviceName = parsedData.source.serviceName;
-    clusterName = parsedData.source.clusterName;
     AWS.config.update({
         accessKeyId: parsedData.source.accessKeyId,
         secretAccessKey : parsedData.source.secretAccessKey
@@ -36,7 +32,19 @@ function readConfig() {
     ECS = new AWS.ECS();
     CloudFormation = new AWS.CloudFormation();
 
-    runStackServiceUpdate();
+    if(parsedData.source.stackName !== undefined) {
+        stackName = parsedData.source.stackName;
+        taskName = parsedData.source.taskName;
+        serviceName = parsedData.source.serviceName;
+        clusterName = parsedData.source.clusterName;
+
+        runStackServiceUpdate();
+    } else {
+        taskArn = parsedData.source.taskName;
+        serviceArn = parsedData.source.serviceName;
+        clusterArn = parsedData.source.clusterName;
+        runManualService();
+    }
 }
 
 function runStackServiceUpdate() {
@@ -44,6 +52,16 @@ function runStackServiceUpdate() {
         .then(getServiceArn)
         .then(getTaskArn)
         .then(getTaskDescription)
+        .then(newTaskVersion)
+        .then(updateService)
+        .then(listTasks)
+        .then(stopTasks)
+        .then(done)
+        .catch(error);
+}
+
+function runManualService() {
+    getTaskDescription(taskArn)
         .then(newTaskVersion)
         .then(updateService)
         .then(listTasks)

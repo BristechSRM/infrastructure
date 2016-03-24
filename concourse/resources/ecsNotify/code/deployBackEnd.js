@@ -3,8 +3,10 @@ var Promise = require("promise");
 var AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-west-1'});
 var ECS;
+var CloudFormation;
 
 var taskName;
+var stackName;
 
 var stdin = process.stdin, inputChunks = [];
 stdin.resume();
@@ -18,17 +20,21 @@ function readConfig() {
     var parsedData = JSON.parse(inputChunks.join());
 
     taskName = parsedData.source.task;
+    stackName = parsedData.source.stackName;
     AWS.config.update({
         accessKeyId: parsedData.source.accessKeyId,
         secretAccessKey : parsedData.source.secretAccessKey
     });
     ECS = new AWS.ECS();
+    CloudFormation = new AWS.CloudFormation();
 
     runDasCode();
+
 }
 
 function runDasCode() {
-    getTaskDescription(taskName)
+    getTaskDescriptionARN(stackName, taskName)
+        .then(getTaskDescription)
         .then(newTaskVersion)
         .then(gatherServiceParams)
         .then(updateService)
@@ -41,8 +47,6 @@ function runDasCode() {
 function gatherServiceParams(taskRevision) {
     var fd3 = fs.createWriteStream(null, {fd : 3});
     fd3.write(JSON.stringify({version : { ref : taskRevision.revision.toString()}}))
-    // console.log()
-    
 
     return findService().then(function(serviceArns) {
         return new Promise(function(resolve,reject) {
@@ -53,6 +57,35 @@ function gatherServiceParams(taskRevision) {
 
 function ecsPromiseMaker(task, params, dataTransform, log) {
     return promiseMaker(ECS, task, params, dataTransform, log);
+}
+
+function cfPromiseMaker(task, params, dataTransform, log) {
+    return promiseMaker(CloudFormation, task, params, dataTransform, log);
+}
+
+function noOpPromise(returner) {
+    return new Promise(function (reject, resolve) {
+        resolve(returner);
+    })
+}
+
+function getTaskDescriptionARN(stackName, logicalResourceId) {
+    if(stackName !== undefined){
+        console.log("Getting ARN of task definition:", logicalResourceId, "from", stackName);
+        var params = {
+            "StackName" : stackName,
+            "LogicalResourceId" : logicalResourceId
+        };
+        return cfPromiseMaker(
+            CloudFormation.describeStackResource,
+            params,
+            function(data){return data.StackResourceDetail.PhysicalResourceId;},
+            function(data){return "Got task description ARN: " + data.StackResourceDetail.PhysicalResourceId;}
+        );
+
+    } else {
+        return noOpPromise(logicalResourceId);
+    }
 }
 
 function getTaskDescription(taskName) {
@@ -132,7 +165,9 @@ function stopTask(taskArn) {
 
 function promiseMaker(taskOwner, task, params, dataTransform, log) {
     return new Promise(function(resolve, reject) {
+        // console.log(task, taskOwner, params)
         task.call(taskOwner, params, function(err,data) {
+            console.log(err, data);
             if (err) reject(err);
             else {
                 console.log(log(data));
@@ -141,6 +176,10 @@ function promiseMaker(taskOwner, task, params, dataTransform, log) {
         });
     });
 };
+
+function removeTaskDefinitionVersion(arn) {
+    return arn.substr(0, arn.lastIndexOf(":"))
+}
 
 function done() {
     console.log("DONE!");

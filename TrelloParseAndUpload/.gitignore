@@ -255,3 +255,5 @@ build/output/
 
 # This file needs to have the parameters required by the pipeline
 concourse/credentials.yml
+
+bristech-speakers-export.json

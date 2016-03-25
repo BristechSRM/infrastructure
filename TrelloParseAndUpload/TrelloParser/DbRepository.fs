@@ -84,6 +84,12 @@ let replaceDbData connectionString (board : BoardMetaData) =
                         Some admin.Id
                     else None) }
 
+    let inline insertAllAndGetAll (connection: MySqlConnection) (insertCommand:string) (collection : 'Entity seq) : 'Entity seq = 
+        let rowsInserted = connection.Execute(insertCommand,collection)
+        let typeName = typeof<'Entity>.Name
+        let failString = sprintf "Incorrect number of %s(s) inserted. Failed" typeName
+        if rowsInserted <> Seq.length collection then failwith failString
+        connection.GetAll<'Entity>()
 
     let admins = 
         board.Members |> Array.map (fun memb -> 
@@ -103,7 +109,6 @@ let replaceDbData connectionString (board : BoardMetaData) =
     use transaction = connection.BeginTransaction()
 
     try 
-
         let talkDeleteSuccess = connection.DeleteAll<Talk>()
         let adminDeleteSuccess = connection.DeleteAll<Admin>()
         let speakerDeleteSuccess = connection.DeleteAll<Speaker>()
@@ -113,21 +118,14 @@ let replaceDbData connectionString (board : BoardMetaData) =
             |> List.exists not
 
         if somethingFailed then
-            failwith "A delete failed"           
-
-        let adminInsertCount = connection.Execute(@"insert admins(name,email,imageurl) values (@Name,@Email,@ImageUrl)",admins)
-        if adminInsertCount <> admins.Length then failwith "Incorrect number of admins inserted. Failed"
-        let admins = connection.GetAll<Admin>()
-
-        let speakerInsertCount = connection.Execute(@"insert speakers(name,email,rating) values (@Name,@Email,@Rating)",speakers)
-        if speakerInsertCount <> speakers.Length then failwith "Incorrect number of speakers inserted. Failed"
-        let speakers = connection.GetAll<Speaker>()
+            failwith "A delete failed"       
+            
+        let admins = insertAllAndGetAll connection @"insert admins(name,email,imageurl) values (@Name,@Email,@ImageUrl)" admins
+        let speakers = insertAllAndGetAll connection @"insert speakers(name,email,rating) values (@Name,@Email,@Rating)" speakers
 
         let talks = Array.map (getTalkWithForeignKeys speakers admins) talkAndTrelloRefs
 
-        let talkInsertCount = connection.Execute(@"insert talks(title,status,speakerid,adminid) values (@Title,@Status,@SpeakerId,@AdminId)",talks)
-        if talkInsertCount <> talks.Length then failwith "Incorrect number of talks inserted. Failed"
-        let talks = connection.GetAll<Talk>()
+        let talks = insertAllAndGetAll connection @"insert talks(title,status,speakerid,adminid) values (@Title,@Status,@SpeakerId,@AdminId)" talks
 
         let talkOutlines = connection.Query<TalkOutlineEntity>("select * from talk_outlines")
         if Seq.length talkOutlines <> Seq.length talks then failwith "Incorrect number of talkOutlines found. Failed"

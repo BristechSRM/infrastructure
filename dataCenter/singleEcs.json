@@ -63,12 +63,36 @@
                 ]
             }
         },
-        "service": {
+        "speakerService": {
             "Type": "AWS::ECS::Service",
             "Properties" : {
                 "Cluster": {"Ref": "speakersCluster"},
                 "DesiredCount": "1",
                 "TaskDefinition" : {"Ref":"speakersTaskDefinition"}
+            }
+        },
+         "speakerCommsTaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "speakers",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/speaker-comms:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 8080, "ContainerPort" : 8080, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+        "speakerCommsService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "speakersCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"speakerCommsTaskDefinition"}
             }
         }
     }

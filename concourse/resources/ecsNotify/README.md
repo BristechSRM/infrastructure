@@ -2,7 +2,7 @@
 
 ## Cloud Formation Cluster
 
-Can be used with a cloud formation stack with the following configuation
+Can be used with a cloud formation stack with the following configuration
 ```
 - name: cluster
   type: ecs

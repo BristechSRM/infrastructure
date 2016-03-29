@@ -5,6 +5,11 @@
             "Type" : "String",
             "Default" : "52.50.88.117",
             "Description" : "The Elastic IP to associate with this stack"
+        },
+        "SpeakerDBClientSG" : {
+            "Type" : "AWS::EC2::SecurityGroup::Id",
+            "Default" : "sg-02d53065",
+            "Description" : "A security group with access to the security group of the Speakers DB"
         }
     },
     "Resources": {
@@ -32,7 +37,7 @@
                         "DeviceIndex": 0,
                         "SubnetId": "subnet-b64844c1",
                         "GroupSet": [
-                            "sg-b6e9d4d2"
+                            {"Ref" : "SpeakerDBClientSG"}
                         ]
                     }
                 ],

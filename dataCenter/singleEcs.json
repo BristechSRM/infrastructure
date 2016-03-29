@@ -4,7 +4,7 @@
         "PublicElasticIP" : {
             "Type" : "String",
             "Default" : "52.50.88.117",
-            "Description" : "The Ealstic IP to associate with this stack"
+            "Description" : "The Elastic IP to associate with this stack"
         }
     },
     "Resources": {

@@ -17,17 +17,12 @@ type TrelloCard = {
     SpeakerName : string
     SpeakerEmail : string 
     TalkData : string 
-    AdminId : string
     ExtraInfo : string 
     RawInput : string
+    CardId : string
+    AdminId : string
+    AdminEmail : string
 }
-
-[<Serializable>]
-type CardTitle = 
-    | Unmatched of string
-    | EventDate of string
-    | Template of string
-    | TalkCard of TrelloCard
 
 type BoardMetaData = {
     Name : string
@@ -39,9 +34,22 @@ type BoardMetaData = {
 }
 
 [<Literal>]
-let TrelloExport = @"bristech-speakers-export.json"
+let TrelloExport = @"../bristech-speakers-export.json"
 
 type Board = JsonProvider<TrelloExport>
+
+type RawTrelloCard = {
+    Card : Board.Card
+    Groups : GroupCollection 
+}  
+
+[<Serializable>]
+type CardType = 
+    | Unmatched of Board.Card
+    | EventDate of Board.Card
+    | Template of Board.Card
+    | UnparsedTalkCard of RawTrelloCard
+    | TalkCard of TrelloCard
 
 module private Helpers = 
 
@@ -63,42 +71,27 @@ module private Helpers =
     let parseWasValid (groups : GroupCollection) = 
         groups.Count = 5 && not <| String.IsNullOrWhiteSpace (groups.[1].Value)
 
-    let tryPopulateSpeakerData (groups : GroupCollection) (card : Board.Card) ignoredAdmins (defaultAdmin : TrelloMember)= 
+    let tryParseCard (admins : TrelloMember []) ignoredAdmins (defaultAdmin : TrelloMember) (card : Board.Card) (groups : GroupCollection) = 
         if parseWasValid groups then
+            let adminId = 
+                card.IdMembers 
+                    |> Array.tryFind (fun id -> idIsNotForIgnoredAdmin ignoredAdmins id )
+                    |> function 
+                        | Some id -> id
+                        | None -> defaultAdmin.Id
+            let admin = admins |> Array.pick (fun memb -> if memb.Id = adminId then Some memb else None ) 
             TalkCard { 
                 SpeakerName = groups.[1].Value
                 SpeakerEmail = groups.[2].Value
                 TalkData = groups.[3].Value
                 ExtraInfo = groups.[4].Value
                 RawInput = groups.[0].Value
-                AdminId = card.IdMembers 
-                    |> Array.tryFind (fun id -> idIsNotForIgnoredAdmin ignoredAdmins id )
-                    |> function 
-                        | Some id -> id
-                        | None -> defaultAdmin.Id
+                CardId = card.Id
+                AdminId = adminId
+                AdminEmail = admin.Email
                 }
         else 
-            Unmatched card.Name
-
-    let nameContainsDate (cardName: string) = 
-        let monthNames = 
-            DateTimeFormatInfo.CurrentInfo.MonthNames 
-            |> Array.map (fun x -> x.ToUpperInvariant())
-            |> Array.filter (String.IsNullOrWhiteSpace >> not)
-        let cardNameUpped = cardName.ToUpperInvariant()
-        monthNames 
-        |> Array.exists (fun month -> cardNameUpped.Contains(month))
-
-    let (|AllRegexGroups|_|) pattern input = 
-        let m = Regex.Match(input, pattern)
-        if (m.Success) then Some m.Groups else None
-
-    let parseCard (card : Board.Card) ignoredAdmins defaultAdmin= 
-        match card.Name with
-        | template when card.Name.ToUpperInvariant().Contains("TEMPLATE") -> Template template
-        | dateCard when nameContainsDate card.Name -> EventDate dateCard
-        | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups -> tryPopulateSpeakerData groups card ignoredAdmins defaultAdmin
-        | _ -> Unmatched card.Name
+            Unmatched card
 
     let parseEmail (fullName : string) = 
         let split = fullName.Split()
@@ -112,6 +105,30 @@ module private Helpers =
         | _ -> "missingEmail@scottlogic.co.uk" 
 
     let ignoredAdminUserNames = ["samdavies";"jamesphillpotts";"tamarachehayebmakarem1";"tamaramakarem";"nicholashemley"]
+
+let (|AllRegexGroups|_|) pattern input = 
+    let m = Regex.Match(input, pattern)
+    if (m.Success) then Some m.Groups else None
+
+let (|AllRegexGroupsMultiLine|_|) pattern input = 
+    let m = Regex.Match(input, pattern,RegexOptions.Singleline)
+    if (m.Success) then Some m.Groups else None
+
+let categorizeCard (card : Board.Card)= 
+    let nameContainsDate (cardName: string) = 
+        let monthNames = 
+            DateTimeFormatInfo.CurrentInfo.MonthNames 
+            |> Array.map (fun x -> x.ToUpperInvariant())
+            |> Array.filter (String.IsNullOrWhiteSpace >> not)
+        let cardNameUpped = cardName.ToUpperInvariant()
+        monthNames 
+        |> Array.exists (fun month -> cardNameUpped.Contains(month))
+
+    match card.Name with
+    | template when card.Name.ToUpperInvariant().Contains("TEMPLATE") -> Template card
+    | dateCard when nameContainsDate card.Name -> EventDate card
+    | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups -> UnparsedTalkCard {Card = card; Groups= groups}
+    | _ -> Unmatched card
 
 let parseBoard (board : Board.Root) =     
     let ignoredAdmins, admins = 
@@ -129,9 +146,17 @@ let parseBoard (board : Board.Root) =
     let allCardData = 
         board.Cards
         |> Array.filter(fun x -> not x.Closed)
-        |> Array.map(fun card -> Helpers.parseCard card ignoredAdmins defaultAdmin)
+        |> Array.map(categorizeCard)
 
-    let talkCards = allCardData |> Array.choose (function | TalkCard data -> Some data | _ -> None)
+    let talkCards = 
+        allCardData 
+        |> Array.choose (function 
+            | UnparsedTalkCard rawCard -> 
+                let parsedCard = Helpers.tryParseCard admins ignoredAdmins defaultAdmin rawCard.Card rawCard.Groups 
+                match parsedCard with
+                | TalkCard card -> Some card 
+                | _ -> None
+            | _ -> None)
 
     let boardMeta = {
         Name = board.Name

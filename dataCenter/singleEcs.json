@@ -3,7 +3,6 @@
     "Parameters" : {
         "PublicElasticIP" : {
             "Type" : "String",
-            "Default" : "52.31.60.100",
             "Description" : "The Elastic IP to associate with this stack"
         },
         "SpeakerDBClientSG" : {
@@ -59,7 +58,15 @@
                                 "#!/bin/bash\n",
                                 "echo ECS_CLUSTER=",
                                 { "Ref": "speakersCluster" },
-                                " >> /etc/ecs/ecs.config"
+                                " >> /etc/ecs/ecs.config\n",
+                                "mkdir /etc/speakerComms\n",
+                                "echo [dynamo-db-read] >> /etc/speakerComms/credentials \n",
+                                "echo aws_access_key_id = ",
+                                { "Ref": "dynamoDbAccessKeyId" },
+                                " >> /etc/speakerComms/credentials\n",
+                                "echo aws_secret_access_key = ",
+                                { "Ref": "dynamoDbSecretAccessKey" },
+                                " >> /etc/speakerComms/credentials\n"
                             ]
                         ]
                     }
@@ -114,7 +121,22 @@
                         ],
                         "PortMappings" : [
                             {"HostPort" : 8080, "ContainerPort" : 8080, "Protocol" : "tcp"}
+                        ],
+                        "MountPoints" : [
+                            {
+                                "ContainerPath" : "/root/.aws",
+                                "SourceVolume" : "speakerCommsCredentials",
+                                "ReadOnly" : true
+                            }
                         ]
+                    }
+                ],
+                "Volumes" : [
+                    {
+                        "Name" : "speakerCommsCredentials",
+                        "Host" : {
+                            "SourcePath" : "/etc/speakerComms"
+                        }
                     }
                 ]
             }

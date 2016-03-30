@@ -1,5 +1,12 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Parameters" : {
+        "PublicElasticIP" : {
+            "Type" : "String",
+            "Default" : "52.50.88.117",
+            "Description" : "The Elastic IP to associate with this stack"
+        }
+    },
     "Resources": {
       	"speakersServer": {
               "Type": "AWS::EC2::Instance",
@@ -93,6 +100,14 @@
                 "Cluster": {"Ref": "speakersCluster"},
                 "DesiredCount": "1",
                 "TaskDefinition" : {"Ref":"speakerCommsTaskDefinition"}
+            }
+        },
+        "elasticIPAssociation" : {
+            "Type" : "AWS::EC2::EIPAssociation",
+            "Properties" : {
+                "EIP" : { "Ref" : "PublicElasticIP"} ,
+                "InstanceId" : {"Ref" : "speakersServer"}
+
             }
         }
     }

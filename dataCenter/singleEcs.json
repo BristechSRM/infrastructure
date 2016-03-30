@@ -76,7 +76,7 @@
             "Properties" : {
                 "ContainerDefinitions" : [
                     {
-                        "Name" : "speakers",
+                        "Name" : "speakerComms",
                         "Cpu" : "1",
                         "Image" : "bristechsrm/speaker-comms:latest",
                         "Memory" : "300",

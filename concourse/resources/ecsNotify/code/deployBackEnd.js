@@ -3,8 +3,16 @@ var Promise = require("promise");
 var AWS = require('aws-sdk');
 AWS.config.update({region: 'eu-west-1'});
 var ECS;
+var CloudFormation;
 
 var taskName;
+var stackName;
+var serviceName;
+var clusterName;
+
+var clusterArn;
+var serviceArn;
+var taskArn;
 
 var stdin = process.stdin, inputChunks = [];
 stdin.resume();
@@ -17,20 +25,34 @@ stdin.on('end', readConfig);
 function readConfig() {
     var parsedData = JSON.parse(inputChunks.join());
 
-    taskName = parsedData.source.task;
     AWS.config.update({
         accessKeyId: parsedData.source.accessKeyId,
         secretAccessKey : parsedData.source.secretAccessKey
     });
     ECS = new AWS.ECS();
+    CloudFormation = new AWS.CloudFormation();
 
-    runDasCode();
+    if(parsedData.source.stackName !== undefined) {
+        stackName = parsedData.source.stackName;
+        taskName = parsedData.source.taskName;
+        serviceName = parsedData.source.serviceName;
+        clusterName = parsedData.source.clusterName;
+
+        runStackServiceUpdate();
+    } else {
+        taskArn = parsedData.source.taskName;
+        serviceArn = parsedData.source.serviceName;
+        clusterArn = parsedData.source.clusterName;
+        runManualService();
+    }
 }
 
-function runDasCode() {
-    getTaskDescription(taskName)
+function runStackServiceUpdate() {
+    getClusterArn()
+        .then(getServiceArn)
+        .then(getTaskArn)
+        .then(getTaskDescription)
         .then(newTaskVersion)
-        .then(gatherServiceParams)
         .then(updateService)
         .then(listTasks)
         .then(stopTasks)
@@ -38,26 +60,75 @@ function runDasCode() {
         .catch(error);
 }
 
-function gatherServiceParams(taskRevision) {
-    var fd3 = fs.createWriteStream(null, {fd : 3});
-    fd3.write(JSON.stringify({version : { ref : taskRevision.revision.toString()}}))
-    // console.log()
-    
+function runManualService() {
+    getTaskDescription(taskArn)
+        .then(newTaskVersion)
+        .then(updateService)
+        .then(listTasks)
+        .then(stopTasks)
+        .then(done)
+        .catch(error);
+}
 
-    return findService().then(function(serviceArns) {
-        return new Promise(function(resolve,reject) {
-            resolve({service: serviceArns[0], task: taskRevision});
+function getClusterArn() {
+    return getStackResourceARN(stackName, clusterName).then(function(data) {
+        return new Promise(function(resolve, reject) {
+            clusterArn = data;
+            resolve(clusterArn);
         });
     });
+}
+
+function getServiceArn() {
+    return getStackResourceARN(stackName, serviceName).then(function(data) {
+        return new Promise(function(resolve, reject) {
+            serviceArn = data
+            resolve(serviceArn);
+        });
+    });   
+}
+
+function getTaskArn() {
+    return getStackResourceARN(stackName, taskName).then(function(data) {
+        return new Promise(function(resolve, reject) {
+            taskArn = data;
+            resolve(taskArn);
+        });
+    });   
+}
+
+function getStackResourceARN(stackName, logicalResourceId) {
+    console.log("Getting ARN of task definition:", logicalResourceId, "from", stackName);
+    var params = {
+        "StackName" : stackName,
+        "LogicalResourceId" : logicalResourceId
+    };
+    return cfPromiseMaker(
+        CloudFormation.describeStackResource,
+        params,
+        function(data){return data.StackResourceDetail.PhysicalResourceId;},
+        function(data){return "Got task description ARN: " + data.StackResourceDetail.PhysicalResourceId;}
+    );
+}
+
+function printNewVersion(taskDescription) {    
+    var fd3 = fs.createWriteStream(null, {fd : 3});
+    fd3.write(JSON.stringify({version : { ref : taskDescription.revision.toString()}}));
 }
 
 function ecsPromiseMaker(task, params, dataTransform, log) {
     return promiseMaker(ECS, task, params, dataTransform, log);
 }
 
-function getTaskDescription(taskName) {
-    console.log("Getting task description for:", taskName);
-    var params = { taskDefinition : taskName};
+function cfPromiseMaker(task, params, dataTransform, log) {
+    return promiseMaker(CloudFormation, task, params, dataTransform, log);
+}
+
+
+
+function getTaskDescription(task) {
+    console.log("Getting task description for:", task);
+    var params = { taskDefinition : task};
     return ecsPromiseMaker(
         ECS.describeTaskDefinition,
         params,
@@ -76,40 +147,39 @@ function newTaskVersion(oldTask) {
     return ecsPromiseMaker(
         ECS.registerTaskDefinition,
         params,
-        function(data){return data.taskDefinition;},
+        function(data){
+            printNewVersion(data.taskDefinition);
+            return data.taskDefinition;
+        },
         function(data){return "Created new revision: " + data.taskDefinition.family + " : " + data.taskDefinition.revision;}
     );
 }
 
-function findService() {
-    console.log("Finding services");
-    return ecsPromiseMaker(
-        ECS.listServices,
-        {},
-        function(data){return data.serviceArns;},
-        function(data){return "Found services: " + data.serviceArns;}
-    );
-}
-
-function updateService(serviceData) {
-    console.log("Updating service:", serviceData.service, "with revision:", serviceData.task.revision);
+function updateService(taskDefinition) {
+    console.log("Updating service:", serviceArn, "one cluster:", clusterArn, "with revision:", taskDefinition.revision);
     var params = {
-        service: serviceData.service,
-        taskDefinition: serviceData.task.family + ":" + serviceData.task.revision
+        service: serviceArn,
+        cluster: clusterArn,
+        taskDefinition: taskDefinition.family + ":" + taskDefinition.revision
     };
     return ecsPromiseMaker(
         ECS.updateService,
         params,
         function(data){return data;},
-        function(data){return "Updated service: " + serviceData.service + " with revision: " + serviceData.task.revision;}
+        function(data){return "Updated service: " + serviceArn + " with revision: " + taskDefinition.revision;}
     );
 }
 
 function listTasks() {
-    console.log("Listing tasks");
+    params = { 
+        serviceName : serviceArn,
+        cluster : clusterArn
+    };
+    
+    console.log("Listing tasks for:", params);
     return ecsPromiseMaker(
         ECS.listTasks,
-        {},
+        params,
         function(data){return data.taskArns;},
         function(data){return "Found tasks:" + data.taskArns;}
     );
@@ -124,7 +194,7 @@ function stopTask(taskArn) {
     console.log("Stopping task:", taskArn);
     return ecsPromiseMaker(
         ECS.stopTask,
-        {task: taskArn},
+        {task: taskArn, cluster: clusterArn},
         function(data){return data;},
         function(data){return "Stopped task:" + taskArn;}
     );
@@ -133,6 +203,7 @@ function stopTask(taskArn) {
 function promiseMaker(taskOwner, task, params, dataTransform, log) {
     return new Promise(function(resolve, reject) {
         task.call(taskOwner, params, function(err,data) {
+            
             if (err) reject(err);
             else {
                 console.log(log(data));
@@ -141,6 +212,10 @@ function promiseMaker(taskOwner, task, params, dataTransform, log) {
         });
     });
 };
+
+function removeTaskDefinitionVersion(arn) {
+    return arn.substr(0, arn.lastIndexOf(":"))
+}
 
 function done() {
     console.log("DONE!");

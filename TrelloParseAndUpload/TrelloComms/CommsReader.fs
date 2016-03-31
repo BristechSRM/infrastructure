@@ -33,6 +33,11 @@ type Correspondance =
     member c.AsCsv = 
         sprintf @"%s,%s,%s,""%s""" c.To (c.Date.ToString("s", System.Globalization.CultureInfo.InvariantCulture)) c.From c.Message
 
+type CorrsAndErrors = {   
+    Corrs : Correspondance 
+    Errors : string list
+}
+
 type EmailCommsMeta = 
     { EmailComms : EmailMeta
       RawComment : string
@@ -125,16 +130,43 @@ let parseBoard() =
     let createCorrespondance (card : TrelloCard) (em : EmailMeta) = 
         match em.Direction with
         | Send -> 
+            { To = card.SpeakerEmail 
+              From = card.AdminEmail
+              Date = em.Date
+              Message = em.Text }
+        | Recieve -> 
             { To = card.AdminEmail
               From = card.SpeakerEmail
               Date = em.Date
               Message = em.Text }
-        | Recieve -> 
-            { To = card.SpeakerEmail
-              From = card.AdminEmail
-              Date = em.Date
-              Message = em.Text }
     
     let corrs = cardsAndEmails |> Array.collect (fun ce -> ce.EmailComments |> Array.map (createCorrespondance ce.Card))
+    let detectMissingTo (corr : CorrsAndErrors)= 
+        if corr.Corrs.To = "" then
+            {corr with Errors = "Missing To" :: corr.Errors } 
+        else 
+            corr
+    let detectMissingFrom (corr : CorrsAndErrors)= 
+        if corr.Corrs.From = "" then
+            {corr with Errors = "Missing From" :: corr.Errors }  
+        else 
+            corr
+    let detectMissingDate (corr : CorrsAndErrors)= 
+        if corr.Corrs.Date = DateTime.MinValue then
+            {corr with Errors = "Missing Date" :: corr.Errors }  
+        else 
+            corr
+    let detectMissingMessage (corr : CorrsAndErrors)= 
+        if corr.Corrs.Message = "" then
+            {corr with Errors = "Missing Message" :: corr.Errors }  
+        else 
+            corr
+    let detectCorrsErrors = detectMissingTo >> detectMissingFrom >> detectMissingDate >> detectMissingMessage
+
+    let corrsWithErrors = corrs |> Array.choose (fun corr -> 
+            let detectedErrors = {Corrs = corr; Errors = [] } |> detectCorrsErrors
+            match detectedErrors.Errors with
+            | [] -> None
+            | _ -> Some detectedErrors )
     let corrsCsv = corrs |> Array.map (fun c -> c.AsCsv)
     corrsCsv

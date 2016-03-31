@@ -17,6 +17,11 @@
         "dynamoDbAccessKeyId" : {
             "Type" : "String",
             "Description" : "The access key ID with which speaker-comms talks to it's DB"
+        },
+        "speakerServerKeyPair" : {
+            "Type" : "AWS::EC2::KeyPair::KeyName",
+            "Dafault" : "developmentStack",
+            "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
         }
     },
     "Resources": {
@@ -28,7 +33,7 @@
                 "IamInstanceProfile": "ecsInstanceRole",
                 "ImageId": "ami-76e95b05",
                 "InstanceType": "t2.micro",
-                "KeyName": "ecsKey",
+                "KeyName": { "Ref" : "speakerServerKeyPair"},
                 "Monitoring": "false",
                 "Tags": [
                     {"Key": "Name","Value": "speakersServer"},

@@ -4,7 +4,10 @@
     "Parameters" : {
         "PublicElasticIP" : {
             "Type" : "String",
-            "Description" : "The Elastic IP to associate with this stack"
+            "MinLength" : "4",
+            "MaxLength" : "15",
+            "Default" : "null",
+            "Description" : "The Elastic IP to associate with this stack. Enter null to skip having public IP assignment"
         },
         "SpeakerDBClientSG" : {
             "Type" : "AWS::EC2::SecurityGroup::Id",
@@ -21,9 +24,12 @@
         },
         "speakerServerKeyPair" : {
             "Type" : "AWS::EC2::KeyPair::KeyName",
-            "Dafault" : "developmentStack",
+            "Default" : "developmentStack",
             "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
         }
+    },
+    "Conditions" : {
+        "asscociateEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "PublicElasticIP"}, "null"]}]}
     },
     "Resources": {
       	"speakersServer": {
@@ -157,6 +163,7 @@
         },
         "elasticIPAssociation" : {
             "Type" : "AWS::EC2::EIPAssociation",
+            "Condition" : "asscociateEIP",
             "Properties" : {
                 "EIP" : { "Ref" : "PublicElasticIP"} ,
                 "InstanceId" : {"Ref" : "speakersServer"}

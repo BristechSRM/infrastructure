@@ -3,8 +3,20 @@
     "Parameters" : {
         "PublicElasticIP" : {
             "Type" : "String",
-            "Default" : "52.50.88.117",
             "Description" : "The Elastic IP to associate with this stack"
+        },
+        "SpeakerDBClientSG" : {
+            "Type" : "AWS::EC2::SecurityGroup::Id",
+            "Default" : "sg-02d53065",
+            "Description" : "A security group with access to the security group of the Speakers DB"
+        },
+        "dynamoDbSecretAccessKey" : {
+            "Type" : "String",
+            "Description" : "The secret access key with which speaker-comms talks to it's DB"
+        },
+        "dynamoDbAccessKeyId" : {
+            "Type" : "String",
+            "Description" : "The access key ID with which speaker-comms talks to it's DB"
         }
     },
     "Resources": {
@@ -32,7 +44,9 @@
                         "DeviceIndex": 0,
                         "SubnetId": "subnet-b64844c1",
                         "GroupSet": [
+                            {"Ref" : "SpeakerDBClientSG"},
                             "sg-b6e9d4d2"
+
                         ]
                     }
                 ],
@@ -44,7 +58,15 @@
                                 "#!/bin/bash\n",
                                 "echo ECS_CLUSTER=",
                                 { "Ref": "speakersCluster" },
-                                " >> /etc/ecs/ecs.config"
+                                " >> /etc/ecs/ecs.config\n",
+                                "mkdir /etc/speakerComms\n",
+                                "echo [dynamo-db-read] >> /etc/speakerComms/credentials \n",
+                                "echo aws_access_key_id = ",
+                                { "Ref": "dynamoDbAccessKeyId" },
+                                " >> /etc/speakerComms/credentials\n",
+                                "echo aws_secret_access_key = ",
+                                { "Ref": "dynamoDbSecretAccessKey" },
+                                " >> /etc/speakerComms/credentials\n"
                             ]
                         ]
                     }
@@ -87,9 +109,34 @@
                         "Cpu" : "1",
                         "Image" : "bristechsrm/speaker-comms:latest",
                         "Memory" : "300",
+                        "Environment" : [
+                            {
+                                "Name" : "aws_access_key_id",
+                                "Value" : { "Ref" : "dynamoDbAccessKeyId"}
+                            },
+                            {
+                                "Name" : "aws_secret_access_key",
+                                "Value" : { "Ref" : "dynamoDbSecretAccessKey"}
+                            }
+                        ],
                         "PortMappings" : [
                             {"HostPort" : 8080, "ContainerPort" : 8080, "Protocol" : "tcp"}
+                        ],
+                        "MountPoints" : [
+                            {
+                                "ContainerPath" : "/root/.aws",
+                                "SourceVolume" : "speakerCommsCredentials",
+                                "ReadOnly" : true
+                            }
                         ]
+                    }
+                ],
+                "Volumes" : [
+                    {
+                        "Name" : "speakerCommsCredentials",
+                        "Host" : {
+                            "SourcePath" : "/etc/speakerComms"
+                        }
                     }
                 ]
             }

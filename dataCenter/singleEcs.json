@@ -1,9 +1,13 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
+    "Description" : "A stack for the non-persistent, backend infrastructure used by BristechSRM",
     "Parameters" : {
         "PublicElasticIP" : {
             "Type" : "String",
-            "Description" : "The Elastic IP to associate with this stack"
+            "MinLength" : "4",
+            "MaxLength" : "15",
+            "Default" : "null",
+            "Description" : "The Elastic IP to associate with this stack. Enter null to skip having public IP assignment"
         },
         "SpeakerDBClientSG" : {
             "Type" : "AWS::EC2::SecurityGroup::Id",
@@ -17,7 +21,15 @@
         "dynamoDbAccessKeyId" : {
             "Type" : "String",
             "Description" : "The access key ID with which speaker-comms talks to it's DB"
+        },
+        "speakerServerKeyPair" : {
+            "Type" : "AWS::EC2::KeyPair::KeyName",
+            "Default" : "developmentStack",
+            "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
         }
+    },
+    "Conditions" : {
+        "associateEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "PublicElasticIP"}, "null"]}]}
     },
     "Resources": {
       	"speakersServer": {
@@ -28,7 +40,7 @@
                 "IamInstanceProfile": "ecsInstanceRole",
                 "ImageId": "ami-76e95b05",
                 "InstanceType": "t2.micro",
-                "KeyName": "ecsKey",
+                "KeyName": { "Ref" : "speakerServerKeyPair"},
                 "Monitoring": "false",
                 "Tags": [
                     {"Key": "Name","Value": "speakersServer"},
@@ -151,6 +163,7 @@
         },
         "elasticIPAssociation" : {
             "Type" : "AWS::EC2::EIPAssociation",
+            "Condition" : "associateEIP",
             "Properties" : {
                 "EIP" : { "Ref" : "PublicElasticIP"} ,
                 "InstanceId" : {"Ref" : "speakersServer"}

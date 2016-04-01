@@ -29,7 +29,7 @@
         }
     },
     "Conditions" : {
-        "asscociateEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "PublicElasticIP"}, "null"]}]}
+        "associateEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "PublicElasticIP"}, "null"]}]}
     },
     "Resources": {
       	"speakersServer": {
@@ -163,7 +163,7 @@
         },
         "elasticIPAssociation" : {
             "Type" : "AWS::EC2::EIPAssociation",
-            "Condition" : "asscociateEIP",
+            "Condition" : "associateEIP",
             "Properties" : {
                 "EIP" : { "Ref" : "PublicElasticIP"} ,
                 "InstanceId" : {"Ref" : "speakersServer"}

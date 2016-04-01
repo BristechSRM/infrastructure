@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description" : "A stack for the non-persistant, backend infrastructure used by BrsitechSRM",
+    "Description" : "A stack for the non-persistent, backend infrastructure used by BristechSRM",
     "Parameters" : {
         "PublicElasticIP" : {
             "Type" : "String",

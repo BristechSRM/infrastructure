@@ -1,16 +1,28 @@
 ﻿open System
 open System.Configuration
+open System.IO
 open System.Net
 open Newtonsoft.Json
 open System.Globalization
 open System.Text.RegularExpressions
 
-type TrelloCredentials = 
-    { Key : string
-      Token : string } 
+[<AutoOpen>]
+module Helpers = 
+    type TrelloCredentials = 
+        { Key : string
+          Token : string } 
 
-module Members =     
+    let getTrelloCredentials() = {Key = ConfigurationManager.AppSettings.Item("TrelloKey") ; Token = ConfigurationManager.AppSettings.Item("TrelloToken")}
 
+    let (|AllRegexGroups|_|) pattern input = 
+        let m = Regex.Match(input, pattern)
+        if (m.Success) then Some m.Groups else None
+
+    let (|AllRegexGroupsMultiLine|_|) pattern input = 
+        let m = Regex.Match(input, pattern,RegexOptions.Singleline)
+        if (m.Success) then Some m.Groups else None
+
+module Members =  
     type BasicMember = 
         { Id : string
           Username : string
@@ -29,27 +41,28 @@ module Members =
           IgnoredMembers : TrelloMember []
           DefaultMember : TrelloMember }
 
-    let getMemberDetails trelloCred id = 
-        let parseToEmail (fullName : string) = 
-            let split = fullName.Split()
-            match split.Length with 
-            | 1  -> 
-                split.[0] + "@scottlogic.co.uk"
-            | x when x > 1 -> 
-                let firstNameFirstLetter = split.[0].Chars(0)
-                let lastName = (Array.last split).ToLowerInvariant()
-                sprintf "%c%s@scottlogic.co.uk" firstNameFirstLetter lastName
-            | _ -> "missingEmail@scottlogic.co.uk" 
+    type MemberId = { Id: string}
 
-        let createImageUrl (avatarHash : string) =
-            //sprintf "https://trello-avatars.s3.amazonaws.com/%s/original.png" <| avatarHash.ToString("N")
-            sprintf "https://trello-avatars.s3.amazonaws.com/%s/50.png" <| avatarHash
+    let parseToEmail (fullName : string) = 
+        let split = fullName.Split()
+        match split.Length with 
+        | 1  -> 
+            split.[0] + "@scottlogic.co.uk"
+        | x when x > 1 -> 
+            let firstNameFirstLetter = split.[0].Chars(0)
+            let lastName = (Array.last split).ToLowerInvariant()
+            sprintf "%c%s@scottlogic.co.uk" firstNameFirstLetter lastName
+        | _ -> "missingEmail@scottlogic.co.uk" 
 
-        let getImageUrl avatarHash = 
-            match avatarHash with 
-            | Some hash -> createImageUrl hash
-            | None -> "https://placebear.com/50/50"
+    let createImageUrl (avatarHash : string) =
+        sprintf "https://trello-avatars.s3.amazonaws.com/%s/50.png" <| avatarHash
 
+    let getImageUrl avatarHash = 
+        match avatarHash with 
+        | Some hash -> createImageUrl hash
+        | None -> "https://placebear.com/50/50"
+
+    let getMemberDetailsAsync trelloCred id =
         async {
             let uri = Uri(sprintf "https://api.trello.com/1/members/%s?fields=username,fullName,avatarHash&key=%s&token=%s" id trelloCred.Key trelloCred.Token)
             use webClient = new WebClient()
@@ -64,8 +77,7 @@ module Members =
             }
         }
 
-    type MemberId = { Id: string}
-    let getMembers trelloCred= 
+    let getMembersAsync trelloCred= 
         async {
             let uri = Uri(sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/members?fields=id&key=%s&token=%s" trelloCred.Key trelloCred.Token)
             use webClient = new WebClient()
@@ -73,15 +85,15 @@ module Members =
             let memberIds = JsonConvert.DeserializeObject<MemberId []>(rawMemberIds)
             let allMembersAsync = 
                 memberIds 
-                |> Array.map (fun mem -> getMemberDetails trelloCred mem.Id) 
+                |> Array.map (fun mem -> getMemberDetailsAsync trelloCred mem.Id) 
                 |> Async.Parallel                
                 
             return! allMembersAsync
         }
     let ignoredAdminUserNames = ["samdavies";"jamesphillpotts";"tamarachehayebmakarem1";"tamaramakarem";"nicholashemley"] 
-    let getAllMembers trelloCred = 
+    let getAllMembersAsync trelloCred = 
         async {
-            let! members = getMembers trelloCred
+            let! members = getMembersAsync trelloCred
             let ignoredMembers, keptMembers = 
                 members 
                 |> Array.partition(fun mem -> List.contains mem.UserName ignoredAdminUserNames)
@@ -120,10 +132,6 @@ module Cards =
         | UnparsedTalkCard of RawTrelloCard
         | TalkCard of TrelloCard
 
-    let (|AllRegexGroups|_|) pattern input = 
-        let m = Regex.Match(input, pattern)
-        if (m.Success) then Some m.Groups else None
-
     let categorizeCard (card : BasicCard)= 
         let nameContainsDate (cardName: string) = 
             let monthNames = 
@@ -135,8 +143,8 @@ module Cards =
             |> Array.exists (fun month -> cardNameUpped.Contains(month))
 
         match card.Name with
-        | template when card.Name.ToUpperInvariant().Contains("TEMPLATE") -> Template card
-        | dateCard when nameContainsDate card.Name -> EventDate card
+        | _ when card.Name.ToUpperInvariant().Contains("TEMPLATE") -> Template card
+        | _ when nameContainsDate card.Name -> EventDate card
         | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups -> UnparsedTalkCard {Card = card; Groups= groups}
         | _ -> Unmatched card
 
@@ -149,19 +157,57 @@ module Cards =
             return basicCards |> Array.map(categorizeCard)        
         }
 
-module BoardParser = 
-    open Members
+    let getAllRawTalkCards trelloCred = 
+        async {
+            let! allCards = getAllCards trelloCred
+            return allCards |> Array.choose(function | UnparsedTalkCard rawTalkCard -> Some rawTalkCard | _ -> None)
+        }
+
+module Actions = 
     open Cards
 
-    type TrelloBoard = 
-        { Members : TrelloMember []
-          Cards : TrelloCard [] }
+    type ActionData = 
+        { Text : string }
+
+    type MemberCreator = 
+        { Id : string
+          FullName : string
+          Username : string}
+
+    type BasicAction = 
+        { Id : string
+          Data : ActionData
+          Type : string
+          MemberCreator : MemberCreator
+          }
+
+    type RawCardAndActions = 
+        { Card : RawTrelloCard 
+          Actions : BasicAction [] }
+
+    //NOTE: Currently assuming that card will have less than 1000 actions. If a card has more than that, we need to deal with the trello paging to get them all
+    let getCardCommentActionsAsync trelloCred (rawCard : RawTrelloCard) = 
+        async {
+            let uri = Uri(sprintf "https://api.trello.com/1/cards/%s/actions?filter=commentCard&key=%s&token=%s" rawCard.Card.Id trelloCred.Key trelloCred.Token)
+            use webClient = new WebClient()
+            let! rawCommentActions = webClient.AsyncDownloadString(uri)
+            let basicCommentActions = JsonConvert.DeserializeObject<BasicAction []>(rawCommentActions)
+            return {Card = rawCard; Actions = basicCommentActions;}
+        }
+
+    let getActionsPerCardAsync trelloCred (rawCards : RawTrelloCard []) =
+        async {
+            return! rawCards |> Array.map(getCardCommentActionsAsync trelloCred) |> Async.Parallel
+        }
+
+module CardParser = 
+    open Members
+    open Cards
 
     let idIsNotForIgnoredAdmin (ignoredAdmins : TrelloMember []) id= 
         ignoredAdmins 
         |> Array.exists (fun x -> x.Id = id) 
         |> not
-
 
     let parseWasValid (groups : GroupCollection) = 
         groups.Count = 5 && not <| String.IsNullOrWhiteSpace (groups.[1].Value)
@@ -188,29 +234,107 @@ module BoardParser =
         else 
             Unmatched card
 
-    let parseBoard (allMembersAsync : Async<Members.MembersMeta>) (allCardsAsync : Async<Cards.CardType []>) =
+module CommsActionParser = 
+    open Cards
+    open Actions
+
+    type EmailDirection = 
+        | Send
+        | Recieve
+
+    type EmailMeta = 
+        { Date : DateTime
+          Direction : EmailDirection
+          Text : string
+          MemberCreator : MemberCreator }
+
+    type Correspondance = 
+        { To : string
+          From : string
+          Date : DateTime
+          Message : string }
+
+    let tryParseEmailDirection (dirString : string) = 
+        match dirString.ToUpperInvariant() with
+        | "SEND" -> Some Send
+        | "RECEIVE" | "RECIEVE" -> Some Recieve
+        | _ -> None
+
+    let tryParseCommsComment (action : BasicAction) (groups : GroupCollection) = 
+        let success, date = DateTime.TryParse(groups.[1].Value)
+        if success then 
+            match tryParseEmailDirection groups.[2].Value with
+            | Some dir ->                    
+                Some {  Date = date
+                        Direction = dir
+                        Text = groups.[3].Value
+                        MemberCreator = action.MemberCreator }
+            | None -> None
+        else None
+
+    let tryParseCommentAction (action : BasicAction) = 
+        match action.Data.Text with
+        | AllRegexGroupsMultiLine "\[([0-9\/\.]+) - ([a-zA-Z]+)\](.*)$" groups -> 
+            tryParseCommsComment action groups
+        | _ -> None
+
+    let createCorrespondance (card : TrelloCard) (em : EmailMeta) = 
+        match em.Direction with
+        | Send -> 
+            { To = card.SpeakerEmail 
+              From = card.AdminEmail
+              Date = em.Date
+              Message = em.Text }
+        | Recieve -> 
+            { To = card.AdminEmail
+              From = card.SpeakerEmail
+              Date = em.Date
+              Message = em.Text }
+
+module BoardParser = 
+    open Members
+    open Cards
+    open Actions
+
+    open CardParser
+    open CommsActionParser
+
+    type CardWithCorrs = 
+        { TrelloCard : TrelloCard 
+          Correspondance : Correspondance []}
+
+    type TrelloBoard = 
+        { Members : TrelloMember []
+          Cards : CardWithCorrs [] }
+
+    let tryParseCardAndActions members cas =
+        let parsedCard = tryParseCard members cas.Card
+        match parsedCard with
+        | TalkCard card -> 
+            let correspondance = cas.Actions |> Array.map tryParseCommentAction |> Array.choose (createCorrespondance card |> Option.map)
+            Some {TrelloCard = card; Correspondance = correspondance} 
+        | _ -> None
+
+    let parseBoardAsync trelloCred =
         async {
-            let! cardsAsync = Async.StartChild allCardsAsync
-            let! membersAsync = Async.StartChild allMembersAsync
+            //StartChild lets you start multiple asyncs without blocking for the result
+            let! cardsAsync = Async.StartChild <| getAllRawTalkCards trelloCred
+            let! membersAsync = Async.StartChild <| getAllMembersAsync trelloCred
+
+            //Now we block for the result
             let! cards = cardsAsync
+            let! cardsAndCommentActions = getActionsPerCardAsync trelloCred cards
             let! members = membersAsync
-            let talkCards = cards |> Array.choose(function 
-                | UnparsedTalkCard rawCard -> 
-                    let parsedCard = tryParseCard members rawCard
-                    match parsedCard with
-                    | TalkCard card -> Some card 
-                    | _ -> None
-                | _ -> None)
-            return talkCards
+
+            let talkCards = cardsAndCommentActions |> Array.choose (tryParseCardAndActions members)
+            return {Members = members.Members; Cards = talkCards}
         }
 
 [<EntryPoint>]
 let main argv = 
-    let key = ConfigurationManager.AppSettings.Item("TrelloKey") 
-    let token = ConfigurationManager.AppSettings.Item("TrelloToken")
-    let trelloCred = {Key = key; Token = token}
-    let allMembersAsync = Members.getAllMembers trelloCred
-    let allCardsAsync = Cards.getAllCards trelloCred
-    let test = BoardParser.parseBoard allMembersAsync allCardsAsync |> Async.RunSynchronously
+    let trelloCred = getTrelloCredentials()
+    let test = BoardParser.parseBoardAsync trelloCred |> Async.RunSynchronously
+    let result = JsonConvert.SerializeObject(test, Formatting.Indented)
+    File.WriteAllText(@"outlines-import.json",result)
     printfn "%A" argv
     0 

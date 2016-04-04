@@ -4,7 +4,7 @@ open DbRepository
 open JsonExporter
 
 let connectionString = ConfigurationManager.ConnectionStrings.Item("DefaultConnection").ConnectionString
-let trelloExport = @"bristech-speakers-export.json"
+let trelloExport = @"../bristech-speakers-export.json"
 let parseExport = @"outlines-import.json"
 
 [<EntryPoint>]

@@ -52,7 +52,7 @@ type TalkOutlineEntity = {
 
 let replaceDbData connectionString (board : BoardMetaData) =
 
-    let extractSpeakerAndTalk (card : TrelloCard) =
+    let extractSpeakerAndTalkWithRefs (card : TrelloCard) =
         let speaker = 
             {   Speaker.Id = -1
                 Name = card.SpeakerName
@@ -66,8 +66,7 @@ let replaceDbData connectionString (board : BoardMetaData) =
                 SpeakerId = -1
                 AdminId =  -1} 
                 
-        let adminEmail = board.Members |> Array.pick (fun memb -> if memb.Id = card.AdminId then Some memb.Email else None ) 
-        let talkAndTrelloRefs = {Talk = talk; SpeakerName = speaker.Name; AdminEmail = adminEmail;}
+        let talkAndTrelloRefs = {Talk = talk; SpeakerName = card.SpeakerName; AdminEmail = card.AdminEmail;}
                
         speaker, talkAndTrelloRefs
 
@@ -100,7 +99,7 @@ let replaceDbData connectionString (board : BoardMetaData) =
 
     let speakers, talkAndTrelloRefs = 
         board.Cards
-        |> Array.map extractSpeakerAndTalk
+        |> Array.map extractSpeakerAndTalkWithRefs
         |> Array.unzip
 
 

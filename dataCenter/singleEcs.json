@@ -9,10 +9,10 @@
             "Default" : "null",
             "Description" : "The Elastic IP to associate with this stack. Enter null to skip having public IP assignment"
         },
-        "SpeakerDBClientSG" : {
+        "sessionsDBClientSG" : {
             "Type" : "AWS::EC2::SecurityGroup::Id",
             "Default" : "sg-02d53065",
-            "Description" : "A security group with access to the security group of the Speakers DB"
+            "Description" : "A security group with access to the security group of the Sessions DB"
         },
         "dynamoDbSecretAccessKey" : {
             "Type" : "String",
@@ -22,7 +22,7 @@
             "Type" : "String",
             "Description" : "The access key ID with which speaker-comms talks to it's DB"
         },
-        "speakerServerKeyPair" : {
+        "apiServerKeyPair" : {
             "Type" : "AWS::EC2::KeyPair::KeyName",
             "Default" : "developmentStack",
             "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
@@ -32,7 +32,7 @@
         "associateEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "PublicElasticIP"}, "null"]}]}
     },
     "Resources": {
-      	"speakersServer": {
+      	"apiServer": {
               "Type": "AWS::EC2::Instance",
               "Properties": {
                 "DisableApiTermination": "false",
@@ -40,14 +40,14 @@
                 "IamInstanceProfile": "ecsInstanceRole",
                 "ImageId": "ami-76e95b05",
                 "InstanceType": "t2.micro",
-                "KeyName": { "Ref" : "speakerServerKeyPair"},
+                "KeyName": { "Ref" : "apiServerKeyPair"},
                 "Monitoring": "false",
                 "Tags": [
-                    {"Key": "Name","Value": "speakersServer"},
+                    {"Key": "Name","Value": "apiServer"},
                     {"Key": "Product","Value": "bristechSRM"},
                     {"Key": "Environment","Value": "development"},
-                    {"Key": "Cluster","Value": "speakers"},
-                    {"Key": "Service","Value": "speakers"},
+                    {"Key": "Cluster","Value": "api"},
+                    {"Key": "Service","Value": "api"},
                     {"Key": "Purpose","Value": "docker"}
                 ],
                 "NetworkInterfaces": [
@@ -56,7 +56,7 @@
                         "DeviceIndex": 0,
                         "SubnetId": "subnet-b64844c1",
                         "GroupSet": [
-                            {"Ref" : "SpeakerDBClientSG"},
+                            {"Ref" : "sessionsDBClientSG"},
                             "sg-b6e9d4d2"
 
                         ]
@@ -69,7 +69,7 @@
                             [
                                 "#!/bin/bash\n",
                                 "echo ECS_CLUSTER=",
-                                { "Ref": "speakersCluster" },
+                                { "Ref": "apiCluster" },
                                 " >> /etc/ecs/ecs.config\n",
                                 "mkdir /etc/speakerComms\n",
                                 "echo [dynamo-db-read] >> /etc/speakerComms/credentials \n",
@@ -85,17 +85,17 @@
                 }
             }
         },
-        "speakersCluster": {
+        "apiCluster": {
             "Type": "AWS::ECS::Cluster"
         },
-        "speakersTaskDefinition": {
+        "sessionsTaskDefinition": {
             "Type": "AWS::ECS::TaskDefinition",
             "Properties" : {
                 "ContainerDefinitions" : [
                     {
-                        "Name" : "speakers",
+                        "Name" : "sessions",
                         "Cpu" : "1",
-                        "Image" : "bristechsrm/speakers:latest",
+                        "Image" : "bristechsrm/sessions:latest",
                         "Memory" : "300",
                         "PortMappings" : [
                             {"HostPort" : 80, "ContainerPort" : 9000, "Protocol" : "tcp"}
@@ -104,12 +104,12 @@
                 ]
             }
         },
-        "speakerService": {
+        "sessionsService": {
             "Type": "AWS::ECS::Service",
             "Properties" : {
-                "Cluster": {"Ref": "speakersCluster"},
+                "Cluster": {"Ref": "apiCluster"},
                 "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"speakersTaskDefinition"}
+                "TaskDefinition" : {"Ref":"sessionsTaskDefinition"}
             }
         },
          "speakerCommsTaskDefinition": {
@@ -166,7 +166,7 @@
             "Condition" : "associateEIP",
             "Properties" : {
                 "EIP" : { "Ref" : "PublicElasticIP"} ,
-                "InstanceId" : {"Ref" : "speakersServer"}
+                "InstanceId" : {"Ref" : "apiServer"}
 
             }
         }

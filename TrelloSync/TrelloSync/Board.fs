@@ -13,6 +13,7 @@
             let! cards = getAllRawTalkCards trelloCred
             let! membersMeta = getAllMembersAsync trelloCred
             let! cardsAndCommentActions = getActionsPerCardAsync trelloCred cards
+
             return 
                 {
                     Members = membersMeta.Members

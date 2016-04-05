@@ -8,7 +8,7 @@
 
     type CardWithCorrs = 
         { TrelloCard : TrelloCard 
-          Correspondance : Correspondance []}
+          Correspondence : Correspondence []}
 
     type TrelloBoard = 
         { Members : TrelloMember []
@@ -19,7 +19,7 @@
         match parsedCard with
         | TalkCard card -> 
             let correspondance = cas.Actions |> Array.map tryParseCommentAction |> Array.choose (createCorrespondance card |> Option.map)
-            Some {TrelloCard = card; Correspondance = correspondance} 
+            Some {TrelloCard = card; Correspondence = correspondance} 
         | _ -> None
 
     let parseBoardAsync trelloCred =

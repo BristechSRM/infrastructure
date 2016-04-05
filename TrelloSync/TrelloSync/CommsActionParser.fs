@@ -6,7 +6,7 @@
 
     type EmailDirection = 
         | Send
-        | Recieve
+        | Receive
 
     type EmailMeta = 
         { Date : DateTime
@@ -14,7 +14,7 @@
           Text : string
           MemberCreator : MemberCreator }
 
-    type Correspondance = 
+    type Correspondence = 
         { To : string
           From : string
           Date : DateTime
@@ -23,7 +23,7 @@
     let tryParseEmailDirection (dirString : string) = 
         match dirString.ToUpperInvariant() with
         | "SEND" -> Some Send
-        | "RECEIVE" | "RECIEVE" -> Some Recieve
+        | "RECEIVE" | "RECIEVE" -> Some Receive
         | _ -> None
 
     let tryParseCommsComment (action : BasicAction) (groups : GroupCollection) = 
@@ -51,7 +51,7 @@
               From = card.AdminEmail
               Date = em.Date
               Message = em.Text }
-        | Recieve -> 
+        | Receive -> 
             { To = card.AdminEmail
               From = card.SpeakerEmail
               Date = em.Date

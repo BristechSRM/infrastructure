@@ -88,6 +88,30 @@
         "apiCluster": {
             "Type": "AWS::ECS::Cluster"
         },
+        "swaggerTaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "swagger-api",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/api_docs:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 8081, "ContainerPort" : 9000, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+        "swaggerService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "apiCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"swaggerTaskDefinition"}
+            }
+        },
         "sessionsTaskDefinition": {
             "Type": "AWS::ECS::TaskDefinition",
             "Properties" : {

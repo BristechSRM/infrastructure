@@ -23,7 +23,7 @@
     let tryParseEmailDirection (dirString : string) = 
         match dirString.ToUpperInvariant() with
         | "SEND" -> Some Send
-        | "RECEIVE" | "RECIEVE" -> Some Receive
+        | "RECEIVE" -> Some Receive
         | _ -> None
 
     let tryParseCommsComment (action : BasicAction) (groups : GroupCollection) = 

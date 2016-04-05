@@ -33,6 +33,7 @@
 
     let expectedNumberOfGroupsInCardParse = 5
     let speakerNameGroup = 1
+
     let categorizeCard (card : BasicCard)= 
         let nameContainsDate (cardName: string) = 
             let monthNames = 

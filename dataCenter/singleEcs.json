@@ -156,7 +156,7 @@
         "speakerCommsService": {
             "Type": "AWS::ECS::Service",
             "Properties" : {
-                "Cluster": {"Ref": "speakersCluster"},
+                "Cluster": {"Ref": "apiCluster"},
                 "DesiredCount": "1",
                 "TaskDefinition" : {"Ref":"speakerCommsTaskDefinition"}
             }

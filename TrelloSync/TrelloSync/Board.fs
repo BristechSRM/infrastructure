@@ -3,10 +3,19 @@
     open Cards
     open Actions
 
+    open CardParser
+
+    type CardWithActions = 
+        { TrelloCard : TrelloCard 
+          CommsActions : BasicAction [] }
+
     type TrelloBoard =
         { Members : TrelloMember []
-          Cards : BasicCard [] 
-          Actions : (string * BasicAction []) [] }
+          Cards : CardWithActions [] }
+
+    let parseCardAndActions members rawCardsAndActions = 
+        let parsedCard = parseCard members rawCardsAndActions.Card
+        {TrelloCard = parsedCard; CommsActions = rawCardsAndActions.Actions}
 
     let fetchBoardAsync trelloCred = 
         async {
@@ -17,8 +26,7 @@
             return 
                 {
                     Members = membersMeta.Members
-                    Cards = cards |> Array.map(fun x -> x.Card)
-                    Actions = cardsAndCommentActions |> Array.map(fun x -> (x.Card.Card.Id, x.Actions))
+                    Cards = cardsAndCommentActions |> Array.map (parseCardAndActions membersMeta)
                 }
 
         }

@@ -58,6 +58,7 @@
     <Compile Include="Credentials.fs" />
     <Compile Include="Members.fs" />
     <Compile Include="Cards.fs" />
+    <Compile Include="Actions.fs" />
     <Compile Include="Board.fs" />
     <Compile Include="Program.fs" />
     <Content Include="App.config">

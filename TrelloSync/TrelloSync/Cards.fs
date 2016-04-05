@@ -31,6 +31,8 @@
         | UnparsedTalkCard of RawTrelloCard
         | TalkCard of TrelloCard
 
+    let expectedNumberOfGroupsInCardParse = 5
+    let speakerNameGroup = 1
     let categorizeCard (card : BasicCard)= 
         let nameContainsDate (cardName: string) = 
             let monthNames = 
@@ -41,10 +43,18 @@
             monthNames 
             |> Array.exists (fun month -> cardNameUpped.Contains(month))
 
+        let allGroupsMatched (groups : GroupCollection) = 
+            groups.Count = expectedNumberOfGroupsInCardParse 
+                && not <| String.IsNullOrWhiteSpace (groups.[speakerNameGroup].Value)
+
         match card.Name with
         | _ when card.Name.ToUpperInvariant().Contains("TEMPLATE") -> Template card
         | _ when nameContainsDate card.Name -> EventDate card
-        | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups -> UnparsedTalkCard {Card = card; Groups= groups}
+        | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups -> 
+            if allGroupsMatched groups then 
+                UnparsedTalkCard {Card = card; Groups= groups}
+            else 
+                Unmatched card
         | _ -> Unmatched card
 
     let getAllCards trelloCred = 

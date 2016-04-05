@@ -14,25 +14,22 @@
         { Members : TrelloMember []
           Cards : CardWithCorrs [] }
 
-    let tryParseCardAndActions members cas =
-        let parsedCard = tryParseCard members cas.Card
-        match parsedCard with
-        | TalkCard card -> 
-            let correspondance = cas.Actions |> Array.map tryParseCommentAction |> Array.choose (createCorrespondance card |> Option.map)
-            Some {TrelloCard = card; Correspondence = correspondance} 
-        | _ -> None
+    let parseCardAndActions members rawCardAndActions =
+        let parsedCard = parseCard members rawCardAndActions.Card
+        let correspondence = rawCardAndActions.Actions |> Array.map tryParseCommentAction |> Array.choose (createCorrespondance parsedCard |> Option.map)
+        {TrelloCard = parsedCard; Correspondence = correspondence} 
 
     let parseBoardAsync trelloCred =
         async {
             //StartChild lets you start multiple asyncs without blocking for the result
             let! cardsAsync = Async.StartChild <| getAllRawTalkCards trelloCred
-            let! membersAsync = Async.StartChild <| getAllMembersAsync trelloCred
+            let! membersMetaAsync = Async.StartChild <| getAllMembersAsync trelloCred
 
             //Now we block for the result
             let! cards = cardsAsync
             let! cardsAndCommentActions = getActionsPerCardAsync trelloCred cards
-            let! members = membersAsync
+            let! membersMeta = membersMetaAsync
 
-            let talkCards = cardsAndCommentActions |> Array.choose (tryParseCardAndActions members)
-            return {Members = members.Members; Cards = talkCards}
+            let talkCards = cardsAndCommentActions |> Array.map (parseCardAndActions membersMeta)
+            return {Members = membersMeta.Members; Cards = talkCards}
         }

@@ -2,7 +2,7 @@
     open System
     open System.Net
     open Newtonsoft.Json 
-    open Helpers
+    open Credentials
 
     type BasicMember = 
         { Id : string

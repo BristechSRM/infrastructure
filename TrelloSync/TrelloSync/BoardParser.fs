@@ -16,7 +16,7 @@
 
     let parseCardAndActions members rawCardAndActions =
         let parsedCard = parseCard members rawCardAndActions.Card
-        let correspondence = rawCardAndActions.Actions |> Array.map tryParseCommentAction |> Array.choose (createCorrespondance parsedCard |> Option.map)
+        let correspondence = rawCardAndActions.Actions |> Array.map tryParseCommentAction |> Array.choose (createCorrespondence parsedCard |> Option.map)
         {TrelloCard = parsedCard; Correspondence = correspondence} 
 
     let parseBoardAsync trelloCred =

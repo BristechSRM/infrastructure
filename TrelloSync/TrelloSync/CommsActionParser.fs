@@ -44,7 +44,7 @@
             tryParseCommsComment action groups
         | _ -> None
 
-    let createCorrespondance (card : TrelloCard) (em : EmailMeta) = 
+    let createCorrespondence (card : TrelloCard) (em : EmailMeta) = 
         match em.Direction with
         | Send -> 
             { To = card.SpeakerEmail 

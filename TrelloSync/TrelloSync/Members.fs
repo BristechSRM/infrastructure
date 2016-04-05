@@ -17,7 +17,7 @@
           UserName : string
           ImageUrl : string }
 
-    type MembersMeta = 
+    type GroupedMembers = 
         { Members : TrelloMember []
           IgnoredMembers : TrelloMember []
           DefaultMember : TrelloMember }

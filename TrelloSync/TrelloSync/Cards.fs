@@ -4,7 +4,7 @@
     open System.Globalization
     open System.Text.RegularExpressions 
     open Newtonsoft.Json
-    open Helpers
+    open Credentials
 
     type BasicCard =
         { Id : string

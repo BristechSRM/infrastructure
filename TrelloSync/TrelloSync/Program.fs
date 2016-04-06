@@ -2,10 +2,9 @@
 open Newtonsoft.Json
 
 [<EntryPoint>]
-let main argv = 
-    let trelloCred = Helpers.getTrelloCredentials()
+let main _ = 
+    let trelloCred = Credentials.getTrelloCredentials()
     let trelloData = Board.fetchBoardAsync trelloCred |> Async.RunSynchronously
     let result = JsonConvert.SerializeObject(trelloData, Formatting.Indented)
     File.WriteAllText(@"trello-import.json",result)
-    printfn "%A" argv
     0 

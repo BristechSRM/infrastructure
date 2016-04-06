@@ -2,7 +2,7 @@
     open System
     open System.Net
     open Newtonsoft.Json 
-    open Helpers
+    open Credentials
 
     type BasicMember = 
         { Id : string
@@ -17,13 +17,20 @@
           UserName : string
           ImageUrl : string }
 
-    type MembersMeta = 
+    type GroupedMembers = 
         { Members : TrelloMember []
           IgnoredMembers : TrelloMember []
           DefaultMember : TrelloMember }
 
     type MemberId = { Id: string}
 
+    (*
+        This is essentially guessing the admin's Scott Logic email address. 
+        After the split, if one string is found, we assume we've gotten their username, or a single name. 
+        We then use it directly. 
+        If 2 or more strings are found, we take the first and last strings (Basic attempt to get first and last name). 
+        Then we use first letter of the first name, and the last name as the email. 
+    *)
     let parseToEmail (fullName : string) = 
         let split = fullName.Split()
         match split.Length with 
@@ -33,10 +40,10 @@
             let firstNameFirstLetter = split.[0].Chars(0)
             let lastName = (Array.last split).ToLowerInvariant()
             sprintf "%c%s@scottlogic.co.uk" firstNameFirstLetter lastName
-        | _ -> "missingEmail@scottlogic.co.uk" 
+        | _ -> failwith "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. "
 
     let createImageUrl (avatarHash : string) =
-        sprintf "https://trello-avatars.s3.amazonaws.com/%s/50.png" <| avatarHash
+        sprintf "https://trello-avatars.s3.amazonaws.com/%s/50.png" avatarHash
 
     let getImageUrl avatarHash = 
         match avatarHash with 

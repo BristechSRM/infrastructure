@@ -2,7 +2,7 @@
     open System
     open System.Text.RegularExpressions 
     open Credentials
-    open JsonToTypeWebClient
+    open Download
 
     type BasicCard =
         { Id : string

@@ -56,7 +56,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Credentials.fs" />
-    <Compile Include="JsonToTypeWebClient.fs" />
+    <Compile Include="Download.fs" />
     <Compile Include="Members.fs" />
     <Compile Include="Cards.fs" />
     <Compile Include="Actions.fs" />

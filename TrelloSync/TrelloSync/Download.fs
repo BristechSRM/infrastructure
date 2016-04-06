@@ -1,4 +1,4 @@
-﻿module JsonToTypeWebClient
+﻿module Download
     open System
     open System.Net
     open Newtonsoft.Json

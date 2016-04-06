@@ -1,6 +1,6 @@
 ﻿module Members
     open Credentials
-    open JsonToTypeWebClient
+    open Download
 
     type BasicMember = 
         { Id : string

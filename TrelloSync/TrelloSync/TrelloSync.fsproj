@@ -57,6 +57,8 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Credentials.fs" />
     <Compile Include="Members.fs" />
+    <Compile Include="Cards.fs" />
+    <Compile Include="Board.fs" />
     <Compile Include="Program.fs" />
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

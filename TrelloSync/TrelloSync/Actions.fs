@@ -1,9 +1,7 @@
-﻿module Actions 
-    open System
-    open System.Net
-    open Newtonsoft.Json
+﻿module Actions
     open Cards
     open Credentials
+    open Download
 
     type ActionData = 
         { Text : string }
@@ -24,13 +22,12 @@
         { Card : RawTrelloCard 
           Actions : BasicAction [] }
 
+    let getBasicActionsAsync trelloCred id : Async<BasicAction []> = downloadObjectAsync <| sprintf "https://api.trello.com/1/cards/%s/actions?filter=commentCard&key=%s&token=%s" id trelloCred.Key trelloCred.Token
+
     //NOTE: Currently assuming that card will have less than 1000 actions. If a card has more than that, we need to deal with the trello paging to get them all
     let getCardCommentActionsAsync trelloCred (rawCard : RawTrelloCard) = 
         async {
-            let uri = Uri(sprintf "https://api.trello.com/1/cards/%s/actions?filter=commentCard&key=%s&token=%s" rawCard.Card.Id trelloCred.Key trelloCred.Token)
-            use webClient = new WebClient()
-            let! rawCommentActions = webClient.AsyncDownloadString(uri)
-            let basicCommentActions = JsonConvert.DeserializeObject<BasicAction []>(rawCommentActions)
+            let! basicCommentActions = getBasicActionsAsync trelloCred rawCard.Card.Id
             return {Card = rawCard; Actions = basicCommentActions;}
         }
 

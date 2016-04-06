@@ -1,10 +1,8 @@
 ﻿module Cards
     open System
-    open System.Net
-    open System.Globalization
     open System.Text.RegularExpressions 
-    open Newtonsoft.Json
     open Credentials
+    open JsonToTypeWebClient
 
     type BasicCard =
         { Id : string
@@ -40,11 +38,10 @@
         | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups when allGroupsMatched groups-> Some {Card = card; RegexGroups= groups}
         | _ -> None
 
+    let getBasicCardsAsync trelloCred : Async<BasicCard []> = downloadObjectAsync <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers&key=%s&token=%s" trelloCred.Key trelloCred.Token
+
     let getAllRawTalkCards trelloCred = 
         async {
-            let uri =  Uri(sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers&key=%s&token=%s" trelloCred.Key trelloCred.Token)
-            use webClient = new WebClient()
-            let! rawCards = webClient.AsyncDownloadString(uri)
-            let basicCards = JsonConvert.DeserializeObject<BasicCard []>(rawCards)
+            let! basicCards = getBasicCardsAsync trelloCred            
             return basicCards |> Array.choose(cardsWithTalkData)        
         }

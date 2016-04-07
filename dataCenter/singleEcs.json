@@ -156,7 +156,7 @@
                             }
                         ],
                         "PortMappings" : [
-                            {"HostPort" : 8080, "ContainerPort" : 8080, "Protocol" : "tcp"}
+                            {"HostPort" : 8080, "ContainerPort" : 9001, "Protocol" : "tcp"}
                         ],
                         "MountPoints" : [
                             {

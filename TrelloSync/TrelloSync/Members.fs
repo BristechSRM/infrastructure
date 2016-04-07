@@ -16,8 +16,7 @@
 
     type GroupedMembers = 
         { Members : TrelloMember []
-          IgnoredMembers : TrelloMember []
-          DefaultMember : TrelloMember }
+          IgnoredMembers : TrelloMember [] }
 
     type MemberId = { Id: string}
 
@@ -72,10 +71,8 @@
             let ignoredMembers, keptMembers = 
                 members 
                 |> Array.partition(fun mem -> List.contains mem.UserName ignoredAdminUserNames)
-            let defaultMember = members |> Array.find (fun x -> x.UserName = "chrissmith58")
             return {
                 Members = keptMembers
                 IgnoredMembers = ignoredMembers
-                DefaultMember = defaultMember
             }
         }

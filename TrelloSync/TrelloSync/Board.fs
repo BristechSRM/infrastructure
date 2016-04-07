@@ -17,7 +17,7 @@
         let parsedCard = parseCard members rawCardsAndActions.Card
         {TrelloCard = parsedCard; CommsActions = rawCardsAndActions.Actions}
 
-    let fetchBoardAsync trelloCred = 
+    let parseBoardAsync trelloCred = 
         async {
             let! cards = getAllRawTalkCards trelloCred
             let! membersMeta = getAllMembersAsync trelloCred
@@ -28,5 +28,4 @@
                     Members = membersMeta.Members
                     Cards = cardsAndCommentActions |> Array.map (parseCardAndActions membersMeta)
                 }
-
         }

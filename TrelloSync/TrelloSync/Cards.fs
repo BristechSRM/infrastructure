@@ -19,8 +19,8 @@
           ExtraInfo : string 
           RawInput : string
           CardId : string
-          AdminId : string
-          AdminEmail : string }
+          AdminId : string option
+          AdminEmail : string option }
 
     let expectedNumberOfGroupsInCardParse = 5
     let speakerNameGroup = 1

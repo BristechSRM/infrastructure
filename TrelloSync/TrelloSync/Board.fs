@@ -3,21 +3,29 @@
     open Cards
     open Actions
 
+    open CardParser
+
+    type CardWithActions = 
+        { TrelloCard : TrelloCard 
+          CommsActions : BasicAction [] }
+
     type TrelloBoard =
         { Members : TrelloMember []
-          Cards : BasicCard [] 
-          Actions : (string * BasicAction []) [] }
+          Cards : CardWithActions [] }
 
-    let fetchBoardAsync trelloCred = 
+    let parseCardAndActions members rawCardsAndActions = 
+        let parsedCard = parseCard members rawCardsAndActions.Card
+        {TrelloCard = parsedCard; CommsActions = rawCardsAndActions.Actions}
+
+    let parseBoardAsync trelloCred = 
         async {
             let! cards = getAllRawTalkCards trelloCred
-            let! membersMeta = getAllMembersAsync trelloCred
+            let! groupedMembers = getAllMembersAsync trelloCred
             let! cardsAndCommentActions = getActionsPerCardAsync trelloCred cards
+
             return 
                 {
-                    Members = membersMeta.Members
-                    Cards = cards |> Array.map(fun x -> x.Card)
-                    Actions = cardsAndCommentActions |> Array.map(fun x -> (x.Card.Card.Id, x.Actions))
+                    Members = groupedMembers.Members
+                    Cards = cardsAndCommentActions |> Array.map (parseCardAndActions groupedMembers)
                 }
-
         }

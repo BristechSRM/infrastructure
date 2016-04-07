@@ -1,7 +1,6 @@
 ﻿module Actions
     open Cards
     open Credentials
-    open Download
 
     type ActionData = 
         { Text : string }
@@ -22,7 +21,7 @@
         { Card : RawTrelloCard 
           Actions : BasicAction [] }
 
-    let getBasicActionsAsync trelloCred id : Async<BasicAction []> = downloadObjectAsync <| sprintf "https://api.trello.com/1/cards/%s/actions?filter=commentCard&key=%s&token=%s" id trelloCred.Key trelloCred.Token
+    let getBasicActionsAsync trelloCred id : Async<BasicAction []> = Download.from <| sprintf "https://api.trello.com/1/cards/%s/actions?filter=commentCard&key=%s&token=%s" id trelloCred.Key trelloCred.Token
 
     //NOTE: Currently assuming that card will have less than 1000 actions. If a card has more than that, we need to deal with the trello paging to get them all
     let getCardCommentActionsAsync trelloCred (rawCard : RawTrelloCard) = 

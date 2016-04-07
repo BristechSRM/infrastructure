@@ -1,9 +1,10 @@
-﻿module Download
+﻿[<RequireQualifiedAccess>]
+module Download
     open System
     open System.Net
     open Newtonsoft.Json
 
-    let downloadObjectAsync url : Async<'a>= 
+    let from url : Async<'a>= 
         async {
             let uri = Uri(url)
             use webClient = new WebClient()

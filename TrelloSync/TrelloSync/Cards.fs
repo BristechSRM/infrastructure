@@ -2,7 +2,6 @@
     open System
     open System.Text.RegularExpressions 
     open Credentials
-    open Download
 
     type BasicCard =
         { Id : string
@@ -38,7 +37,7 @@
         | AllRegexGroups "(.*)\[(.*)\]\((.*)\)(.*)$" groups when allGroupsMatched groups-> Some {Card = card; RegexGroups= groups}
         | _ -> None
 
-    let getBasicCardsAsync trelloCred : Async<BasicCard []> = downloadObjectAsync <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers&key=%s&token=%s" trelloCred.Key trelloCred.Token
+    let getBasicCardsAsync trelloCred : Async<BasicCard []> = Download.from <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers&key=%s&token=%s" trelloCred.Key trelloCred.Token
 
     let getAllRawTalkCards trelloCred = 
         async {

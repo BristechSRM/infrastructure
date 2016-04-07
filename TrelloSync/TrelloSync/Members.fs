@@ -1,6 +1,5 @@
 ﻿module Members
     open Credentials
-    open Download
 
     type BasicMember = 
         { Id : string
@@ -44,9 +43,9 @@
         | Some hash -> sprintf "https://trello-avatars.s3.amazonaws.com/%s/50.png" hash
         | None -> "https://placebear.com/50/50"
 
-    let getMemberIdsAsync trelloCred : Async<MemberId []> = downloadObjectAsync <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/members?fields=id&key=%s&token=%s" trelloCred.Key trelloCred.Token        
+    let getMemberIdsAsync trelloCred : Async<MemberId []> = Download.from <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/members?fields=id&key=%s&token=%s" trelloCred.Key trelloCred.Token        
 
-    let getBasicMemberAsync trelloCred id : Async<BasicMember> = downloadObjectAsync <| sprintf "https://api.trello.com/1/members/%s?fields=username,fullName,avatarHash&key=%s&token=%s" id trelloCred.Key trelloCred.Token         
+    let getBasicMemberAsync trelloCred id : Async<BasicMember> = Download.from <| sprintf "https://api.trello.com/1/members/%s?fields=username,fullName,avatarHash&key=%s&token=%s" id trelloCred.Key trelloCred.Token         
 
     let getMemberDetailsAsync trelloCred id =
         async {            

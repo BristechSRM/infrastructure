@@ -20,12 +20,12 @@
     let parseBoardAsync trelloCred = 
         async {
             let! cards = getAllRawTalkCards trelloCred
-            let! membersMeta = getAllMembersAsync trelloCred
+            let! groupedMembers = getAllMembersAsync trelloCred
             let! cardsAndCommentActions = getActionsPerCardAsync trelloCred cards
 
             return 
                 {
-                    Members = membersMeta.Members
-                    Cards = cardsAndCommentActions |> Array.map (parseCardAndActions membersMeta)
+                    Members = groupedMembers.Members
+                    Cards = cardsAndCommentActions |> Array.map (parseCardAndActions groupedMembers)
                 }
         }

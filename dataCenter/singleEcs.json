@@ -16,11 +16,11 @@
         },
         "dynamoDbSecretAccessKey" : {
             "Type" : "String",
-            "Description" : "The secret access key with which speaker-comms talks to it's DB"
+            "Description" : "The secret access key with which comms talks to its DB"
         },
         "dynamoDbAccessKeyId" : {
             "Type" : "String",
-            "Description" : "The access key ID with which speaker-comms talks to it's DB"
+            "Description" : "The access key ID with which comms talks to its DB"
         },
         "apiServerKeyPair" : {
             "Type" : "AWS::EC2::KeyPair::KeyName",
@@ -71,14 +71,14 @@
                                 "echo ECS_CLUSTER=",
                                 { "Ref": "apiCluster" },
                                 " >> /etc/ecs/ecs.config\n",
-                                "mkdir /etc/speakerComms\n",
-                                "echo [dynamo-db-read] >> /etc/speakerComms/credentials \n",
+                                "mkdir /etc/comms\n",
+                                "echo [dynamo-db-read] >> /etc/comms/credentials \n",
                                 "echo aws_access_key_id = ",
                                 { "Ref": "dynamoDbAccessKeyId" },
-                                " >> /etc/speakerComms/credentials\n",
+                                " >> /etc/comms/credentials\n",
                                 "echo aws_secret_access_key = ",
                                 { "Ref": "dynamoDbSecretAccessKey" },
-                                " >> /etc/speakerComms/credentials\n"
+                                " >> /etc/comms/credentials\n"
                             ]
                         ]
                     }
@@ -136,14 +136,14 @@
                 "TaskDefinition" : {"Ref":"sessionsTaskDefinition"}
             }
         },
-         "speakerCommsTaskDefinition": {
+         "commsTaskDefinition": {
             "Type": "AWS::ECS::TaskDefinition",
             "Properties" : {
                 "ContainerDefinitions" : [
                     {
-                        "Name" : "speakerComms",
+                        "Name" : "comms",
                         "Cpu" : "1",
-                        "Image" : "bristechsrm/speaker-comms:latest",
+                        "Image" : "bristechsrm/comms:latest",
                         "Memory" : "300",
                         "Environment" : [
                             {
@@ -161,7 +161,7 @@
                         "MountPoints" : [
                             {
                                 "ContainerPath" : "/root/.aws",
-                                "SourceVolume" : "speakerCommsCredentials",
+                                "SourceVolume" : "commsCredentials",
                                 "ReadOnly" : true
                             }
                         ]
@@ -169,20 +169,20 @@
                 ],
                 "Volumes" : [
                     {
-                        "Name" : "speakerCommsCredentials",
+                        "Name" : "commsCredentials",
                         "Host" : {
-                            "SourcePath" : "/etc/speakerComms"
+                            "SourcePath" : "/etc/comms"
                         }
                     }
                 ]
             }
         },
-        "speakerCommsService": {
+        "commsService": {
             "Type": "AWS::ECS::Service",
             "Properties" : {
                 "Cluster": {"Ref": "apiCluster"},
                 "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"speakerCommsTaskDefinition"}
+                "TaskDefinition" : {"Ref":"commsTaskDefinition"}
             }
         },
         "elasticIPAssociation" : {

@@ -1,22 +1,24 @@
-﻿module Board
+﻿module BoardParser
 
 open Members
 open Cards
 open Actions
 open CardParser
+open CommsActionParser
 
-type CardWithActions = 
+type CardWithCorrespondence = 
     { TrelloCard : TrelloCard
-      CommsActions : BasicAction [] }
+      Comms : CommsItem [] }
 
 type TrelloBoard = 
     { Members : TrelloMember []
-      Cards : CardWithActions [] }
+      Cards : CardWithCorrespondence [] }
 
-let parseCardAndActions members rawCardsAndActions = 
-    let parsedCard = parseCard members rawCardsAndActions.Card
+let parseCardAndActions members rawCardAndActions = 
+    let parsedCard = parseCard members rawCardAndActions.Card
+    let comms = rawCardAndActions.Actions |> Array.choose (tryCreateCommsItem parsedCard)
     { TrelloCard = parsedCard
-      CommsActions = rawCardsAndActions.Actions }
+      Comms = comms }
 
 let parseBoardAsync trelloCred = 
     async { 

@@ -14,8 +14,7 @@ type MemberCreator =
 type BasicAction = 
     { Id : string
       Data : ActionData
-      Type : string
-      MemberCreator : MemberCreator }
+      Type : string }
 
 type RawCardAndActions = 
     { Card : RawTrelloCard

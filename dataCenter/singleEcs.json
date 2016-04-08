@@ -16,11 +16,11 @@
         },
         "dynamoDbSecretAccessKey" : {
             "Type" : "String",
-            "Description" : "The secret access key with which comms talks to it's DB"
+            "Description" : "The secret access key with which comms talks to its DB"
         },
         "dynamoDbAccessKeyId" : {
             "Type" : "String",
-            "Description" : "The access key ID with which comms talks to it's DB"
+            "Description" : "The access key ID with which comms talks to its DB"
         },
         "apiServerKeyPair" : {
             "Type" : "AWS::EC2::KeyPair::KeyName",

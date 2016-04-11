@@ -61,7 +61,8 @@
     <Compile Include="Cards.fs" />
     <Compile Include="Actions.fs" />
     <Compile Include="CardParser.fs" />
-    <Compile Include="Board.fs" />
+    <Compile Include="CommsActionParser.fs" />
+    <Compile Include="BoardParser.fs" />
     <Compile Include="Program.fs" />
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

@@ -2,12 +2,19 @@
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description" : "A stack for the non-persistent, backend infrastructure used by BristechSRM",
     "Parameters" : {
-        "PublicElasticIP" : {
+        "apiElasticIP" : {
             "Type" : "String",
             "MinLength" : "4",
             "MaxLength" : "15",
             "Default" : "null",
-            "Description" : "The Elastic IP to associate with this stack. Enter null to skip having public IP assignment"
+            "Description" : "The Elastic IP to associate with this stacks API resocources. Enter null to skip having public IP assignment"
+        },
+        "frontElasticIP" : {
+            "Type" : "String",
+            "MinLength" : "4",
+            "MaxLength" : "15",
+            "Default" : "null",
+            "Description" : "The Elastic IP to associate with this stacks front end. Enter null to skip having public IP assignment"
         },
         "sessionsDBClientSG" : {
             "Type" : "AWS::EC2::SecurityGroup::Id",
@@ -26,10 +33,16 @@
             "Type" : "AWS::EC2::KeyPair::KeyName",
             "Default" : "developmentStack",
             "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
+        },
+        "frontServerKeyPair" : {
+            "Type" : "AWS::EC2::KeyPair::KeyName",
+            "Default" : "developmentStack",
+            "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
         }
     },
     "Conditions" : {
-        "associateEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "PublicElasticIP"}, "null"]}]}
+        "associateApiEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "apiElasticIP"}, "null"]}]},
+        "associateFrontEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "frontElasticIP"}, "null"]}]}
     },
     "Resources": {
       	"apiServer": {
@@ -85,8 +98,87 @@
                 }
             }
         },
+        "frontServer": {
+              "Type": "AWS::EC2::Instance",
+              "Properties": {
+                "DisableApiTermination": "false",
+                "InstanceInitiatedShutdownBehavior": "stop",
+                "IamInstanceProfile": "ecsInstanceRole",
+                "ImageId": "ami-76e95b05",
+                "InstanceType": "t2.micro",
+                "KeyName": { "Ref" : "frontServerKeyPair"},
+                "Monitoring": "false",
+                "Tags": [
+                    {"Key": "Name","Value": "frontServer"},
+                    {"Key": "Product","Value": "bristechSRM"},
+                    {"Key": "Environment","Value": "development"},
+                    {"Key": "Cluster","Value": "front"},
+                    {"Key": "Service","Value": "front"},
+                    {"Key": "Purpose","Value": "docker"}
+                ],
+                "NetworkInterfaces": [
+                    {
+                        "DeleteOnTermination": "true",
+                        "DeviceIndex": 0,
+                        "SubnetId": "subnet-b64844c1",
+                        "GroupSet": [
+                            "sg-b6e9d4d2"
+
+                        ]
+                    }
+                ],
+                "UserData" : {
+                    "Fn::Base64" : {
+                        "Fn::Join": [
+                            "",
+                            [
+                                "#!/bin/bash\n",
+                                "echo ECS_CLUSTER=",
+                                { "Ref": "frontCluster" },
+                                " >> /etc/ecs/ecs.config\n"
+                            ]
+                        ]
+                    }
+                }
+            }
+        },
         "apiCluster": {
             "Type": "AWS::ECS::Cluster"
+        },
+        "frontCluster": {
+            "Type": "AWS::ECS::Cluster"
+        },
+        "frontService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "frontCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"frontTaskDefinition"}
+            }
+        },
+        "frontTaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "front-end-js",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/frontend:latest",
+                        "Memory" : "600",
+                        "PortMappings" : [
+                            {"HostPort" : 80, "ContainerPort" : 8080, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+        "swaggerService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "apiCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"swaggerTaskDefinition"}
+            }
         },
         "swaggerTaskDefinition": {
             "Type": "AWS::ECS::TaskDefinition",
@@ -185,12 +277,21 @@
                 "TaskDefinition" : {"Ref":"commsTaskDefinition"}
             }
         },
-        "elasticIPAssociation" : {
+        "apiElasticIPAssociation" : {
             "Type" : "AWS::EC2::EIPAssociation",
-            "Condition" : "associateEIP",
+            "Condition" : "associateApiEIP",
             "Properties" : {
-                "EIP" : { "Ref" : "PublicElasticIP"} ,
+                "EIP" : { "Ref" : "apiElasticIP"} ,
                 "InstanceId" : {"Ref" : "apiServer"}
+
+            }
+        },
+        "frontElasticIPAssociation" : {
+            "Type" : "AWS::EC2::EIPAssociation",
+            "Condition" : "associateFrontEIP",
+            "Properties" : {
+                "EIP" : { "Ref" : "frontElasticIP"} ,
+                "InstanceId" : {"Ref" : "frontServer"}
 
             }
         }

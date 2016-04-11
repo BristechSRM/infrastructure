@@ -7,14 +7,14 @@
             "MinLength" : "4",
             "MaxLength" : "15",
             "Default" : "null",
-            "Description" : "The Elastic IP to associate with this stacks API resocources. Enter null to skip having public IP assignment"
+            "Description" : "The Elastic IP to associate with this stack's API resources. Enter null to skip having public IP assignment"
         },
         "frontElasticIP" : {
             "Type" : "String",
             "MinLength" : "4",
             "MaxLength" : "15",
             "Default" : "null",
-            "Description" : "The Elastic IP to associate with this stacks front end. Enter null to skip having public IP assignment"
+            "Description" : "The Elastic IP to associate with this stack's front end. Enter null to skip having public IP assignment"
         },
         "sessionsDBClientSG" : {
             "Type" : "AWS::EC2::SecurityGroup::Id",
@@ -123,7 +123,6 @@
                         "SubnetId": "subnet-b64844c1",
                         "GroupSet": [
                             "sg-b6e9d4d2"
-
                         ]
                     }
                 ],

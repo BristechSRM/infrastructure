@@ -85,7 +85,7 @@
                                 { "Ref": "apiCluster" },
                                 " >> /etc/ecs/ecs.config\n",
                                 "mkdir /etc/comms\n",
-                                "echo [dynamo-db-read] >> /etc/comms/credentials \n",
+                                "echo [dynamo-db-write] >> /etc/comms/credentials \n",
                                 "echo aws_access_key_id = ",
                                 { "Ref": "dynamoDbAccessKeyId" },
                                 " >> /etc/comms/credentials\n",

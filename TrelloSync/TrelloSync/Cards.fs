@@ -26,7 +26,8 @@ type TrelloCard =
 
 let private expectedNumberOfGroupsInCardParse = 5
 let private speakerNameGroup = 1
-let allGroupsMatched (groups : GroupCollection) = groups.Count = expectedNumberOfGroupsInCardParse && not <| String.IsNullOrWhiteSpace(groups.[speakerNameGroup].Value)
+let allGroupsMatched (groups : GroupCollection) = 
+    groups.Count = expectedNumberOfGroupsInCardParse && not <| String.IsNullOrWhiteSpace(groups.[speakerNameGroup].Value)
 
 let (|AllRegexGroups|_|) pattern input = 
     let m = Regex.Match(input, pattern)
@@ -42,5 +43,6 @@ let cardsWithTalkData (card : BasicCard) =
 
 let getBasicCardsAsync trelloCred : Async<BasicCard []> = 
     Download.from <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers&key=%s&token=%s" trelloCred.Key trelloCred.Token
+
 let getAllRawTalkCards trelloCred = async { let! basicCards = getBasicCardsAsync trelloCred
                                             return basicCards |> Array.choose (cardsWithTalkData) }

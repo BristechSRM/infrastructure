@@ -16,7 +16,16 @@ type TrelloBoard =
 
 let parseCardAndActions members rawCardAndActions = 
     let parsedCard = parseCard members rawCardAndActions.Card
-    let comms = rawCardAndActions.Actions |> Array.choose (tryCreateCommsItem parsedCard)
+    
+    let comms = 
+        match rawCardAndActions.Actions with
+        | [||] -> [||]
+        | actions -> 
+            match parsedCard.SpeakerEmail with
+            | "" -> 
+                printfn "Card :%A has comms data, but no speakerEmail. Comms data will be saved, but not imported" parsedCard
+                actions |> Array.choose (tryCreateCommsItem parsedCard)
+            | _ -> actions |> Array.choose (tryCreateCommsItem parsedCard)
     { TrelloCard = parsedCard
       Comms = comms }
 

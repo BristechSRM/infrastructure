@@ -57,6 +57,8 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Credentials.fs" />
     <Compile Include="Download.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="DataCache.fs" />
     <Compile Include="Members.fs" />
     <Compile Include="Cards.fs" />
     <Compile Include="Actions.fs" />

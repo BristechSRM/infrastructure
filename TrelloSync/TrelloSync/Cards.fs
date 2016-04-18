@@ -14,7 +14,8 @@ type RawTrelloCard =
       RegexGroups : GroupCollection }
 
 type TrelloCard = 
-    { SpeakerName : string
+    { SpeakerForename : string
+      SpeakerSurname : string
       SpeakerEmail : string
       TalkData : string
       ExtraInfo : string
@@ -23,9 +24,8 @@ type TrelloCard =
       AdminId : string option
       AdminEmail : string option }
 
-let expectedNumberOfGroupsInCardParse = 5
-let speakerNameGroup = 1
-
+let private expectedNumberOfGroupsInCardParse = 5
+let private speakerNameGroup = 1
 let allGroupsMatched (groups : GroupCollection) = 
     groups.Count = expectedNumberOfGroupsInCardParse && not <| String.IsNullOrWhiteSpace(groups.[speakerNameGroup].Value)
 

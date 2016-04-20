@@ -13,7 +13,6 @@
     let threadsEndpoint = Uri(commsServiceUri, "Threads")
 
     let httpClient = new HttpClient()
-    //TODO Error handling for posts. Fail as early as possible
 
     let postStringAsync (uri : Uri) data = 
         let content = new StringContent(data,Encoding.UTF8,"application/json")

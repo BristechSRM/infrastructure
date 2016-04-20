@@ -43,7 +43,7 @@
         { Correspondence = correspondence
           SessionData = sessionData }
                     
-    //TODO Error handling for import
+    //TODO Error handling for import here and in ApiClient with post requests. Fail as early as possible. 
     let importAll (trelloBoard : TrelloBoard) = 
         let importedAdmins = 
             trelloBoard.Members 

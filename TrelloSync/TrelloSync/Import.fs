@@ -19,7 +19,13 @@
             | Some id -> findSrmProfileId id adminProfiles
             | None -> None
         
-        let speakerId = findSrmProfileId card.TrelloCard.CardId speakerProfiles |> Option.get
+        let speakerId = 
+            match findSrmProfileId card.TrelloCard.CardId speakerProfiles with 
+            | Some id -> id 
+            | None -> 
+                let message = "A speaker profile corresponding to the speaker attached to this card should have been added. If this code has been reached, an error occured with adding the speaker profile that was not detected."
+                Log.Fatal(message)
+                failwith message
         
         let correspondence = 
             // If the card doesn't have a admin email or speakerEmail, then we can't complete all the required information for the correspondence item, so the correspondence won't be processed and inserted. 
@@ -30,6 +36,7 @@
                     match card.TrelloCard.SpeakerEmail with
                     | "" -> [||]
                     | speakerEmail -> 
+                        // A card cannot have an adminEmail without an Admin id, so no need to deal with other case. 
                         let aId = Option.get adminId
                         card.Comms |> Array.map (commsItemToCorrespondenceItem aId adminEmail speakerId speakerEmail)
                 | None -> [||]

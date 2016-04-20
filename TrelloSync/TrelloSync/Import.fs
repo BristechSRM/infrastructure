@@ -69,7 +69,12 @@
             trelloBoard.Cards 
             |> Array.map (prepSessionAndCorrData importedAdmins importedSpeakers)
 
-        //Sending off threads and inserting thread id into session data so that we don't have to do a seperate search over the threads. 
+        (*
+            The comms and session information starts off in a combined state, but without the required Ids. The prepSessionAndCorrData above adds in the ids for the admins and speakers, if they exist. 
+            Below we send off each set of comms data, then add the returned threadId to the SessionData record. The sessions are then posted. 
+
+            This is done in combined steps since the data is already combined, and it means that we don't have to do a search over the threads to connect them with the right session. 
+        *)
         let sessionsForImport =     
             sessionsDataAndCorrespondence
             |> Array.map (fun combo -> 

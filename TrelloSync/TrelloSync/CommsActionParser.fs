@@ -49,11 +49,11 @@ let createCommsItem (groups : GroupCollection) speakerEmail adminEmail action =
                        Date = date
                        Message = groups.[3].Value }
         | None -> 
-            let message = sprintf "Parsing for direction for comms action: %A failed" action
+            let message = sprintf "Parsing for direction for comms Action: %A failed" action
             Log.Fatal(message)
             failwith message
     else 
-        let message = sprintf "Parsing for date for comms action: %A failed" action
+        let message = sprintf "Parsing for date for comms Action: %A failed" action
         Log.Fatal(message)
         failwith message
 

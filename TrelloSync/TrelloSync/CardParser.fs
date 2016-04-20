@@ -24,7 +24,7 @@ let parseCard members { Card = card; RegexGroups = groups } =
             | Some admin -> Some adminId, Some admin.Email
             | None -> None, None
         | _ -> 
-            let message = sprintf "Card %A had multiple members attached, please remove additonal members so that there is one per card" card
+            let message = sprintf "Card: %A had multiple members attached, please remove additonal members so that there is one per card" card
             Log.Fatal(message)
             failwith message
     

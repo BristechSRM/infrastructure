@@ -12,7 +12,7 @@ let parseToNames (fullName : string) =
         let lastName = split |> Array.skip 1 |> String.concat " " 
         split.[0],lastName
     | _ -> 
-        let message = "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. "
+        let message = "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. Input value was: " + fullName
         Log.Fatal(message)
         failwith message
 
@@ -32,7 +32,7 @@ let nameToEmail (fullName : string) =
         let lastName = (Array.last split)
         sprintf "%c%s@scottlogic.co.uk" firstNameFirstLetter lastName
     | _ -> 
-        let message = "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. "
+        let message = "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. Input value was: " + fullName
         Log.Fatal(message)
         failwith message
 

@@ -23,7 +23,7 @@ let parseCardAndActions members rawCardAndActions =
         | [||] -> [||]
         | actions -> 
             match parsedCard.SpeakerEmail with
-            | "" -> Log.Information("Card :{card} has comms data, but no speakerEmail. Comms data will be saved, but not imported", parsedCard)
+            | "" -> Log.Information("Card: {card} has comms data, but no speakerEmail. Comms data will be saved, but not imported", parsedCard)
             | _ -> ()
             actions |> Array.choose (tryCreateCommsItem parsedCard)
     { TrelloCard = parsedCard

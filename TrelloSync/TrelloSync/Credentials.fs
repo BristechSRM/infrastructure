@@ -14,7 +14,7 @@ let credConfigTemplate = """<?xml version="1.0" encoding="utf-8" ?>
                             </appSettings>"""
 
 let missingCredentialsMessage = 
-    "TrelloKey or TrelloToken is unset. Create a TrelloCreds.config file next to the App.config with the following xml (Filling in the key and token value fields):" 
+    "TrelloKey or TrelloToken is unset. Create a TrelloCreds.config file next to the App.config with the following xml (Filling in the key and token value fields): " 
     + credConfigTemplate
 
 let getTrelloCredentials() = 

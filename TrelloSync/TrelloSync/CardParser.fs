@@ -3,6 +3,7 @@
 open Members
 open Cards
 open Helpers
+open Serilog
 
 let idIsNotForIgnoredAdmin (ignoredAdmins : TrelloMember []) id = 
     ignoredAdmins
@@ -22,7 +23,10 @@ let parseCard members { Card = card; RegexGroups = groups } =
             match foundMember with
             | Some admin -> Some adminId, Some admin.Email
             | None -> None, None
-        | _ -> failwith <| sprintf "Card %A had multiple members attached, please remove additonal members so that there is one per card" card
+        | _ -> 
+            let message = sprintf "Card %A had multiple members attached, please remove additonal members so that there is one per card" card
+            Log.Fatal(message)
+            failwith message
     
     let forename, surname = parseToNames groups.[1].Value
     { SpeakerForename = forename

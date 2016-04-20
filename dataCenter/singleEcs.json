@@ -276,6 +276,30 @@
                 "TaskDefinition" : {"Ref":"commsTaskDefinition"}
             }
         },
+        "apiGatewayTaskDefinition": {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "api-gateway",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/api-gateway:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 8081, "ContainerPort" : 9004, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+        "apiGatewayService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "apiCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"apiGatewayTaskDefinition"}
+            }
+        },
         "apiElasticIPAssociation" : {
             "Type" : "AWS::EC2::EIPAssociation",
             "Condition" : "associateApiEIP",

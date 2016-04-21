@@ -5,6 +5,7 @@ open Cards
 open Actions
 open CardParser
 open CommsActionParser
+open Serilog
 
 type CardWithCorrespondence = 
     { TrelloCard : TrelloCard
@@ -22,7 +23,7 @@ let parseCardAndActions members rawCardAndActions =
         | [||] -> [||]
         | actions -> 
             match parsedCard.SpeakerEmail with
-            | "" -> printfn "Card :%A has comms data, but no speakerEmail. Comms data will be saved, but not imported" parsedCard
+            | "" -> Log.Information("Card: {card} has comms data, but no speakerEmail. Comms data will be saved, but not imported", parsedCard)
             | _ -> ()
             actions |> Array.choose (tryCreateCommsItem parsedCard)
     { TrelloCard = parsedCard

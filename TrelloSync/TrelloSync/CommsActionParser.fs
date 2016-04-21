@@ -4,6 +4,7 @@ open System
 open System.Text.RegularExpressions
 open Cards
 open Actions
+open Serilog
 
 type EmailDirection = 
     | Send
@@ -47,13 +48,22 @@ let createCommsItem (groups : GroupCollection) speakerEmail adminEmail action =
                        From = speakerEmail
                        Date = date
                        Message = groups.[3].Value }
-        | None -> failwith <| sprintf "Parsing for direction for comms action: %A failed" action
-    else failwith <| sprintf "Parsing for date for comms action: %A failed" action
+        | None -> 
+            let message = sprintf "Parsing for direction for comms Action: %A failed" action
+            Log.Fatal(message)
+            failwith message
+    else 
+        let message = sprintf "Parsing for date for comms Action: %A failed" action
+        Log.Fatal(message)
+        failwith message
 
 let tryCreateCommsItem (card : TrelloCard) (action : BasicAction) = 
     match action.Data.Text with
     | AllRegexGroupsMultiLine "\[([0-9\/\.]+) - ([a-zA-Z]+)\](.*)$" groups -> 
         match card.AdminEmail with
         | Some adminEmail -> createCommsItem groups card.SpeakerEmail adminEmail action
-        | None -> failwith <| sprintf "Card: %A has commms comments attached, but no admin or the admin has no email? Please review the card and try again" card
+        | None -> 
+            let message = sprintf "Card: %A has commms comments attached, but no admin or the admin has no email? Please review the card and try again" card
+            Log.Fatal(message)
+            failwith message
     | _ -> None

@@ -1,6 +1,7 @@
 ﻿module Credentials
 
 open System.Configuration
+open Serilog
 
 type TrelloCredentials = 
     { Key : string
@@ -13,7 +14,7 @@ let credConfigTemplate = """<?xml version="1.0" encoding="utf-8" ?>
                             </appSettings>"""
 
 let missingCredentialsMessage = 
-    "TrelloKey or TrelloToken is unset. Create a TrelloCreds.config file next to the App.config with the following xml (Filling in the key and token value fields):" 
+    "TrelloKey or TrelloToken is unset. Create a TrelloCreds.config file next to the App.config with the following xml (Filling in the key and token value fields): " 
     + credConfigTemplate
 
 let getTrelloCredentials() = 
@@ -21,5 +22,7 @@ let getTrelloCredentials() =
         { Key = ConfigurationManager.AppSettings.Item("TrelloKey")
           Token = ConfigurationManager.AppSettings.Item("TrelloToken") }
 
-    if creds.Key = "UNSET" || creds.Token = "UNSET" then failwith missingCredentialsMessage
+    if creds.Key = "UNSET" || creds.Token = "UNSET" then 
+        Log.Fatal(missingCredentialsMessage)
+        failwith missingCredentialsMessage
     else creds

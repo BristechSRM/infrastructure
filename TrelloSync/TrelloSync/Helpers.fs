@@ -1,6 +1,7 @@
 ﻿module Helpers
 
 open System
+open Serilog
 
 //Take first string of split as first name, take the rest as last name
 let parseToNames (fullName : string) = 
@@ -10,7 +11,10 @@ let parseToNames (fullName : string) =
     | x when x > 1 -> 
         let lastName = split |> Array.skip 1 |> String.concat " " 
         split.[0],lastName
-    | _ -> failwith "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. "
+    | _ -> 
+        let message = "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. Input value was: " + fullName
+        Log.Fatal(message)
+        failwith message
 
 (*
         This is essentially guessing the admin's Scott Logic email address. 
@@ -27,7 +31,10 @@ let nameToEmail (fullName : string) =
         let firstNameFirstLetter = split.[0].Chars(0)
         let lastName = (Array.last split)
         sprintf "%c%s@scottlogic.co.uk" firstNameFirstLetter lastName
-    | _ -> failwith "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. "
+    | _ -> 
+        let message = "Full name of member is somehow missing? Make sure everyone on the trello board enters a full name. Input value was: " + fullName
+        Log.Fatal(message)
+        failwith message
 
 let defaultImage = "https://placebear.com/50/50"
 

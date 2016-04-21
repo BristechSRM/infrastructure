@@ -13,11 +13,10 @@
     let threadsEndpoint = Uri(commsServiceUri, "Threads")
 
     let httpClient = new HttpClient()
-    //TODO Error handling
 
     let postStringAsync (uri : Uri) data = 
         let content = new StringContent(data,Encoding.UTF8,"application/json")
-        httpClient.PostAsync(uri,content) |> Async.AwaitTask   
+        httpClient.PostAsync(uri,content) |> Async.AwaitTask 
 
     let postAsync' (uri : Uri) data = 
         async {

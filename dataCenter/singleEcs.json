@@ -227,6 +227,30 @@
                 "TaskDefinition" : {"Ref":"sessionsTaskDefinition"}
             }
         },
+        "authTaskDefinition" : {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "auth",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/auth:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 8081, "ContainerPort" : 9003, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+	    "authService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "apiCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"authTaskDefinition"}
+            }
+        },
          "commsTaskDefinition": {
             "Type": "AWS::ECS::TaskDefinition",
             "Properties" : {

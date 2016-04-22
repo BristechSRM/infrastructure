@@ -52,7 +52,7 @@
                 "InstanceInitiatedShutdownBehavior": "stop",
                 "IamInstanceProfile": "ecsInstanceRole",
                 "ImageId": "ami-76e95b05",
-                "InstanceType": "t2.micro",
+                "InstanceType": "t2.small",
                 "KeyName": { "Ref" : "apiServerKeyPair"},
                 "Monitoring": "false",
                 "Tags": [

@@ -189,7 +189,7 @@
                         "Image" : "bristechsrm/api_docs:latest",
                         "Memory" : "300",
                         "PortMappings" : [
-                            {"HostPort" : 8081, "ContainerPort" : 9000, "Protocol" : "tcp"}
+                            {"HostPort" : 8082, "ContainerPort" : 9000, "Protocol" : "tcp"}
                         ]
                     }
                 ]

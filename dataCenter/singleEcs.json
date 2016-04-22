@@ -52,7 +52,7 @@
                 "InstanceInitiatedShutdownBehavior": "stop",
                 "IamInstanceProfile": "ecsInstanceRole",
                 "ImageId": "ami-76e95b05",
-                "InstanceType": "t2.micro",
+                "InstanceType": "t2.small",
                 "KeyName": { "Ref" : "apiServerKeyPair"},
                 "Monitoring": "false",
                 "Tags": [
@@ -225,6 +225,30 @@
                 "Cluster": {"Ref": "apiCluster"},
                 "DesiredCount": "1",
                 "TaskDefinition" : {"Ref":"sessionsTaskDefinition"}
+            }
+        },
+        "authTaskDefinition" : {
+            "Type": "AWS::ECS::TaskDefinition",
+            "Properties" : {
+                "ContainerDefinitions" : [
+                    {
+                        "Name" : "auth",
+                        "Cpu" : "1",
+                        "Image" : "bristechsrm/auth:latest",
+                        "Memory" : "300",
+                        "PortMappings" : [
+                            {"HostPort" : 8081, "ContainerPort" : 9003, "Protocol" : "tcp"}
+                        ]
+                    }
+                ]
+            }
+        },
+	    "authService": {
+            "Type": "AWS::ECS::Service",
+            "Properties" : {
+                "Cluster": {"Ref": "apiCluster"},
+                "DesiredCount": "1",
+                "TaskDefinition" : {"Ref":"authTaskDefinition"}
             }
         },
          "commsTaskDefinition": {

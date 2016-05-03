@@ -1,0 +1,9 @@
+{
+  "source": {
+      "serviceName": "comms",
+          "nodeName": "comms",
+              "swarmMasterIp": "10.0.1.66",
+                  "repository" : "bristechsrm/comms",
+                      "overlay" : "overlay"
+                        }
+                        }

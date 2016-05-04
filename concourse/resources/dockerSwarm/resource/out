@@ -27,6 +27,6 @@ docker pull ${repository}
 if [ -z "$accessKeyId" ] || [ -z "$secretAccessKey" ]; then
     docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} ${repository}
 else
-    docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} -e AWS_ACCESS_KEY_ID=${accessKeyId} -e AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
+    docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} -env AWS_ACCESS_KEY_ID=${accessKeyId} -env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
 fi
 

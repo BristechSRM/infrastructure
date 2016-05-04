@@ -11,7 +11,7 @@ nodeName=$(echo $buffer | jq -r '.source.nodeName')
 swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 repository=$(echo $buffer | jq -r '.source.repository')
 overlay=$(echo $buffer | jq -r '.source.overlay')
-accessKeyId=$(echo $buffer | jq -r '.source.accesskeyId')
+accessKeyId=$(echo $buffer | jq -r '.source.accessKeyId')
 secretAccessKey=$(echo $buffer | jq -r '.source.secretAccessKey')
 
 #Remove surrounding quotes from repository
@@ -24,9 +24,5 @@ docker rm ${serviceName}
 
 docker pull ${repository}
 
-if [ -z "$accessKeyId" ] || [ -z "$secretAccessKey" ]; then
-    docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} ${repository}
-else
-    docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} -env AWS_ACCESS_KEY_ID=${accessKeyId} -env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
-fi
+docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} --env AWS_ACCESS_KEY_ID=${accessKeyId} --env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
 

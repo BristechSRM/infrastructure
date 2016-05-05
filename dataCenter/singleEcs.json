@@ -1,346 +1,146 @@
 {
-    "AWSTemplateFormatVersion": "2010-09-09",
-    "Description" : "A stack for the non-persistent, backend infrastructure used by BristechSRM",
-    "Parameters" : {
-        "apiElasticIP" : {
-            "Type" : "String",
-            "MinLength" : "4",
-            "MaxLength" : "15",
-            "Default" : "null",
-            "Description" : "The Elastic IP to associate with this stack's API resources. Enter null to skip having public IP assignment"
-        },
-        "frontElasticIP" : {
-            "Type" : "String",
-            "MinLength" : "4",
-            "MaxLength" : "15",
-            "Default" : "null",
-            "Description" : "The Elastic IP to associate with this stack's front end. Enter null to skip having public IP assignment"
-        },
-        "sessionsDBClientSG" : {
-            "Type" : "AWS::EC2::SecurityGroup::Id",
-            "Default" : "sg-02d53065",
-            "Description" : "A security group with access to the security group of the Sessions DB"
-        },
-        "dynamoDbSecretAccessKey" : {
-            "Type" : "String",
-            "Description" : "The secret access key with which comms talks to its DB"
-        },
-        "dynamoDbAccessKeyId" : {
-            "Type" : "String",
-            "Description" : "The access key ID with which comms talks to its DB"
-        },
-        "apiServerKeyPair" : {
-            "Type" : "AWS::EC2::KeyPair::KeyName",
-            "Default" : "developmentStack",
-            "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
-        },
-        "frontServerKeyPair" : {
-            "Type" : "AWS::EC2::KeyPair::KeyName",
-            "Default" : "developmentStack",
-            "Description" : "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
-        }
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "A stack for the non-persistent, backend infrastructure used by BristechSRM",
+  "Parameters": {
+    "frontElasticIP": {
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "15",
+      "Default": "null",
+      "Description": "The Elastic IP to associate with this stack's front end. Enter null to skip having public IP assignment"
     },
-    "Conditions" : {
-        "associateApiEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "apiElasticIP"}, "null"]}]},
-        "associateFrontEIP" : {"Fn::Not"  : [{"Fn::Equals" : [ {"Ref" : "frontElasticIP"}, "null"]}]}
-    },
-    "Resources": {
-      	"apiServer": {
-              "Type": "AWS::EC2::Instance",
-              "Properties": {
-                "DisableApiTermination": "false",
-                "InstanceInitiatedShutdownBehavior": "stop",
-                "IamInstanceProfile": "ecsInstanceRole",
-                "ImageId": "ami-76e95b05",
-                "InstanceType": "t2.small",
-                "KeyName": { "Ref" : "apiServerKeyPair"},
-                "Monitoring": "false",
-                "Tags": [
-                    {"Key": "Name","Value": "apiServer"},
-                    {"Key": "Product","Value": "bristechSRM"},
-                    {"Key": "Environment","Value": "development"},
-                    {"Key": "Cluster","Value": "api"},
-                    {"Key": "Service","Value": "api"},
-                    {"Key": "Purpose","Value": "docker"}
-                ],
-                "NetworkInterfaces": [
-                    {
-                        "DeleteOnTermination": "true",
-                        "DeviceIndex": 0,
-                        "SubnetId": "subnet-b64844c1",
-                        "GroupSet": [
-                            {"Ref" : "sessionsDBClientSG"},
-                            "sg-b6e9d4d2"
-
-                        ]
-                    }
-                ],
-                "UserData" : {
-                    "Fn::Base64" : {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "#!/bin/bash\n",
-                                "echo ECS_CLUSTER=",
-                                { "Ref": "apiCluster" },
-                                " >> /etc/ecs/ecs.config\n",
-                                "mkdir /etc/comms\n",
-                                "echo [dynamo-db-write] >> /etc/comms/credentials \n",
-                                "echo aws_access_key_id = ",
-                                { "Ref": "dynamoDbAccessKeyId" },
-                                " >> /etc/comms/credentials\n",
-                                "echo aws_secret_access_key = ",
-                                { "Ref": "dynamoDbSecretAccessKey" },
-                                " >> /etc/comms/credentials\n"
-                            ]
-                        ]
-                    }
-                }
-            }
-        },
-        "frontServer": {
-              "Type": "AWS::EC2::Instance",
-              "Properties": {
-                "DisableApiTermination": "false",
-                "InstanceInitiatedShutdownBehavior": "stop",
-                "IamInstanceProfile": "ecsInstanceRole",
-                "ImageId": "ami-76e95b05",
-                "InstanceType": "t2.micro",
-                "KeyName": { "Ref" : "frontServerKeyPair"},
-                "Monitoring": "false",
-                "Tags": [
-                    {"Key": "Name","Value": "frontServer"},
-                    {"Key": "Product","Value": "bristechSRM"},
-                    {"Key": "Environment","Value": "development"},
-                    {"Key": "Cluster","Value": "front"},
-                    {"Key": "Service","Value": "front"},
-                    {"Key": "Purpose","Value": "docker"}
-                ],
-                "NetworkInterfaces": [
-                    {
-                        "DeleteOnTermination": "true",
-                        "DeviceIndex": 0,
-                        "SubnetId": "subnet-b64844c1",
-                        "GroupSet": [
-                            "sg-b6e9d4d2"
-                        ]
-                    }
-                ],
-                "UserData" : {
-                    "Fn::Base64" : {
-                        "Fn::Join": [
-                            "",
-                            [
-                                "#!/bin/bash\n",
-                                "echo ECS_CLUSTER=",
-                                { "Ref": "frontCluster" },
-                                " >> /etc/ecs/ecs.config\n"
-                            ]
-                        ]
-                    }
-                }
-            }
-        },
-        "apiCluster": {
-            "Type": "AWS::ECS::Cluster"
-        },
-        "frontCluster": {
-            "Type": "AWS::ECS::Cluster"
-        },
-        "frontService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "frontCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"frontTaskDefinition"}
-            }
-        },
-        "frontTaskDefinition": {
-            "Type": "AWS::ECS::TaskDefinition",
-            "Properties" : {
-                "ContainerDefinitions" : [
-                    {
-                        "Name" : "front-end-js",
-                        "Cpu" : "1",
-                        "Image" : "bristechsrm/frontend:latest",
-                        "Memory" : "600",
-                        "PortMappings" : [
-                            {"HostPort" : 80, "ContainerPort" : 8080, "Protocol" : "tcp"}
-                        ]
-                    }
-                ]
-            }
-        },
-        "swaggerService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "apiCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"swaggerTaskDefinition"}
-            }
-        },
-        "swaggerTaskDefinition": {
-            "Type": "AWS::ECS::TaskDefinition",
-            "Properties" : {
-                "ContainerDefinitions" : [
-                    {
-                        "Name" : "swagger-api",
-                        "Cpu" : "1",
-                        "Image" : "bristechsrm/api_docs:latest",
-                        "Memory" : "300",
-                        "PortMappings" : [
-                            {"HostPort" : 8081, "ContainerPort" : 9000, "Protocol" : "tcp"}
-                        ]
-                    }
-                ]
-            }
-        },
-        "swaggerService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "apiCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"swaggerTaskDefinition"}
-            }
-        },
-        "sessionsTaskDefinition": {
-            "Type": "AWS::ECS::TaskDefinition",
-            "Properties" : {
-                "ContainerDefinitions" : [
-                    {
-                        "Name" : "sessions",
-                        "Cpu" : "1",
-                        "Image" : "bristechsrm/sessions:latest",
-                        "Memory" : "300",
-                        "PortMappings" : [
-                            {"HostPort" : 80, "ContainerPort" : 9000, "Protocol" : "tcp"}
-                        ]
-                    }
-                ]
-            }
-        },
-        "sessionsService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "apiCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"sessionsTaskDefinition"}
-            }
-        },
-        "authTaskDefinition" : {
-            "Type": "AWS::ECS::TaskDefinition",
-            "Properties" : {
-                "ContainerDefinitions" : [
-                    {
-                        "Name" : "auth",
-                        "Cpu" : "1",
-                        "Image" : "bristechsrm/auth:latest",
-                        "Memory" : "300",
-                        "PortMappings" : [
-                            {"HostPort" : 8083, "ContainerPort" : 9003, "Protocol" : "tcp"}
-                        ]
-                    }
-                ]
-            }
-        },
-	    "authService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "apiCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"authTaskDefinition"}
-            }
-        },
-         "commsTaskDefinition": {
-            "Type": "AWS::ECS::TaskDefinition",
-            "Properties" : {
-                "ContainerDefinitions" : [
-                    {
-                        "Name" : "comms",
-                        "Cpu" : "1",
-                        "Image" : "bristechsrm/comms:latest",
-                        "Memory" : "300",
-                        "Environment" : [
-                            {
-                                "Name" : "aws_access_key_id",
-                                "Value" : { "Ref" : "dynamoDbAccessKeyId"}
-                            },
-                            {
-                                "Name" : "aws_secret_access_key",
-                                "Value" : { "Ref" : "dynamoDbSecretAccessKey"}
-                            }
-                        ],
-                        "PortMappings" : [
-                            {"HostPort" : 8080, "ContainerPort" : 9001, "Protocol" : "tcp"}
-                        ],
-                        "MountPoints" : [
-                            {
-                                "ContainerPath" : "/root/.aws",
-                                "SourceVolume" : "commsCredentials",
-                                "ReadOnly" : true
-                            }
-                        ]
-                    }
-                ],
-                "Volumes" : [
-                    {
-                        "Name" : "commsCredentials",
-                        "Host" : {
-                            "SourcePath" : "/etc/comms"
-                        }
-                    }
-                ]
-            }
-        },
-        "commsService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "apiCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"commsTaskDefinition"}
-            }
-        },
-        "apiGatewayTaskDefinition": {
-            "Type": "AWS::ECS::TaskDefinition",
-            "Properties" : {
-                "ContainerDefinitions" : [
-                    {
-                        "Name" : "api-gateway",
-                        "Cpu" : "1",
-                        "Image" : "bristechsrm/api-gateway:latest",
-                        "Memory" : "300",
-                        "PortMappings" : [
-                            {"HostPort" : 8082, "ContainerPort" : 9004, "Protocol" : "tcp"}
-                        ]
-                    }
-                ]
-            }
-        },
-        "apiGatewayService": {
-            "Type": "AWS::ECS::Service",
-            "Properties" : {
-                "Cluster": {"Ref": "apiCluster"},
-                "DesiredCount": "1",
-                "TaskDefinition" : {"Ref":"apiGatewayTaskDefinition"}
-            }
-        },
-        "apiElasticIPAssociation" : {
-            "Type" : "AWS::EC2::EIPAssociation",
-            "Condition" : "associateApiEIP",
-            "Properties" : {
-                "EIP" : { "Ref" : "apiElasticIP"} ,
-                "InstanceId" : {"Ref" : "apiServer"}
-
-            }
-        },
-        "frontElasticIPAssociation" : {
-            "Type" : "AWS::EC2::EIPAssociation",
-            "Condition" : "associateFrontEIP",
-            "Properties" : {
-                "EIP" : { "Ref" : "frontElasticIP"} ,
-                "InstanceId" : {"Ref" : "frontServer"}
-
-            }
-        }
+    "frontServerKeyPair": {
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "Default": "developmentStack",
+      "Description": "The key pair used to gain access to the EC2 instance(s) via ssh, should the need arise."
     }
+  },
+  "Conditions": {
+    "associateFrontEIP": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "frontElasticIP"
+            },
+            "null"
+          ]
+        }
+      ]
+    }
+  },
+  "Resources": {
+    "frontServer": {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "DisableApiTermination": "false",
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "IamInstanceProfile": "ecsInstanceRole",
+        "ImageId": "ami-76e95b05",
+        "InstanceType": "t2.micro",
+        "KeyName": {
+          "Ref": "frontServerKeyPair"
+        },
+        "Monitoring": "false",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "frontServer"
+          },
+          {
+            "Key": "Product",
+            "Value": "bristechSRM"
+          },
+          {
+            "Key": "Environment",
+            "Value": "development"
+          },
+          {
+            "Key": "Cluster",
+            "Value": "front"
+          },
+          {
+            "Key": "Service",
+            "Value": "front"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "docker"
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "DeleteOnTermination": "true",
+            "DeviceIndex": 0,
+            "SubnetId": "subnet-b64844c1",
+            "GroupSet": [
+              "sg-b6e9d4d2"
+            ]
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n",
+                "echo ECS_CLUSTER=",
+                {
+                  "Ref": "frontCluster"
+                },
+                " >> /etc/ecs/ecs.config\n"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "frontCluster": {
+      "Type": "AWS::ECS::Cluster"
+    },
+    "frontService": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": {
+          "Ref": "frontCluster"
+        },
+        "DesiredCount": "1",
+        "TaskDefinition": {
+          "Ref": "frontTaskDefinition"
+        }
+      }
+    },
+    "frontTaskDefinition": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Name": "front-end-js",
+            "Cpu": "1",
+            "Image": "bristechsrm/frontend:latest",
+            "Memory": "600",
+            "PortMappings": [
+              {
+                "HostPort": 80,
+                "ContainerPort": 8080,
+                "Protocol": "tcp"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "frontElasticIPAssociation": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Condition": "associateFrontEIP",
+      "Properties": {
+        "EIP": {
+          "Ref": "frontElasticIP"
+        },
+        "InstanceId": {
+          "Ref": "frontServer"
+        }
+      }
+    }
+  }
 }

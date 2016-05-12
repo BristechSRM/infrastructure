@@ -26,3 +26,4 @@ docker pull ${repository}
 
 docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} --env AWS_ACCESS_KEY_ID=${accessKeyId} --env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
 
+echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

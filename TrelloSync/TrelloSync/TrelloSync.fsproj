@@ -58,6 +58,7 @@
     <Compile Include="JsonSettings.fs" />
     <Compile Include="Logging.fs" />
     <Compile Include="Credentials.fs" />
+    <Compile Include="Config.fs" />
     <Compile Include="Download.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="DataCache.fs" />

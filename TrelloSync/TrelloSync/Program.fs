@@ -7,6 +7,7 @@ open Serilog
 
 [<EntryPoint>]
 let main _ = 
+    JsonSettings.setDefaults()
     setupLogging()
     let cacheFilePath = @"trello-import.json"
     let useCache = 

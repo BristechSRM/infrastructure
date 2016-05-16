@@ -1,9 +1,6 @@
-﻿module Program
-
-open System.IO
-open System.Configuration
-open Logging
+﻿open Logging
 open Serilog
+open System.IO
 
 [<EntryPoint>]
 let main _ = 
@@ -14,7 +11,7 @@ let main _ =
     let trelloData = 
         if Config.useCache && File.Exists(cacheFilePath) then 
             let trelloData = DataCache.load cacheFilePath
-            Log.Information("Trello Data loaded from file: {file}",cacheFilePath)
+            Log.Information("Trello Data loaded from file: {file}", cacheFilePath)
             trelloData
         else 
             let trelloCred = Credentials.getTrelloCredentials()
@@ -24,8 +21,7 @@ let main _ =
             trelloData
     
     let result = 
-        if Config.performImport then
-            Import.importAll trelloData
-        else
-            0
+        if Config.performImport then Import.importAll trelloData
+        else 0
+    
     0

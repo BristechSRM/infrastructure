@@ -1,7 +1,9 @@
 ﻿module Credentials
 
+open System
 open System.Configuration
 open Serilog
+
 
 type TrelloCredentials = 
     { Key : string
@@ -22,7 +24,7 @@ let getTrelloCredentials() =
         { Key = ConfigurationManager.AppSettings.Item("TrelloKey")
           Token = ConfigurationManager.AppSettings.Item("TrelloToken") }
 
-    if creds.Key = "UNSET" || creds.Token = "UNSET" then 
+    if String.IsNullOrWhiteSpace creds.Key || String.IsNullOrWhiteSpace creds.Token then 
         Log.Fatal(missingCredentialsMessage)
         failwith missingCredentialsMessage
     else creds

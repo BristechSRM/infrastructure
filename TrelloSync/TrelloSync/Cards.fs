@@ -42,7 +42,7 @@ let cardsWithTalkData (card : BasicCard) =
     | _ -> None
 
 let getBasicCardsAsync trelloCred : Async<BasicCard []> = 
-    Download.from <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers&key=%s&token=%s" trelloCred.Key trelloCred.Token
+    Download.from <| sprintf "https://api.trello.com/1/boards/524ec750ed130abd230011ab/cards/open?fields=id,name,idMembers,due&key=%s&token=%s" trelloCred.Key trelloCred.Token
 
 let getAllRawTalkCards trelloCred = async { let! basicCards = getBasicCardsAsync trelloCred
                                             return basicCards |> Array.choose (cardsWithTalkData) }

@@ -8,7 +8,7 @@ let getBoolConfig (key : string) =
     | true , value -> value
     | _ -> 
         let message = sprintf "Could not parse configuration value for key: %s as boolean" key
-        Log.Fatal(key)
+        Log.Fatal(message)
         failwith message
 
 let useCache = getBoolConfig "UseCache"

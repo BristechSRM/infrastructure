@@ -22,6 +22,7 @@ type TrelloCard =
       ExtraInfo : string
       RawInput : string
       CardId : string
+      Date : DateTime option
       AdminId : string option
       AdminEmail : string option }
 

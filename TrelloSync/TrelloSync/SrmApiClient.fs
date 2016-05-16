@@ -1,6 +1,6 @@
 ﻿module SrmApiClient
     open System
-    open ImportModels
+    open SrmApiModels
     open System.Text
     open System.Net.Http
     open Newtonsoft.Json

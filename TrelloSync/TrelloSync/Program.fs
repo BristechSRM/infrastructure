@@ -27,6 +27,6 @@ let main _ =
         0
     with
         | ex -> 
-            Log.Fatal(ex.Message)
+            Log.Fatal("Exception: {ex}",ex)
             1
 

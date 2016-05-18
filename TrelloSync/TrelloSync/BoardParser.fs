@@ -34,6 +34,7 @@ let parseBoardAsync trelloCred =
         let! cards = getAllRawTalkCards trelloCred
         let! groupedMembers = getAllMembersAsync trelloCred
         let! cardsAndCommentActions = getActionsPerCardAsync trelloCred cards
+        let cardsWithCorrespondence = cardsAndCommentActions |> Array.map (parseCardAndActions groupedMembers)
         return { Members = groupedMembers.Members
-                 Cards = cardsAndCommentActions |> Array.map (parseCardAndActions groupedMembers) }
+                 Cards = cardsWithCorrespondence}
     }

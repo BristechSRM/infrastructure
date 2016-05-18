@@ -22,8 +22,12 @@ let main _ =
                 trelloData
     
         let result = 
-            if Config.performImport then Import.importAll trelloData
-            else 0
+            if Config.performImport then 
+                Log.Information("Performing import")
+                Import.importAll trelloData
+            else
+                Log.Information("Skipping Import") 
+                0
         0
     with
         | ex -> 

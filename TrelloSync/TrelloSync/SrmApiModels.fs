@@ -58,8 +58,9 @@ type Profile =
       ImageUrl : string
       Handles : Handle seq }
 
-type ProfileAndTrelloId = 
+type ProfileWrapper = 
     { Profile : Profile
+      Email : string
       TrelloId : string }
 
 type SessionAndCorrespondence = 

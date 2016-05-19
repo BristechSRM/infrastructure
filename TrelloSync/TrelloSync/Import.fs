@@ -4,6 +4,7 @@
     open Serilog
 
     open Cards
+    open Members
     open BoardParser
     open SrmApiClient
     open SrmApiModels
@@ -13,7 +14,7 @@
         |> Array.tryFind (fun x -> x.TrelloId = key)
         |> Option.map (fun x -> x.Profile.Id)
     
-    let prepSessionAndCorrData (adminProfiles : ProfileAndTrelloId []) (speakerProfiles : ProfileAndTrelloId []) (card : CardWithCorrespondence) = 
+    let prepSessionAndCorrData (adminProfiles : ProfileWrapper []) (speakerProfiles : ProfileWrapper []) (card : CardWithCorrespondence) = 
         let adminId = 
             match card.TrelloCard.AdminId with
             | Some id -> findSrmProfileId id adminProfiles
@@ -49,26 +50,39 @@
         
         { Correspondence = correspondence
           SessionData = sessionData }
+
+    let importAdminAsync (mem : TrelloMember) = 
+        async {
+            Log.Information("Importing admin with email: {email}", mem.Email)
+            let! profile = Profiles.postAndGetIdAsync <| memberToProfile mem
+            return {Profile = profile; Email = mem.Email; TrelloId = mem.Id}
+        }
+
+    let importSpeakerAsync (importedAdmins : ProfileWrapper []) (card : CardWithCorrespondence) = 
+        async {
+            let! profile = 
+                let foundAdmin = importedAdmins |> Array.tryFind (fun x -> x.Email = card.TrelloCard.SpeakerEmail)
+                match foundAdmin with
+                | Some adminProfile ->
+                    Log.Information("Found Matching admin profile for speaker. No Import performed. Email: {emai}", adminProfile.Email) 
+                    async {return adminProfile.Profile}
+                | None -> 
+                    Log.Information("Importing speaker with email: {email}", card.TrelloCard.SpeakerEmail)
+                    Profiles.postAndGetIdAsync <| cardToProfile card.TrelloCard
+            return {Profile = profile; Email = card.TrelloCard.SpeakerEmail; TrelloId = card.TrelloCard.CardId}
+        }
                     
     //TODO Error handling for import here and in ApiClient with post requests. Fail as early as possible. 
     let importAll (trelloBoard : TrelloBoard) = 
         let importedAdmins = 
             trelloBoard.Members 
-            |> Array.map (fun mem -> 
-                async {
-                    let! profile = Profiles.postAndGetIdAsync <| memberToProfile mem
-                    return {Profile = profile; TrelloId = mem.Id}
-                })
+            |> Array.map importAdminAsync
             |> Async.Parallel
             |> Async.RunSynchronously
 
         let importedSpeakers = 
             trelloBoard.Cards
-            |> Array.map (fun card -> 
-                async {
-                    let! profile = Profiles.postAndGetIdAsync <| cardToProfile card.TrelloCard
-                    return {Profile = profile; TrelloId = card.TrelloCard.CardId}
-                })
+            |> Array.map (importSpeakerAsync importedAdmins)
             |> Async.Parallel
             |> Async.RunSynchronously
 

@@ -5,12 +5,11 @@
     open System.Net.Http
     open Newtonsoft.Json
     open Helpers
+    open Config
     
-    let sessionsServiceUri = Uri("http://127.0.0.1:9000")
-    let commsServiceUri = Uri("http://127.0.0.1:9001")
-    let profilesEndpoint = Uri(sessionsServiceUri, "Profiles")
-    let sessionsEndpoint = Uri(sessionsServiceUri, "Sessions")
-    let threadsEndpoint = Uri(commsServiceUri, "Threads")
+    let profilesEndpoint = Uri(sessionsUri, "Profiles")
+    let sessionsEndpoint = Uri(sessionsUri, "Sessions")
+    let threadsEndpoint = Uri(commsUri, "Threads")
 
     let httpClient = new HttpClient()
 

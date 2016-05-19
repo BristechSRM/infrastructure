@@ -1,30 +1,28 @@
 ﻿open Logging
 open Serilog
-open System.IO
 
 [<EntryPoint>]
 let main _ = 
     try
         JsonSettings.setDefaults()
         setupLogging()
-        let cacheFilePath = @"trello-import.json"
+        let saveFile = @"trello-import.json"
     
         let trelloData = 
-            if Config.useCache && File.Exists(cacheFilePath) then 
-                let trelloData = DataCache.load cacheFilePath
-                Log.Information("Trello Data loaded from file: {file}", cacheFilePath)
-                trelloData
-            else 
-                let trelloCred = Credentials.getTrelloCredentials()
-                let trelloData = BoardParser.parseBoardAsync trelloCred |> Async.RunSynchronously
-                DataCache.save trelloData cacheFilePath
-                Log.Information("Trello Data download and parse complete. Saved to file: {file} for cache as well.", cacheFilePath)
-                trelloData
+            let trelloCred = Credentials.getTrelloCredentials()
+            let trelloData = BoardParser.parseBoardAsync trelloCred |> Async.RunSynchronously
+            Log.Information("Trello Data download and parse complete.")
+            DataCache.save trelloData saveFile
+            Log.Information("Saved to file: {file} for reference", saveFile)
+            trelloData
     
-        let result = 
-            if Config.performImport then Import.importAll trelloData
-            else 0
-        0
+        if Config.performImport then 
+            Log.Information("Performing import")
+            Import.importAll trelloData
+        else
+            Log.Information("Skipping Import") 
+            0
+
     with
         | ex -> 
             Log.Fatal("Exception: {ex}",ex)

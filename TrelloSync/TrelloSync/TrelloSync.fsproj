@@ -55,8 +55,10 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="JsonSettings.fs" />
     <Compile Include="Logging.fs" />
     <Compile Include="Credentials.fs" />
+    <Compile Include="Config.fs" />
     <Compile Include="Download.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="DataCache.fs" />
@@ -66,7 +68,7 @@
     <Compile Include="CardParser.fs" />
     <Compile Include="CommsActionParser.fs" />
     <Compile Include="BoardParser.fs" />
-    <Compile Include="ImportModels.fs" />
+    <Compile Include="SrmApiModels.fs" />
     <Compile Include="SrmApiClient.fs" />
     <Compile Include="Import.fs" />
     <Compile Include="Program.fs" />
@@ -79,6 +81,9 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Bristech.Srm.HttpConfig">
+      <HintPath>..\packages\Bristech.Srm.HttpConfig.0.1.5.0\lib\net45\Bristech.Srm.HttpConfig.dll</HintPath>
+    </Reference>
     <Reference Include="FSharp.Core">
       <HintPath>..\packages\FSharp.Core.4.0.0.1\lib\net40\FSharp.Core.dll</HintPath>
       <Private>True</Private>

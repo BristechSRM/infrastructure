@@ -1,4 +1,4 @@
-﻿module ImportModels
+﻿module SrmApiModels
 
 open System
 open Members
@@ -21,14 +21,16 @@ type SessionDetail =
       Status : String
       SpeakerId : Guid
       AdminId : Guid
-      ThreadId : Guid }
+      ThreadId : Guid 
+      Date : DateTime option}
 
 type SessionDetailNoAdmin = 
     { Id : Guid
       Title : string
       Status : String
       SpeakerId : Guid
-      ThreadId : Guid }
+      ThreadId : Guid 
+      Date : DateTime option}
 
 type SessionData = 
     { TrelloCard : TrelloCard
@@ -95,14 +97,16 @@ let cardToSession (card : TrelloCard) speakerId adminId threadId =
       Status = "assigned"
       SpeakerId = speakerId
       AdminId = adminId
-      ThreadId = threadId }
+      ThreadId = threadId 
+      Date = card.Date }
 
 let cardToNoAdminSession (card : TrelloCard) speakerId threadId = 
     { SessionDetailNoAdmin.Id = Guid.Empty
       Title = card.TalkData
       Status = "unassigned"
       SpeakerId = speakerId
-      ThreadId = threadId }
+      ThreadId = threadId 
+      Date = card.Date }
 
 let commsItemToCorrespondenceItem (adminId : Guid) (adminEmail : string) (speakerId : Guid) (speakerEmail : string) (item : CommsItem) = 
     let senderId, receiverId = 

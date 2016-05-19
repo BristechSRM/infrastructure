@@ -1,5 +1,6 @@
 ﻿module CardParser
 
+open System
 open Members
 open Cards
 open Helpers
@@ -27,7 +28,17 @@ let parseCard members { Card = card; RegexGroups = groups } =
             let message = sprintf "Card: %A had multiple members attached, please remove additonal members so that there is one per card" card
             Log.Fatal(message)
             failwith message
-    
+
+    //Currently ignoring any date that is not on the first Thursday of the month. 
+    let eventDate = 
+        match card.Due with
+        | None -> None
+        | Some date-> 
+            if date.DayOfWeek = DayOfWeek.Thursday && date.Day <= 7 then
+                Some date
+            else 
+                None
+   
     let forename, surname = parseToNames groups.[1].Value
     { SpeakerForename = forename
       SpeakerSurname = surname
@@ -36,5 +47,6 @@ let parseCard members { Card = card; RegexGroups = groups } =
       ExtraInfo = groups.[4].Value
       RawInput = groups.[0].Value
       CardId = card.Id
+      Date = eventDate
       AdminId = adminId
       AdminEmail = adminEmail }

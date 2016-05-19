@@ -6,7 +6,7 @@
     open Cards
     open BoardParser
     open SrmApiClient
-    open ImportModels
+    open SrmApiModels
 
     let findSrmProfileId key profiles = 
         profiles

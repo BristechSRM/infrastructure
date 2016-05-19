@@ -10,5 +10,6 @@ let from url : Async<'a> =
         let uri = Uri(url)
         use webClient = new WebClient()
         let! rawData = webClient.AsyncDownloadString(uri)
-        return JsonConvert.DeserializeObject<'a>(rawData)
+        let data = JsonConvert.DeserializeObject<'a>(rawData)
+        return data
     }

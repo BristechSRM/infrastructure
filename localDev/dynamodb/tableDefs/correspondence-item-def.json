@@ -1,0 +1,19 @@
+{
+    "TableName": "CorrespondenceItem",
+    "KeySchema": [
+        {
+            "AttributeName": "Id",
+            "KeyType": "HASH"
+        }
+    ],
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "Id",
+            "AttributeType": "S"
+        }
+    ],
+    "ProvisionedThroughput": {
+        "WriteCapacityUnits": 5,
+        "ReadCapacityUnits": 5
+    }
+}

@@ -1,0 +1,61 @@
+{
+    "AttributeDefinitions": [
+        {
+            "AttributeName": "", 
+            "AttributeType": ""
+        }
+    ], 
+    "TableName": "", 
+    "KeySchema": [
+        {
+            "AttributeName": "", 
+            "KeyType": ""
+        }
+    ], 
+    "LocalSecondaryIndexes": [
+        {
+            "IndexName": "", 
+            "KeySchema": [
+                {
+                    "AttributeName": "", 
+                    "KeyType": ""
+                }
+            ], 
+            "Projection": {
+                "ProjectionType": "", 
+                "NonKeyAttributes": [
+                    ""
+                ]
+            }
+        }
+    ], 
+    "GlobalSecondaryIndexes": [
+        {
+            "IndexName": "", 
+            "KeySchema": [
+                {
+                    "AttributeName": "", 
+                    "KeyType": ""
+                }
+            ], 
+            "Projection": {
+                "ProjectionType": "", 
+                "NonKeyAttributes": [
+                    ""
+                ]
+            }, 
+            "ProvisionedThroughput": {
+                "ReadCapacityUnits": 0, 
+                "WriteCapacityUnits": 0
+            }
+        }
+    ], 
+    "ProvisionedThroughput": {
+        "ReadCapacityUnits": 0, 
+        "WriteCapacityUnits": 0
+    }, 
+    "StreamSpecification": {
+        "StreamEnabled": true, 
+        "StreamViewType": ""
+    }
+}

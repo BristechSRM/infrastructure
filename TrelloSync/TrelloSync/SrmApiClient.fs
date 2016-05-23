@@ -9,7 +9,7 @@
     
     let profilesEndpoint = Uri(sessionsUri, "Profiles")
     let sessionsEndpoint = Uri(sessionsUri, "Sessions")
-    let threadsEndpoint = Uri(commsUri, "Threads")
+    let correspondenceEndpoint = Uri(commsUri, "Correspondence")
 
     let httpClient = new HttpClient()
 
@@ -41,14 +41,14 @@
         let postAsync (data : SessionData) = 
             async { 
                 let! result = match data.AdminId with
-                              | Some aId -> postAsync' sessionsEndpoint <| cardToSession data.TrelloCard data.SpeakerId aId data.ThreadId
-                              | None -> postAsync' sessionsEndpoint <| cardToNoAdminSession data.TrelloCard data.SpeakerId data.ThreadId
+                              | Some aId -> postAsync' sessionsEndpoint <| cardToSession data.TrelloCard data.SpeakerId aId
+                              | None -> postAsync' sessionsEndpoint <| cardToNoAdminSession data.TrelloCard data.SpeakerId
                 return parseQuotedGuid result
             }
 
-    module Threads = 
-        let postAsync (correspondence : CorrespondenceItem []) = 
+    module Correspondence = 
+        let postAsync (correspondence : CorrespondenceItem ) = 
             async {
-                let! result = postAsync' threadsEndpoint correspondence 
+                let! result = postAsync' correspondenceEndpoint correspondence 
                 return parseQuotedGuid result
             }

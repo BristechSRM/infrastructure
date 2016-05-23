@@ -45,8 +45,7 @@
         let sessionData = 
             { TrelloCard = card.TrelloCard
               SpeakerId = speakerId
-              AdminId = adminId
-              ThreadId = Guid.Empty }
+              AdminId = adminId }
         
         { Correspondence = correspondence
           SessionData = sessionData }
@@ -96,20 +95,24 @@
 
             This is done in combined steps since the data is already combined, and it means that we don't have to do a search over the threads to connect them with the right session. 
         *)
-        let sessionsForImport =     
+        let importedCorrespondence =     
             sessionsDataAndCorrespondence
-            |> Array.map (fun combo -> 
+            |> Array.map (fun card -> 
                 async {
-                    let! threadId = Threads.postAsync combo.Correspondence
-                    return {combo.SessionData with ThreadId = threadId}
+                    let! result = 
+                        card.Correspondence
+                        |> Array.map Correspondence.postAsync
+                        |> Async.Parallel
+                    return result
                 })
             |> Async.Parallel
             |> Async.RunSynchronously
 
         let importedSessionsIds =  
-            sessionsForImport
-            |> Array.map Sessions.postAsync
+            sessionsDataAndCorrespondence
+            |> Array.map (fun card -> Sessions.postAsync card.SessionData)
             |> Async.Parallel
             |> Async.RunSynchronously
+
         Log.Information("Migration via services complete")
         0

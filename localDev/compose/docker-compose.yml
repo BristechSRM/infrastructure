@@ -46,6 +46,11 @@ services:
   auth:
     network_mode: "bridge"
     image: bristechsrm/auth
+    volumes:
+        - /workspace/infrastructure/localDev/compose/auth.app.config:/service/Auth.exe.config
+    environment:
+      - AWS_ACCESS_KEY_ID=FAKEID
+      - AWS_SECRET_ACCESS_KEY=fakeSecret
     ports:
       - "9003:8080" # Google doesn't allow 'fake' domains, e.g. http://auth:{PORT}, therefore need to use http://localhost:{PORT} instead
     depends_on:

@@ -55,11 +55,20 @@ services:
     image: bristechsrm/sessions
     volumes:
         - ~/BristechSRM/infrastructure/localDev/compose/sessions.app.config:/service/Sessions.exe.config
+    ports:
+      - "8081:8080"
     depends_on:
       - replacedns
   comms:
     network_mode: "bridge"
     image: bristechsrm/comms
+    volumes:
+        - ~/BristechSRM/infrastructure/localDev/compose/comms.app.config:/service/Comms.exe.config
+    environment:
+      - AWS_ACCESS_KEY_ID=FAKEID
+      - AWS_SECRET_ACCESS_KEY=fakeSecret
+    ports:
+      - "8082:8080"
     depends_on:
       - replacedns
   mysql:

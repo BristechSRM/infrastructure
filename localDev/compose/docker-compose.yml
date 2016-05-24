@@ -47,7 +47,7 @@ services:
     network_mode: "bridge"
     image: bristechsrm/auth
     volumes:
-        - /workspace/infrastructure/localDev/compose/auth.app.config:/service/Auth.exe.config
+        - $PWD/auth.app.config:/service/Auth.exe.config
     environment:
       - AWS_ACCESS_KEY_ID=FAKEID
       - AWS_SECRET_ACCESS_KEY=fakeSecret

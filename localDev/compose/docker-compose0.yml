@@ -1,0 +1,65 @@
+version: "2"
+services:
+  # dns-server:
+  #   network_mode: "bridge"
+  #   dns:
+  #     - 8.8.8.8
+  #     - 8.8.4.4
+  #   image: progrium/consul
+  #   command: -server -bootstrap
+  #   ports:
+  #     - "8500:8500"
+  #     - "$DOCKER_HOST_IP:53:53/udp"
+  # reg:
+  #   network_mode: "bridge"
+  #   image: gliderlabs/registrator
+  #   volumes:
+  #     - /var/run/docker.sock:/tmp/docker.sock
+  #   command: -internal consul://$DOCKER_HOST_IP:8500
+  #   depends_on:
+  #     - dns-server
+  # replacedns:
+  #   network_mode: "bridge"
+  #   dns:
+  #     - $DOCKER_HOST_IP
+  #   dns_search: service.consul
+  #   image: bristechsrm/replacedns
+  #   volumes:
+  #     - /etc/resolv.conf:/tmp/resolv.conf
+  frontend:
+    network_mode: "bridge"
+    image: bristechsrm/frontend
+    volumes:
+      - ~/BristechSRM/infrastructure/localDev/compose/config.json:/frontend/public/js/config.json
+    ports:
+      - "8080:8080"
+  api-gateway:
+    network_mode: "bridge"
+    image: bristechsrm/api-gateway
+    ports:
+      - "8081:8080"
+  auth:
+    network_mode: "bridge"
+    image: bristechsrm/auth
+    ports:
+      - "8082:8080"
+  sessions:
+    network_mode: "bridge"
+    image: bristechsrm/sessions
+    volumes:
+        - ~/BristechSRM/infrastructure/localDev/compose/sessions.app.config:/service/Sessions.exe.config
+    ports:
+      - "8083:8080"
+  comms:
+    network_mode: "bridge"
+    image: bristechsrm/comms
+    ports:
+      - "8084:8080"
+  mysql:
+    network_mode: "bridge"
+    image: bristechsrm/srm-mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=localdev
+  dynamodb:
+    network_mode: "bridge"
+    image: bristechsrm/srm-dynamo-db

@@ -1,0 +1,79 @@
+version: "2"
+services:
+  dns-server:
+    network_mode: "bridge"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    image: progrium/consul
+    command: -server -bootstrap
+    ports:
+      - "8500:8500"
+      - "$PRIVATE_IP:53:53/udp"
+  reg:
+    network_mode: "bridge"
+    image: gliderlabs/registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command: -internal consul://$PRIVATE_IP:8500
+    depends_on:
+      - dns-server
+  replacedns:
+    network_mode: "bridge"
+    dns:
+      - $PRIVATE_IP
+    dns_search: service.consul
+    image: bristechsrm/replacedns
+    volumes:
+      - /etc/resolv.conf:/tmp/resolv.conf
+    depends_on:
+      - reg
+  frontend:
+    network_mode: "bridge"
+    image: bristechsrm/frontend
+    volumes:
+      - ~/BristechSRM/infrastructure/localDev/compose/config.json:/frontend/public/js/config.json
+    ports:
+      - "8080:8080"
+    depends_on:
+      - replacedns
+  api-gateway:
+    network_mode: "bridge"
+    image: bristechsrm/api-gateway
+    depends_on:
+      - replacedns
+      - auth
+  auth:
+    network_mode: "bridge"
+    image: bristechsrm/auth
+    ports:
+      - "9003:8080" # Google doesn't allow 'fake' domains, e.g. http://auth:{PORT}, therefore need to use http://localhost:{PORT} instead
+    depends_on:
+      - replacedns
+  sessions:
+    network_mode: "bridge"
+    image: bristechsrm/sessions
+    volumes:
+        - ~/BristechSRM/infrastructure/localDev/compose/sessions.app.config:/service/Sessions.exe.config
+    depends_on:
+      - replacedns
+  comms:
+    network_mode: "bridge"
+    image: bristechsrm/comms
+    depends_on:
+      - replacedns
+  mysql:
+    network_mode: "bridge"
+    image: bristechsrm/srm-mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=localdev
+      - SERVICE_NAME=mysql
+    depends_on:
+      - replacedns
+  dynamodb:
+    network_mode: "bridge"
+    image: bristechsrm/srm-dynamo-db
+    environment:
+      - SERVICE_NAME=dynamodb
+    depends_on:
+      - replacedns

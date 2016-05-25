@@ -1,69 +1,12 @@
 version: "2"
 services:
-  dns-server:
-    network_mode: "bridge"
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
-    image: progrium/consul
-    command: -server -bootstrap
-    ports:
-      - "8500:8500"
-      - "$DOCKER_HOST_IP:53:53/udp"
-  reg:
-    network_mode: "bridge"
-    image: gliderlabs/registrator
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock
-    command: -internal consul://$DOCKER_HOST_IP:8500
-    depends_on:
-      - dns-server
-  replacedns:
-    network_mode: "bridge"
-    dns:
-      - $DOCKER_HOST_IP
-    dns_search: service.consul
-    image: bristechsrm/replacedns
-    volumes:
-      - /etc/resolv.conf:/tmp/resolv.conf
-    depends_on:
-      - reg
   frontend:
     network_mode: "bridge"
     image: bristechsrm/frontend
     volumes:
-      - $PWD/config.json:/frontend/public/js/config.json
+      - $PWD/frontend.config.json:/frontend/public/js/config.json
     ports:
       - "8080:8080"
-    depends_on:
-      - replacedns
-  api-gateway:
-    network_mode: "bridge"
-    image: bristechsrm/api-gateway
-    depends_on:
-      - replacedns
-      - auth
-  auth:
-    network_mode: "bridge"
-    image: bristechsrm/auth
-    volumes:
-        - $PWD/auth.app.config:/service/Auth.exe.config
-    environment:
-      - AWS_ACCESS_KEY_ID=FAKEID
-      - AWS_SECRET_ACCESS_KEY=fakeSecret
-    ports:
-      - "9003:8080" # Google doesn't allow 'fake' domains, e.g. http://auth:{PORT}, therefore need to use http://localhost:{PORT} instead
-    depends_on:
-      - replacedns
-  sessions:
-    network_mode: "bridge"
-    image: bristechsrm/sessions
-    volumes:
-        - $PWD/sessions.app.config:/service/Sessions.exe.config
-    ports:
-      - "8081:8080"
-    depends_on:
-      - replacedns
   comms:
     network_mode: "bridge"
     image: bristechsrm/comms
@@ -73,21 +16,42 @@ services:
       - AWS_ACCESS_KEY_ID=FAKEID
       - AWS_SECRET_ACCESS_KEY=fakeSecret
     ports:
-      - "8082:8080"
+      - "9000:8080"
+  sessions:
+    network_mode: "bridge"
+    image: bristechsrm/sessions
+    volumes:
+        - $PWD/sessions.app.config:/service/Sessions.exe.config
+    ports:
+      - "9001:8080"
+  api-gateway:
+    network_mode: "bridge"
+    image: bristechsrm/api-gateway
+    volumes:
+        - $PWD/api-gateway.app.config:/service/ApiGateway.exe.config
+    ports:
+      - "9002:8080"
     depends_on:
-      - replacedns
+      - auth
+  auth:
+    network_mode: "bridge"
+    image: bristechsrm/auth
+    ports:
+      - "9003:9003"
+    volumes:
+        - $PWD/auth.app.config:/service/Auth.exe.config
+    environment:
+      - AWS_ACCESS_KEY_ID=FAKEID
+      - AWS_SECRET_ACCESS_KEY=fakeSecret
   mysql:
     network_mode: "bridge"
     image: bristechsrm/srm-mysql-db
+    ports:
+      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=localdev
-      - SERVICE_NAME=mysql
-    depends_on:
-      - replacedns
   dynamodb:
     network_mode: "bridge"
     image: bristechsrm/srm-dynamo-db
-    environment:
-      - SERVICE_NAME=dynamodb
-    depends_on:
-      - replacedns
+    ports:
+      - "7000:7000"

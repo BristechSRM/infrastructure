@@ -1,5 +1,13 @@
+#!/bin/bash
+if [ "$3" == "" ]; then
+    echo "ERROR: email, firstname & surname required as command line arguments"
+    exit 1
+fi
+
 uuid=$(uuidgen)
-# Set env variables for email, firstname & surname
+email=$1
+firstname=$2
+surname=$3
 
 aws dynamodb put-item --endpoint-url http://localhost:7000 \
   --table-name Auth.Users \

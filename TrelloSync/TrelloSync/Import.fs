@@ -114,5 +114,4 @@
             |> Async.Parallel
             |> Async.RunSynchronously
 
-        Log.Information("Migration via services complete")
         0

@@ -5,6 +5,7 @@ open System.Text.RegularExpressions
 open Cards
 open Actions
 open Serilog
+open System.Globalization
 
 type EmailDirection = 
     | Send
@@ -33,8 +34,15 @@ let (|AllRegexGroupsMultiLine|_|) pattern input =
     else None
 
 let createCommsItem (groups : GroupCollection) speakerEmail adminEmail action = 
-    let success, date = DateTime.TryParse(groups.[1].Value)
-    if success then 
+    let dateString = groups.[1].Value
+    try
+        let date = 
+            //Workaround for data error + mono bug
+            let success, exactDate =  DateTime.TryParseExact(dateString,[|"dd/mm/yy";"dd/mm/yyyy";"dd.mm.yy";"dd.mm.yyyy"|],CultureInfo.InvariantCulture,DateTimeStyles.AssumeUniversal)
+            if success then
+                exactDate
+            else 
+                DateTime.Parse(dateString,CultureInfo.InvariantCulture)
         match tryParseEmailDirection groups.[2].Value with
         | Some dir -> 
             match dir with
@@ -52,10 +60,11 @@ let createCommsItem (groups : GroupCollection) speakerEmail adminEmail action =
             let message = sprintf "Parsing for direction for comms Action: %A failed" action
             Log.Fatal(message)
             failwith message
-    else 
-        let message = sprintf "Parsing for date for comms Action: %A failed" action
-        Log.Fatal(message)
-        failwith message
+    with
+        | ex -> 
+            let message = sprintf "Parsing for date: %s for comms Action: %A failed with exception: %s" dateString action ex.Message
+            Log.Fatal(message)
+            failwith message
 
 let tryCreateCommsItem (card : TrelloCard) (action : BasicAction) = 
     match action.Data.Text with

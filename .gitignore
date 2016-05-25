@@ -259,6 +259,7 @@ TrelloSync/build/output/
 concourse/credentials.yml
 
 bristech-speakers-export.json
+TrelloSync/trello-import.json
 
 TrelloCreds.config
 

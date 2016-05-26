@@ -262,3 +262,4 @@ TrelloCreds.config
 
 node_modules
 credentials
+localDev/compose/build

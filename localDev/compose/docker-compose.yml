@@ -1,57 +1,57 @@
 version: "2"
 services:
   frontend:
-    network_mode: "bridge"
     image: bristechsrm/frontend
     volumes:
-      - $PWD/frontend.config.json:/frontend/public/js/config.json
+      - $PWD/build/frontend.config.json:/frontend/public/js/config.json
     ports:
       - "8080:8080"
+    restart: unless-stopped
   comms:
-    network_mode: "bridge"
     image: bristechsrm/comms
-    volumes:
-        - $PWD/comms.app.config:/service/Comms.exe.config
     environment:
       - AWS_ACCESS_KEY_ID=FAKEID
       - AWS_SECRET_ACCESS_KEY=fakeSecret
+    volumes:
+        - $PWD/build/comms.app.config:/service/Comms.exe.config
     ports:
       - "9000:8080"
+    restart: unless-stopped
   sessions:
-    network_mode: "bridge"
     image: bristechsrm/sessions
     volumes:
-        - $PWD/sessions.app.config:/service/Sessions.exe.config
+        - $PWD/build/sessions.app.config:/service/Sessions.exe.config
     ports:
       - "9001:8080"
+    restart: unless-stopped
   api-gateway:
-    network_mode: "bridge"
     image: bristechsrm/api-gateway
     volumes:
-        - $PWD/api-gateway.app.config:/service/ApiGateway.exe.config
+        - $PWD/build/api-gateway.app.config:/service/ApiGateway.exe.config
     ports:
       - "9002:8080"
+    restart: unless-stopped
     depends_on:
       - auth
   auth:
-    network_mode: "bridge"
     image: bristechsrm/auth
-    ports:
-      - "9003:9003"
-    volumes:
-        - $PWD/auth.app.config:/service/Auth.exe.config
     environment:
       - AWS_ACCESS_KEY_ID=FAKEID
       - AWS_SECRET_ACCESS_KEY=fakeSecret
-  mysql:
-    network_mode: "bridge"
-    image: bristechsrm/srm-mysql-db
+    volumes:
+        - $PWD/build/auth.app.config:/service/Auth.exe.config
     ports:
-      - "3306:3306"
+      - "9003:9003"
+    restart: unless-stopped
+  mysql:
+    image: bristechsrm/srm-mysql-db
     environment:
       - MYSQL_ROOT_PASSWORD=localdev
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
   dynamodb:
-    network_mode: "bridge"
     image: bristechsrm/srm-dynamo-db
     ports:
       - "7000:7000"
+    restart: unless-stopped

@@ -1,10 +1,13 @@
 #!/bin/bash
-DOCKER_HOST_IP=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BUILD_DIR="$DIR/../build"
+CONFIG_DIR="$DIR/../config"
 
-mkdir -p $DIR/../build
-cp $DIR/../config/frontend.config.json $DIR/../build/
-sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $DIR/../config/api-gateway.app.config > $DIR/../build/api-gateway.app.config
-sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $DIR/../config/comms.app.config > $DIR/../build/comms.app.config
-sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $DIR/../config/auth.app.config > $DIR/../build/auth.app.config
-sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $DIR/../config/sessions.app.config > $DIR/../build/sessions.app.config
+DOCKER_HOST_IP=$1
+
+mkdir -p $BUILD_DIR
+cp $CONFIG_DIR/frontend.config.json $BUILD_DIR/
+sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $CONFIG_DIR/api-gateway.app.config > $BUILD_DIR/api-gateway.app.config
+sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $CONFIG_DIR/comms.app.config > $BUILD_DIR/comms.app.config
+sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $CONFIG_DIR/auth.app.config > $BUILD_DIR/auth.app.config
+sed "s/{DOCKER_HOST_IP}/$DOCKER_HOST_IP/" $CONFIG_DIR/sessions.app.config > $BUILD_DIR/sessions.app.config

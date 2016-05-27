@@ -11,4 +11,4 @@ read HOST_IP
 
 sed "s/{PROXY_IP}/$HOST_IP/;s/{PORT}/$SERVICE_PORT/" $DIR/../config/proxy.default.conf > $BUILD_DIR/$SERVICE_ID.default.conf
 
-docker run -d --name $SERVICE_ID -v $BUILD_DIR/$SERVICE_ID.default.conf:/etc/nginx/conf.d/default.conf -p $SERVICE_PORT:$SERVICE_PORT nginx
+docker run -d --name ${SERVICE_ID}_proxy -v $BUILD_DIR/$SERVICE_ID.default.conf:/etc/nginx/conf.d/default.conf -p $SERVICE_PORT:$SERVICE_PORT nginx

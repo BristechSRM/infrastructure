@@ -58,12 +58,12 @@ let createCommsItem (groups : GroupCollection) speakerEmail adminEmail action =
                        Message = groups.[3].Value }
         | None -> 
             let message = sprintf "Parsing for direction for comms Action: %A failed" action
-            Log.Fatal(message)
+            Log.Error(message)
             failwith message
     with
         | ex -> 
             let message = sprintf "Parsing for date: %s for comms Action: %A failed with exception: %s" dateString action ex.Message
-            Log.Fatal(message)
+            Log.Error(message)
             failwith message
 
 let tryCreateCommsItem (card : TrelloCard) (action : BasicAction) = 
@@ -73,6 +73,6 @@ let tryCreateCommsItem (card : TrelloCard) (action : BasicAction) =
         | Some adminEmail -> createCommsItem groups card.SpeakerEmail adminEmail action
         | None -> 
             let message = sprintf "Card: %A has commms comments attached, but no admin or the admin has no email? Please review the card and try again" card
-            Log.Fatal(message)
+            Log.Error(message)
             failwith message
     | _ -> None

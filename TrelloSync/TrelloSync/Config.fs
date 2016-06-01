@@ -19,11 +19,11 @@ let getUriConfig (key : string) =
     with
     | :? UriFormatException as ex -> 
         let fullMessage = errorMessage + " " + ex.Message
-        Log.Fatal(fullMessage)
+        Log.Error(fullMessage)
         reraise()
     | ex -> 
         let fullMessage = errorMessage + " " + ex.Message
-        Log.Fatal(fullMessage)
+        Log.Error(fullMessage)
         reraise()  
 
 let getBoolConfig (key : string) =
@@ -31,7 +31,7 @@ let getBoolConfig (key : string) =
     | true , value -> value
     | _ -> 
         let message = sprintf "Could not parse configuration value for key: %s as boolean" key
-        Log.Fatal(message)
+        Log.Error(message)
         failwith message
 
 let performImport = getBoolConfig "PerformImport"

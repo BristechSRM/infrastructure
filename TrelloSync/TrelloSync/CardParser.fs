@@ -26,7 +26,7 @@ let parseCard members { Card = card; RegexGroups = groups } =
             | None -> None, None
         | _ -> 
             let message = sprintf "Card: %A had multiple members attached, please remove additonal members so that there is one per card" card
-            Log.Fatal(message)
+            Log.Error(message)
             failwith message
 
     //Currently ignoring any date that is not on the first Thursday of the month. 

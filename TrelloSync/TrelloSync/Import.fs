@@ -25,7 +25,7 @@
             | Some id -> id 
             | None -> 
                 let message = "A speaker profile corresponding to the speaker attached to this card should have been added. If this code has been reached, an error occured with adding the speaker profile that was not detected."
-                Log.Fatal(message)
+                Log.Error(message)
                 failwith message
         
         let correspondence = 

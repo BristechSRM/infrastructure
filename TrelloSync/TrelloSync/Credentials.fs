@@ -25,6 +25,6 @@ let getTrelloCredentials() =
           Token = ConfigurationManager.AppSettings.Item("TrelloToken") }
 
     if String.IsNullOrWhiteSpace creds.Key || String.IsNullOrWhiteSpace creds.Token then 
-        Log.Fatal(missingCredentialsMessage)
+        Log.Error(missingCredentialsMessage)
         failwith missingCredentialsMessage
     else creds

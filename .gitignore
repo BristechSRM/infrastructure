@@ -246,6 +246,8 @@ front/npm-debug.log.*
 
 # Output dir (build)
 build/output/
+TrelloSync/build/output/
+
 
 # Nuget stuff (can be install with build.sh)
 .nuget/
@@ -257,6 +259,7 @@ build/output/
 concourse/credentials.yml
 
 bristech-speakers-export.json
+TrelloSync/trello-import.json
 
 TrelloCreds.config
 

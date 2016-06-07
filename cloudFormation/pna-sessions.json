@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
+  "Resources": {
+    "pnasessions" : {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "sessions",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "pna-sessions"
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ "sg-ab8c36cc" ],
+            "SubnetId": "subnet-488a9f11"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
   "Resources": {
     "pnasgssh": {
       "Type": "AWS::EC2::SecurityGroup",

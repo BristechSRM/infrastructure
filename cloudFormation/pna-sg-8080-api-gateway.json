@@ -1,0 +1,27 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
+  "Resources": {
+    "pnasgssh": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 8080 from api-gateway I/P",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "8080",
+            "ToPort": "8080",
+            "CidrIp": "52.50.88.117/32"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "pna-sg-8080-api-gateway"
+          }
+        ],
+        "VpcId": "vpc-d8c5debd"
+      }
+    }
+  }
+}

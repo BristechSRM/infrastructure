@@ -1,17 +1,27 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Paul's test stack",
+  "Parameters": {
+    "apiEIP": {
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "15",
+      "Default": "null",
+      "Description": "The Elastic IP"
+    }
+  },
+
   "Resources": {
-    "pnacomms" : {
+    "pnaapigateway" : {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "ImageId": "ami-f95ef58a",
         "InstanceType": "t2.micro",
-        "KeyName": "comms",
+        "KeyName": "api-gateway",
         "Tags": [
           {
             "Key": "Name",
-            "Value": "pna-comms"
+            "Value": "pna-api-gateway"
           }
         ],
         "NetworkInterfaces" : [
@@ -22,6 +32,18 @@
             "SubnetId": "subnet-488a9f11"
           }
         ]
+      }
+    },
+
+    "apiEIPAssociation": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Properties": {
+        "EIP": {
+          "Ref": "apiEIP"
+        },
+        "InstanceId": {
+          "Ref": "pnaapigateway"
+        }
       }
     }
   }

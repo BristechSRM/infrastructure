@@ -8,6 +8,12 @@
 
 ## Developing a service
 - Run docker ps
-- Run docker stop {SERVICE_NAME}
+- Run docker stop {SERVICE_NAME} 
+  - (The services that are currently avaliable for swapping can be found in utils/servicePortMapping.sh
 - Run ./utils/runProxy.sh
 - Run service with correctly configured ip addresses and port mappings
+
+## Stop developing a service (Return to original state) without reset
+- Run docker ps -a (The proxy service will be called {SERVICE_NAME}_PROXY)
+- Run docker stop {PROXY_NAME}
+- Run docker start {SERVICE_NAME}

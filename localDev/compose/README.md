@@ -15,5 +15,5 @@
 
 ## Stop developing a service (Return to original state) without reset
 - Run docker ps -a (The proxy service will be called {SERVICE_NAME}_PROXY)
-- Run docker stop {{SERVICE_NAME}_NAME}
-- Run docker start {ORIGINAL_SERVICE_NAME}
+- Run docker stop {PROXY_NAME}
+- Run docker start {SERVICE_NAME}

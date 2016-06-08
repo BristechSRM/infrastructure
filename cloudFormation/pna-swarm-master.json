@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Paul's test stack",
   "Resources": {
-    "pnaswarmmaster" : {
+    "pnaSwarmMaster" : {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "ImageId": "ami-f95ef58a",

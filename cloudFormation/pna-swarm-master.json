@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
+  "Resources": {
+    "pnaswarmmaster" : {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "swarm-master",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "pna-swarmmaster"
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ "sg-477cc620" ],
+            "SubnetId": "subnet-488a9f11"
+          }
+        ]
+      }
+    }
+  }
+}

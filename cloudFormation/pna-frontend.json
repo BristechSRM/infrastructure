@@ -1,0 +1,50 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
+  "Parameters": {
+    "frontendEIP": {
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "15",
+      "Default": "null",
+      "Description": "The Elastic IP"
+    }
+  },
+
+  "Resources": {
+    "pnafrontend" : {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "frontend",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "pna-frontend"
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ "sg-477cc620", "sg-3463d953" ],
+            "SubnetId": "subnet-488a9f11"
+          }
+        ]
+      }
+    },
+
+    "frontendEIPAssociation": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Properties": {
+        "EIP": {
+          "Ref": "frontendEIP"
+        },
+        "InstanceId": {
+          "Ref": "pnafrontend"
+        }
+      }
+    }
+  }
+}

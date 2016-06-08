@@ -1,0 +1,28 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
+  "Resources": {
+    "pnaconsul" : {
+      "Type": "AWS::EC2::Instance",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "pna-consul",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "pna-consul"
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ "sg-477cc620", "sg-901095f7" ],
+            "SubnetId": "subnet-488a9f11"
+          }
+        ]
+      }
+    }
+  }
+}

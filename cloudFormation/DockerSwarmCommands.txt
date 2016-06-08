@@ -1,0 +1,38 @@
+//Create a consul server
+docker-machine create -d amazonec2 --amazonec2-region eu-west-1 --amazonec2-vpc-id vpc-d8c5debd --amazonec2-zone a --amazonec2-subnet-id subnet-488a9f11 --amazonec2-security-group docker_swarm_services consul
+eval "$(docker-machine env consul)"
+docker run -d \
+    -p "8500:8500" \
+    -h "consul" \
+    progrium/consul -server -bootstrap
+
+//Need to change server's hostname to the service name.
+//This is found in /etc/hostname .The file should now be a single line containing nothing but the node's name.
+//Add the following to the end of /etc/hosts
+127.0.1.1 [node-name]
+
+sudo service hostname restart
+
+//Upgrade the kernel
+sudo apt-get update
+sudo apt-get install -y linux-generic-lts-vivid
+
+//Install docker
+curl -fsSL https://get.docker.com/ | sh
+sudo usermod -aG docker ubuntu
+
+//Edit this file on every node, look for the line with 'DOCKET_OPTS'. Remember to use the node's private ip (Not public)
+/etc/default/docker
+DOCKET_OPTS="--tls=false -H tcp://{private-ip}:2375 -H unix:///var/run/docker.sock --cluster-store=consul://10.0.1.50:8500 --cluster-advertise={private-ip}:2375"
+
+// Restart docker
+sudo service docker restart
+
+//Run this on the swarm master
+docker run --restart=always -d -p 3376:2375 swarm manage consul://10.0.1.50:8500
+
+//Run this on every node (except swarm master). Remember to use the node's private ip (Not public)
+docker run --restart=always -d -p 2376:2375 swarm join --advertise {private-ip}:2375 consul://10.0.1.50:8500
+
+//Once all the machines are running, create an overlay. Run this on any node (just once)
+docker -H :3376 network create --driver overlay --subnet 10.0.2.0/24 overlay

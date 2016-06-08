@@ -1,0 +1,21 @@
+# General access SL
+aws cloudformation create-stack --stack-name pna-sg-ssh-ScottLogic --template-body file://pna-sg-ssh-ScottLogic.json
+aws cloudformation create-stack --stack-name pna-sg-8080-ScottLogic --template-body file://pna-sg-8080-ScottLogic.json
+
+# Gateway
+aws cloudformation create-stack --stack-name pna-api-gateway --template-body file://pna-api-gateway.json --parameters ParameterKey=apiEIP,ParameterValue=52.50.88.117
+aws cloudformation create-stack --stack-name pna-sg-8080-api-gateway --template-body file://pna-sg-8080-api-gateway.json
+
+# Servers
+aws cloudformation create-stack --stack-name pna-comms --template-body file://pna-comms.json
+aws cloudformation create-stack --stack-name pna-sessions --template-body file://pna-sessions.json
+aws cloudformation create-stack --stack-name pna-auth --template-body file://pna-auth.json --parameters ParameterKey=authEIP,ParameterValue=52.51.54.255
+aws cloudformation create-stack --stack-name pna-frontend --template-body file://pna-frontend.json --parameters ParameterKey=frontendEIP,ParameterValue=52.50.27.136
+
+# Swarm
+aws cloudformation create-stack --stack-name pna-swarm-master --template-body file://pna-swarm-master.json
+
+aws cloudformation create-stack --stack-name pna-sg-8500-swarm-master --template-body file://pna-sg-8500-swarm-master.json
+aws cloudformation create-stack --stack-name pna-consul --template-body file://pna-consul.json
+
+

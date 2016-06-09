@@ -1,0 +1,27 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Paul's test stack",
+  "Resources": {
+    "pnasg2375AllNodes": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 2375 from all nodes",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "2375",
+            "ToPort": "2375",
+            "CidrIp": "10.0.1.0/24"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "pna-sg-2375-all-nodes"
+          }
+        ],
+        "VpcId": "vpc-d8c5debd"
+      }
+    }
+  }
+}

@@ -18,7 +18,7 @@
           {
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
-            "GroupSet": [ "sg-477cc620" ],
+            "GroupSet": [ "sg-7830b61f" ],
             "SubnetId": "subnet-488a9f11"
           }
         ]

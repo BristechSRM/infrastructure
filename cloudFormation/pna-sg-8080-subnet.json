@@ -2,22 +2,22 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Paul's test stack",
   "Resources": {
-    "pnasg8500AllNodes": {
+    "pnasg8080Subnet": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "GroupDescription": "Allow 8500 from all nodes",
+        "GroupDescription": "Allow 8080 from subnet",
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": "8500",
-            "ToPort": "8500",
+            "FromPort": "8080",
+            "ToPort": "8080",
             "CidrIp": "10.0.1.0/24"
           }
         ],
         "Tags": [
           {
             "Key": "Name",
-            "Value": "pna-sg-8500-all-nodes"
+            "Value": "pna-sg-8080-subnet"
           }
         ],
         "VpcId": "vpc-d8c5debd"

@@ -3,7 +3,7 @@
 # For now
 > curl -fsSL https://get.docker.com/ | sh
 > sudo usermod -aG docker ubuntu
-DOCKER_OPTS="-D -H tcp://{private-ip}:2375"
+DOCKER_OPTS="-D -H tcp://{private-ip}:2375 --cluster-advertise={private-ip}:2375 --cluster-store=consul://10.0.1.249:8500"
 > sudo restart docker
 
 # Consul
@@ -11,6 +11,12 @@ docker -H tcp://{private-ip}:2375 run -d -p "8500:8500" -h "consul" progrium/con
 > docker -H tcp://{private-ip}:2375 ps
 > telnet {private-ip} 8500
 > GET /v1/kv/docker HTTP/1.1
+
+
+# Overlay
+docker -H tcp://{private-ip}:4000 network create --driver overlay --subnet 10.0.7.0/24 pna-net
+
+
 
 # Swarm Master
 docker -H tcp://{private-ip}:2375 run -d -p 4000:2375 swarm -l debug manage consul://10.0.1.249:8500
@@ -25,5 +31,3 @@ docker -H tcp://{private-ip}:2375 run -d swarm join --advertise {private-ip}:237
 > telnet {private-ip} 4000
 > GET /help HTTP/1.1
 
-#
-docker -H tcp://{private-ip}:4000 network create --driver overlay --subnet 10.0.2.0/24 overlay

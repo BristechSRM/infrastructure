@@ -1,3 +1,8 @@
+# ---------------
+# ALL
+# ---------------
+
+# Test Instance DHCP
 > sudo true
 
 # Versioned docker
@@ -12,7 +17,9 @@ DOCKER_OPTS="-D -H tcp://{private-ip}:2375 --cluster-advertise={private-ip}:2375
 > sudo usermod -aG docker ubuntu
 > ^D
 
+# ---------------
 # Consul
+# ---------------
 docker -H tcp://{private-ip}:2375 run -d -p "8500:8500" -h "consul" progrium/consul -server -bootstrap -log-level=trace
 > docker -H tcp://{private-ip}:2375 ps
 > telnet {private-ip} 8500
@@ -21,45 +28,62 @@ docker -H tcp://{private-ip}:2375 run -d -p "8500:8500" -h "consul" progrium/con
 # APPLY 8500 SUBNET SG TO consul
 
 
-# Overlay network, once, on any
-docker -H tcp://{private-ip}:2375 network create --driver overlay --subnet 10.0.7.0/24 pna-net
-> docker -H tcp://{private-ip}:2375 network ls
-
-
-
-# Nodes
+# ---------------
+# Comms
+# ---------------
 docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/comms
 > curl localhost:8080 http://localhost:8080/last-contact
 
+# ---------------
+# Sessions
+# ---------------
 docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/sessions
 > curl localhost:8080 http://localhost:8080/sessions
 
 # APPLY 8080 SUBNET SG to comms, sessions
 
+# ---------------
 # Auth
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/auth
+# ---------------
+# docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 --env=AWS_ACCESS_KEY_ID={access-key-id} --env=AWS_SECRET_ACCESS_KEY={secret-key} bristechsrm/auth
+docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/auth.config:/service/Auth.exe.config bristechsrm/api-gateway
 
-
+# ---------------
 # Api
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/api-gateway
+# ---------------
+docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/api.config:/service/ApiGateway.exe.config bristechsrm/api-gateway
 > curl localhost:8080 http://localhost:8080/sessions
 > curl {sessions-hostname}:8080 http://{sessions-hostname}:8080/sessions
 
+# ---------------
+# Frontend
+# ---------------
+docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/config.json:/frontend/public/js/config.json bristechsrm/frontend
 
+
+# ---------------
 # Swarm Master
-docker -H tcp://{private-ip}:2375 run -d -p 4000:2375 swarm -l debug manage consul://10.0.1.249:8500
+# ---------------
+docker -H tcp://{private-ip}:2375 run -d -p 4000:2375 swarm -l debug manage consul://{consul-ip}:8500
 > docker -H tcp://{private-ip}:2375 ps
 > docker -H tcp://{private-ip}:4000 info
 
+# ---------------
 # Swarm Agents
-docker -H tcp://{private-ip}:2375 run -d swarm join --advertise {private-ip}:2375 consul://10.0.1.249:8500
+# ---------------
+docker -H tcp://{private-ip}:2375 run -d swarm join --advertise {private-ip}:2375 consul://{consul-ip}:8500
 > docker -H tcp://{private-ip}:2375 ps
 
+# ---------------
+# Overlay network, once, on any
+# ---------------
+docker -H tcp://{private-ip}:2375 network create --driver overlay --subnet 10.0.7.0/24 pna-net
+> docker -H tcp://{private-ip}:2375 network ls
 
+
+# ---------------
 # TODO
-# docker rest api
-> telnet {private-ip} 2375
-> GET /something HTTP/1.1
-
-> telnet {private-ip} 4000
+# ---------------
+# can we have a test of docker using rest api ?
+> telnet {private-ip} 2375 | 4000
 > GET /something HTTP/1.1

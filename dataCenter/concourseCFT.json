@@ -5,22 +5,14 @@
       "Type": "String",
       "Description": "VpcId of your existing VPC containing your services"
     },
-    "ServicesSubnetId": {
-      "Type": "String",
-      "Description": "SubnetId of your existing services subnet"
-    },
     "ConcourseDBPassword": {
       "Type": "String",
-      "Description": "Password for the concourse database",
+      "Description": "Password for the Concourse database",
       "NoEcho": true
     },
     "DBName": {
       "Type": "String",
       "Description": "Database name"
-    },
-    "VPCGateWayId": {
-      "Type": "String",
-      "Description": "VPC gateway id"
     },
     "ConcourseUsername": {
       "Type": "String",
@@ -36,9 +28,9 @@
       "Description": "AWS AccessId. Must have permission to read s3 bucket containing secret key.",
       "NoEcho": true
     },
-    "SecretKey": {
+    "AWSSecretKey": {
       "Type": "String",
-      "Description": "AWS SecretKey. Must have permission to read s3 bucket containing secret key. This is used only to fetch private ssh key, after which it is securely deleted.",
+      "Description": "AWS Secret Key. Must have permission to read s3 bucket containing secret key. This is used only to fetch private ssh key, after which it is securely deleted.",
       "NoEcho": true
     },
     "KeyName": {
@@ -47,19 +39,23 @@
     },
     "KeysBucketName": {
       "Type": "String",
-      "Description": "Bucket name containing the concourse ssh keys"
+      "Description": "Bucket name containing the Concourse ssh keys"
     },
     "ConcourseElasticIP": {
       "Type": "String",
-      "Description": "Elastic IP for the concourse atc"
+      "Description": "Elastic IP for the Concourse atc"
     },
     "ServicesSecurityGroup": {
       "Type": "String",
       "Description": "Id of the services security group"
+    },
+    "ConcourseExternalUrl": {
+      "Type": "String",
+      "Description": "External url for the concoures atc. This needs to be mapped to the concourse elastic ip used."
     }
   },
   "Resources": {
-    "concoursePostgres": {
+    "ConcoursePostgres": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "10.0.7.0/24",
@@ -70,12 +66,12 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "concourse_postgres"
+            "Value": "ConcoursePostgres"
           }
         ]
       }
     },
-    "concourse": {
+    "Concourse": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "CidrBlock": "10.0.5.0/24",
@@ -100,35 +96,7 @@
         ]
       }
     },
-    "rtb7931fb1d": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": {
-          "Ref": "VpcId"
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "concourse"
-          }
-        ]
-      }
-    },
-    "rtbf4dc0590": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": {
-          "Ref": "VpcId"
-        },
-        "Tags": [
-          {
-            "Key": "Name",
-            "Value": "concoures_to_swarm"
-          }
-        ]
-      }
-    },
-    "rdsconcourse": {
+    "RDSConcourse": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
         "AllocatedStorage": "10",
@@ -142,8 +110,6 @@
         "MasterUserPassword": {
           "Ref": "ConcourseDBPassword"
         },
-        "PreferredBackupWindow": "04:33-05:03",
-        "PreferredMaintenanceWindow": "tue:23:57-wed:00:27",
         "DBName": {
           "Ref": "DBName"
         },
@@ -151,7 +117,7 @@
         "EngineVersion": "9.3.10",
         "LicenseModel": "postgresql-license",
         "DBSubnetGroupName": {
-          "Ref": "dbsubnetdefaultvpcd8c5debd"
+          "Ref": "DBSubnetGroup"
         },
         "VPCSecurityGroups": [
           {
@@ -170,16 +136,16 @@
       "Type": "AWS::EC2::EIPAssociation",
       "Properties": {
         "InstanceId": {
-          "Ref": "concourseAtc"
+          "Ref": "ConcourseAtc"
         },
         "EIP": {
           "Ref": "ConcourseElasticIP"
         }
       }
     },
-    "concourseAtc": {
+    "ConcourseAtc": {
       "Type": "AWS::EC2::Instance",
-      "DependsOn": "rdsconcourse",
+      "DependsOn": "RDSConcourse",
       "Metadata": {
         "AWS::CloudFormation::Init": {
           "config": {
@@ -197,7 +163,7 @@
                       "\n",
                       "aws_secret_access_key = ",
                       {
-                        "Ref": "SecretKey"
+                        "Ref": "AWSSecretKey"
                       }
                     ]
                   ]
@@ -219,7 +185,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "concourse_atc_cft"
+            "Value": "Concourse_atc"
           }
         ],
         "NetworkInterfaces": [
@@ -229,14 +195,8 @@
             "Description": "Primary network interface",
             "DeviceIndex": 0,
             "SubnetId": {
-              "Ref": "concourse"
+              "Ref": "Concourse"
             },
-            "PrivateIpAddresses": [
-              {
-                "PrivateIpAddress": "10.0.5.80",
-                "Primary": "true"
-              }
-            ],
             "GroupSet": [
               {
                 "Ref": "ConcourseSecurityGroup"
@@ -250,7 +210,7 @@
               "",
               [
                 "#!/bin/bash\n",
-                "echo -e \"### BEGIN INIT INFO\n# Provides: concourse_web\n# Short-Description: Start concourse web\n# Description: Start concourse web\n### END INIT INFO\n\n\n#Start concourse as a non root user\nsudo -u ubuntu concourse web --basic-auth-username ",
+                "echo -e \"### BEGIN INIT INFO\n# Provides: Concourse_web\n# Short-Description: Start Concourse web\n# Description: Start Concourse web\n### END INIT INFO\n\n\n#Start Concourse as a non root user\nsudo -u ubuntu concourse web --basic-auth-username ",
                 {
                   "Ref": "ConcourseUsername"
                 },
@@ -258,10 +218,7 @@
                 {
                   "Ref": "ConcoursePassword"
                 },
-                " --session-signing-key /home/ubuntu/.ssh/session_signing_key --tsa-host-key /home/ubuntu/.ssh/host_key --tsa-authorized-keys /home/ubuntu/.ssh/authorized_worker_keys --postgres-data-source postgres://",
-                {
-                  "Ref": "DBName"
-                },
+                " --session-signing-key /home/ubuntu/.ssh/session_signing_key --tsa-host-key /home/ubuntu/.ssh/host_key --tsa-authorized-keys /home/ubuntu/.ssh/authorized_worker_keys --postgres-data-source postgres://concourse",
                 ":",
                 {
                   "Ref": "ConcourseDBPassword"
@@ -269,7 +226,7 @@
                 "@",
                 {
                   "Fn::GetAtt": [
-                    "rdsconcourse",
+                    "RDSConcourse",
                     "Endpoint.Address"
                   ]
                 },
@@ -280,7 +237,7 @@
                 " --external-url ",
                 "http://",
                 {
-                  "Ref": "ConcourseElasticIP"
+                  "Ref": "ConcourseExternalUrl"
                 },
                 ":8080",
                 " --publicly-viewable",
@@ -296,7 +253,7 @@
                 {
                   "Ref": "AWS::StackId"
                 },
-                " -r concourseAtc\n",
+                " -r ConcourseAtc\n",
                 "cd /home/ubuntu/.ssh\n",
                 "sudo -u ubuntu aws --region ",
                 {
@@ -318,7 +275,7 @@
         }
       }
     },
-    "concourseWorker": {
+    "ConcourseWorker": {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "DisableApiTermination": "false",
@@ -332,24 +289,17 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "Concourse_worker_cft"
+            "Value": "Concourse_worker"
           }
         ],
         "NetworkInterfaces": [
           {
-            "AssociatePublicIpAddress": true,
             "DeleteOnTermination": "true",
             "Description": "Primary network interface",
             "DeviceIndex": 0,
             "SubnetId": {
-              "Ref": "concourse"
+              "Ref": "Concourse"
             },
-            "PrivateIpAddresses": [
-              {
-                "PrivateIpAddress": "10.0.5.56",
-                "Primary": "true"
-              }
-            ],
             "GroupSet": [
               {
                 "Ref": "ConcourseSecurityGroup"
@@ -363,10 +313,10 @@
               "",
               [
                 "#!/bin/bash\n",
-                "echo -e \"### BEGIN INIT INFO\n# Provides: concourse_worker\n# Short-Description: Start concourse worker\n# Description: Start concourse worker\n### END INIT INFO\n\n\n#Start concourse\nconcourse worker --work-dir /opt/concourse/worker --tsa-host ",
+                "echo -e \"### BEGIN INIT INFO\n# Provides: Concourse_worker\n# Short-Description: Start Concourse worker\n# Description: Start Concourse worker\n### END INIT INFO\n\n\n#Start Concourse\nconcourse worker --work-dir /opt/concourse/worker --tsa-host ",
                 {
                   "Fn::GetAtt": [
-                    "concourseAtc",
+                    "ConcourseAtc",
                     "PrivateIp"
                   ]
                 },
@@ -382,7 +332,7 @@
                 {
                   "Ref": "AWS::StackId"
                 },
-                " -r concourseAtc\n",
+                " -r ConcourseWorker\n",
                 "cd /home/ubuntu/.ssh\n",
                 "sudo -u ubuntu aws --region ",
                 {
@@ -403,16 +353,16 @@
         }
       }
     },
-    "dbsubnetdefaultvpcd8c5debd": {
+    "DBSubnetGroup": {
       "Type": "AWS::RDS::DBSubnetGroup",
       "Properties": {
         "DBSubnetGroupDescription": "Created from the RDS Management Console",
         "SubnetIds": [
           {
-            "Ref": "concourse"
+            "Ref": "Concourse"
           },
           {
-            "Ref": "concoursePostgres"
+            "Ref": "ConcoursePostgres"
           }
         ]
       }
@@ -500,7 +450,7 @@
         "SourceSecurityGroupOwnerId": "574786877157"
       }
     },
-    "concourseToSwarmMaster": {
+    "ConcourseToSwarmMaster": {
       "Type": "AWS::EC2::SecurityGroupIngress",
       "Properties": {
         "GroupId": {
@@ -514,7 +464,7 @@
         }
       }
     },
-    "egress3": {
+    "OutGoingEgressConcourse": {
       "Type": "AWS::EC2::SecurityGroupEgress",
       "Properties": {
         "GroupId": {
@@ -524,7 +474,7 @@
         "CidrIp": "0.0.0.0/0"
       }
     },
-    "egress4": {
+    "OutGoingEgressConcourseDB": {
       "Type": "AWS::EC2::SecurityGroupEgress",
       "Properties": {
         "GroupId": {
@@ -535,5 +485,5 @@
       }
     }
   },
-  "Description": "concourse"
+  "Description": "Concourse"
 }

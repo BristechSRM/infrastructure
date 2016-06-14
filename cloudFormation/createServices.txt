@@ -20,24 +20,33 @@ DOCKER_OPTS="-D -H tcp://{private-ip}:2375 --cluster-advertise={private-ip}:2375
 # ---------------
 # Consul
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p "8500:8500" -h "consul" progrium/consul -server -bootstrap -log-level=trace
-> docker -H tcp://{private-ip}:2375 ps
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d -p "8500:8500" -h "consul" progrium/consul -server -bootstrap -log-level=trace
+> docker ps
 > telnet {private-ip} 8500
 > GET /v1/kv/docker HTTP/1.1
 
 # APPLY 8500 SUBNET SG TO consul
 
+# ---------------
+# Overlay network, once, on any
+# ---------------
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker network create --driver overlay --subnet 10.0.7.0/24 pna-net
+> docker network ls
 
 # ---------------
 # Comms
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/comms
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d -p 8080:8080 bristechsrm/comms
 > curl localhost:8080 http://localhost:8080/last-contact
 
 # ---------------
 # Sessions
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/sessions
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d -p 8080:8080 bristechsrm/sessions
 > curl localhost:8080 http://localhost:8080/sessions
 
 # APPLY 8080 SUBNET SG to comms, sessions
@@ -45,40 +54,42 @@ docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 bristechsrm/sessions
 # ---------------
 # Auth
 # ---------------
-# docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 --env=AWS_ACCESS_KEY_ID={access-key-id} --env=AWS_SECRET_ACCESS_KEY={secret-key} bristechsrm/auth
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/auth.config:/service/Auth.exe.config bristechsrm/api-gateway
+export DOCKER_HOST=tcp://{private-ip}:2375
+# docker run -d -p 8080:8080 --env=AWS_ACCESS_KEY_ID={access-key-id} --env=AWS_SECRET_ACCESS_KEY={secret-key} bristechsrm/auth
+# -or-
+docker run -d -p 8080:8080 -v /home/ubuntu/auth.config:/service/Auth.exe.config bristechsrm/auth
 
 # ---------------
 # Api
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/api.config:/service/ApiGateway.exe.config bristechsrm/api-gateway
-> curl localhost:8080 http://localhost:8080/sessions
-> curl {sessions-hostname}:8080 http://{sessions-hostname}:8080/sessions
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d -p 8080:8080 -v /home/ubuntu/api.config:/service/ApiGateway.exe.config bristechsrm/api-gateway
+> curl http://localhost:8080/sessions
+> curl http://{sessions-hostname}:8080/sessions
 
 # ---------------
 # Frontend
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/config.json:/frontend/public/js/config.json bristechsrm/frontend
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d -p 80:8080 -v /home/ubuntu/config.json:/frontend/public/js/config.json bristechsrm/frontend
 
 
 # ---------------
 # Swarm Master
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p 3376:2375 swarm -l debug manage consul://{consul-ip}:8500
-> docker -H tcp://{private-ip}:2375 ps
-> docker -H tcp://{private-ip}:3376 info
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d -p 3376:2375 swarm -l debug manage consul://{consul-ip}:8500
+> docker ps
+> docker -H :3376 info
 
 # ---------------
 # Swarm Agents
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d swarm join --advertise {private-ip}:2375 consul://{consul-ip}:8500
-> docker -H tcp://{private-ip}:2375 ps
+export DOCKER_HOST=tcp://{private-ip}:2375
+docker run -d swarm join --advertise {private-ip}:2375 consul://{consul-ip}:8500
+> docker ps
 
-# ---------------
-# Overlay network, once, on any
-# ---------------
-docker -H tcp://{private-ip}:2375 network create --driver overlay --subnet 10.0.7.0/24 pna-net
-> docker -H tcp://{private-ip}:2375 network ls
+
 
 
 # ---------------

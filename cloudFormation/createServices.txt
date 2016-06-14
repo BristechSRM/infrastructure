@@ -64,9 +64,9 @@ docker -H tcp://{private-ip}:2375 run -d -p 8080:8080 -v /home/ubuntu/config.jso
 # ---------------
 # Swarm Master
 # ---------------
-docker -H tcp://{private-ip}:2375 run -d -p 4000:2375 swarm -l debug manage consul://{consul-ip}:8500
+docker -H tcp://{private-ip}:2375 run -d -p 3376:2375 swarm -l debug manage consul://{consul-ip}:8500
 > docker -H tcp://{private-ip}:2375 ps
-> docker -H tcp://{private-ip}:4000 info
+> docker -H tcp://{private-ip}:3376 info
 
 # ---------------
 # Swarm Agents
@@ -85,5 +85,5 @@ docker -H tcp://{private-ip}:2375 network create --driver overlay --subnet 10.0.
 # TODO
 # ---------------
 # can we have a test of docker using rest api ?
-> telnet {private-ip} 2375 | 4000
+> telnet {private-ip} 2375 | 3376
 > GET /something HTTP/1.1

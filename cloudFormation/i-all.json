@@ -1,0 +1,263 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Instances",
+  "Parameters": {
+    "environment": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The environment tag"
+    },
+    "subnet": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The subnet to put it in"
+    },
+    "groupSet": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The main security group to apply"
+    },
+    "authEIP": {
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "15",
+      "Default": "null",
+      "Description": "Auth Elastic IP"
+    },
+    "apiEIP": {
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "15",
+      "Default": "null",
+      "Description": "ApiGateway Elastic IP"
+    },
+    "frontendEIP": {
+      "Type": "String",
+      "MinLength": "4",
+      "MaxLength": "15",
+      "Default": "null",
+      "Description": "Frontend Elastic IP"
+    }
+  },
+
+  "Resources": {
+
+    "consul" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Consul host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "pna-consul",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "consul"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+
+    "swarmMaster" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Swarm Master host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "swarm-master",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "swarm-master"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+
+    "comms" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Comms service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "comms",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "comms"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+
+    "sessions" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Sessions service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "sessions",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sessions"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+
+    "auth" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Auth service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "auth",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "auth"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+    "authEIPAssociation": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Properties": {
+        "EIP": { "Ref": "authEIP" },
+        "InstanceId": { "Ref": "auth" }
+      }
+    },
+
+    "apiGateway" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "ApiGateway service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "api-gateway",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "api-gateway"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+    "apiEIPAssociation": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Properties": {
+        "EIP": { "Ref": "apiEIP" },
+        "InstanceId": { "Ref": "auth" }
+      }
+    },
+
+    "frontend" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Frontend host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "frontend",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "frontend"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
+          }
+        ]
+      }
+    },
+    "frontendEIPAssociation": {
+      "Type": "AWS::EC2::EIPAssociation",
+      "Properties": {
+        "EIP": { "Ref": "frontendEIP" },
+        "InstanceId": { "Ref": "auth" }
+      }
+    }
+
+  }
+}

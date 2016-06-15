@@ -2,7 +2,7 @@
 # ALL boxes
 # Versioned docker (cut, paste, and run)
 # ---------------
-./installDocker.sh ${consul-ip}
+./installDocker.sh {consul-ip}
 
 # ---------------
 # Consul

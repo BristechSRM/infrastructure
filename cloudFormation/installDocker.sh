@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -eu
 
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 consul-ip"

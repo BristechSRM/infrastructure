@@ -9,14 +9,14 @@ aws cloudformation create-stack --stack-name pna-sg-80-ScottLogic --template-bod
 
 # Edit each to update ssh from SL security group Id, and...
 # Consul
-aws cloudformation create-stack --stack-name pna-consul --template-body file://pna-consul.json
+aws cloudformation create-stack --stack-name pna-consul --template-body file://i-consul.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f
 
 # Nodes
-aws cloudformation create-stack --stack-name pna-comms --template-body file://pna-comms.json
-aws cloudformation create-stack --stack-name pna-sessions --template-body file://pna-sessions.json
-aws cloudformation create-stack --stack-name pna-auth --template-body file://pna-auth.json --parameters ParameterKey=authEIP,ParameterValue=52.51.54.255
-aws cloudformation create-stack --stack-name pna-api-gateway --template-body file://pna-api-gateway.json --parameters ParameterKey=apiEIP,ParameterValue=52.50.88.117
-aws cloudformation create-stack --stack-name pna-frontend --template-body file://pna-frontend.json --parameters ParameterKey=frontendEIP,ParameterValue=52.50.27.136
+aws cloudformation create-stack --stack-name pna-comms --template-body file://i-comms.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f
+aws cloudformation create-stack --stack-name pna-sessions --template-body file://i-sessions.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f
+aws cloudformation create-stack --stack-name pna-auth --template-body file://i-auth.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f ParameterKey=EIP,ParameterValue=52.51.54.255
+aws cloudformation create-stack --stack-name pna-api-gateway --template-body file://i-api-gateway.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f ParameterKey=EIP,ParameterValue=52.50.88.117
+aws cloudformation create-stack --stack-name pna-frontend --template-body file://i-frontend.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f ParameterKey=EIP,ParameterValue=52.50.27.136
 
 # Swarm Master
-aws cloudformation create-stack --stack-name pna-swarm-master --template-body file://pna-swarm-master.json
+aws cloudformation create-stack --stack-name pna-swarm-master --template-body file://i-swarm-master.json --parameters ParameterKey=subnet,ParameterValue=subnet-488a9f11 ParameterKey=groupSet,ParameterValue=sg-7830b61f

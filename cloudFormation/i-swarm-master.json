@@ -1,8 +1,21 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Paul's test stack",
+  "Description": "Swarm Master host",
+  "Parameters": {
+    "subnet": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The subnet to put it in"
+    },
+    "groupSet": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The main security group to apply"
+    }
+  },
+
   "Resources": {
-    "pnaSwarmMaster" : {
+    "swarmMaster" : {
       "Type": "AWS::EC2::Instance",
       "Properties": {
         "ImageId": "ami-f95ef58a",
@@ -11,15 +24,15 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "pna-swarmmaster"
+            "Value": "swarmmaster"
           }
         ],
         "NetworkInterfaces" : [
           {
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
-            "GroupSet": [ "sg-7830b61f" ],
-            "SubnetId": "subnet-488a9f11"
+            "GroupSet": [ { "Ref" : "groupSet" } ],
+            "SubnetId": { "Ref" : "subnet" }
           }
         ]
       }

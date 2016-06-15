@@ -7,7 +7,7 @@ fi
 
 ENVIRONMENT_TAG=$1
 SUBNET_ID=$2
-GROUPSET_ID=$2
+GROUPSET_ID=$3
 
 aws cloudformation create-stack --stack-name i-all --template-body file://i-all.json --parameters \
     ParameterKey=environment,ParameterValue=${ENVIRONMENT_TAG} \

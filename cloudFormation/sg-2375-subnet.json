@@ -2,22 +2,22 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Paul's test stack",
   "Resources": {
-    "pnasg8080Subnet": {
+    "sg2375Subnet": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "GroupDescription": "Allow 8080 from subnet",
+        "GroupDescription": "Allow 2375 from subnet",
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": "8080",
-            "ToPort": "8080",
+            "FromPort": "2375",
+            "ToPort": "2375",
             "CidrIp": "10.0.1.0/24"
           }
         ],
         "Tags": [
           {
             "Key": "Name",
-            "Value": "pna-sg-8080-subnet"
+            "Value": "sg-2375-subnet"
           }
         ],
         "VpcId": "vpc-d8c5debd"

@@ -2,22 +2,22 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Paul's test stack",
   "Resources": {
-    "pnasg8080ScottLogic": {
+    "sg8080Subnet": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "GroupDescription": "Allow 8080 from ScottLogic Bristol",
+        "GroupDescription": "Allow 8080 from subnet",
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
             "FromPort": "8080",
             "ToPort": "8080",
-            "CidrIp": "90.155.100.125/32"
+            "CidrIp": "10.0.1.0/24"
           }
         ],
         "Tags": [
           {
             "Key": "Name",
-            "Value": "pna-sg-8080-ScottLogic"
+            "Value": "sg-8080-subnet"
           }
         ],
         "VpcId": "vpc-d8c5debd"

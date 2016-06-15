@@ -2,7 +2,7 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "Paul's test stack",
   "Resources": {
-    "pnasg80ScottLogic": {
+    "sg80ScottLogic": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription": "Allow 80 from ScottLogic Bristol",
@@ -17,7 +17,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "pna-sg-80-ScottLogic"
+            "Value": "sg-80-ScottLogic"
           }
         ],
         "VpcId": "vpc-d8c5debd"

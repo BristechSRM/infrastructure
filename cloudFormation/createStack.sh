@@ -12,7 +12,7 @@ AUTH_EIP=$4
 API_EIP=$5
 FRONTEND_EIP=$6
 
-aws cloudformation create-stack --stack-name srm-all --template-body file://srm-all.json --parameters \
+aws cloudformation create-stack --stack-name ${ENVIRONMENT_TAG}-srm-all --template-body file://srm-all.json --parameters \
     ParameterKey=environment,ParameterValue=${ENVIRONMENT_TAG} \
     ParameterKey=vpcId,ParameterValue=${VPC_ID} \
     ParameterKey=subnet,ParameterValue=${SUBNET_ID} \

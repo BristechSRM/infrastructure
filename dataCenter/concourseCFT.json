@@ -51,7 +51,7 @@
     },
     "ConcourseExternalUrl": {
       "Type": "String",
-      "Description": "External url for the concoures atc. This needs to be mapped to the concourse elastic ip used."
+      "Description": "External url for the concourse atc. This needs to be mapped to the concourse elastic ip used."
     }
   },
   "Resources": {
@@ -441,8 +441,7 @@
         "ToPort": "2222",
         "SourceSecurityGroupId": {
           "Ref": "ConcourseSecurityGroup"
-        },
-        "SourceSecurityGroupOwnerId": "574786877157"
+        }
       }
     },
     "ConcourseATCAccess": {

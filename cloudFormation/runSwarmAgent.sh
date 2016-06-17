@@ -9,4 +9,4 @@ CONSUL_IP=$1
 PRIVATE_IP=$(ifconfig eth0 | awk '/inet addr/{split($2,a,":"); print a[2]}')
 DOCKER_HOST="tcp://${PRIVATE_IP}:2375"
 
-sudo docker -H ${DOCKER_HOST} run -d swarm join --advertise {PRIVATE_IP}:2375 consul://{CONSUL_IP}:8500
+sudo docker -H ${DOCKER_HOST} run -d swarm join --advertise ${DOCKER_HOST} consul://${CONSUL_IP}:8500

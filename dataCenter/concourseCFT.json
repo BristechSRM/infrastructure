@@ -342,7 +342,7 @@
                     "PrivateIp"
                   ]
                 },
-                " --tsa-public-key host_key.pub --tsa-worker-private-key worker_key \" > /etc/init.d/concourse_worker\n",
+                " --tsa-public-key /home/ubuntu/.ssh/host_key.pub --tsa-worker-private-key /home/ubuntu/.ssh/worker_key \" > /etc/init.d/concourse_worker\n",
                 "chmod +x /etc/init.d/concourse_worker\n",
                 "apt-get -y install python-setuptools awscli\n",
                 "easy_install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",

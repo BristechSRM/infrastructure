@@ -15,9 +15,6 @@ overlay=$(echo $buffer | jq -r '.source.overlay')
 accessKeyId=$(echo $buffer | jq -r '.source.accessKeyId')
 secretAccessKey=$(echo $buffer | jq -r '.source.secretAccessKey')
 
-#Remove surrounding quotes from repository
-#repository=$repository | sed -e 's/^"//'  -e 's/"$//'
-
 export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
 
 docker stop ${serviceName}
@@ -27,6 +24,6 @@ set -eu
 
 docker pull ${repository}
 
-docker run -d -p ${portNumber}:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} --env AWS_ACCESS_KEY_ID=${accessKeyId} --env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
+docker run -d -p ${portNumber}:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

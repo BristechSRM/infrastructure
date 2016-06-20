@@ -8,6 +8,7 @@ buffer=$(cat)
 #Extract variables from json
 serviceName=$(echo $buffer | jq -r '.source.serviceName')
 nodeName=$(echo $buffer | jq -r '.source.nodeName')
+portNumber=$(echo $buffer | jq -r '.source.portNumber')
 swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 repository=$(echo $buffer | jq -r '.source.repository')
 overlay=$(echo $buffer | jq -r '.source.overlay')
@@ -22,8 +23,10 @@ export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
 docker stop ${serviceName}
 docker rm ${serviceName}
 
+set -eu
+
 docker pull ${repository}
 
-docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} --env AWS_ACCESS_KEY_ID=${accessKeyId} --env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
+docker run -d -p ${portNumber}:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} --env AWS_ACCESS_KEY_ID=${accessKeyId} --env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

@@ -39,9 +39,9 @@ docker network create --driver overlay overlay
 
 
 
-# ---------------
+# ===============
 # Manual startup
-# ---------------
+# ===============
 
 # ---------------
 # SSH onto Comms host and...
@@ -87,11 +87,18 @@ wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infr
 
 
 
-# ---------------
+# ===============
 # Swarm Master startup
-# ---------------
-docker run -d -p 8080:8080 --name=commms --net=bridge --env=constraint:node==ip-10-0-1-116 bristechsrm/comms
+# ===============
+docker run -d -p 8080:8080 --name=commms --net=bridge --env=constraint:node==ip-10-0-1-116 \
+    -v /home/ubuntu/prd.comms.config:/service/Comms.exe.config -v /home/ubuntu/secrets.comms.config:/service/secrets.config  bristechsrm/comms
+
 docker run -d -p 8080:8080 --name=sessions --net=bridge --env=constraint:node==ip-10-0-1-156 bristechsrm/sessions
-docker run -d -p 8080:8080 --name=auth --net=bridge --env=constraint:node==ip-10-0-1-218 bristechsrm/auth
-docker run -d -p 8080:8080 --name=apigateway --net=bridge --env=constraint:node==ip-10-0-1-32 bristechsrm/api-gateway
+
+docker run -d -p 8080:8080 --name=auth --net=bridge --env=constraint:node==ip-10-0-1-218 \
+    -v /home/ubuntu/prd.auth.config:/service/Auth.exe.config -v /home/ubuntu/secrets.auth.config:/service/secrets.config bristechsrm/auth
+
+docker run -d -p 8080:8080 --name=apigateway --net=bridge --env=constraint:node==ip-10-0-1-32 \
+    -v /home/ubuntu/prd.apigateway.config:/service/ApiGateway.exe.config bristechsrm/api-gateway
+
 docker run -d -p 80:8080 --name=frontend --net=bridge --env=constraint:node==ip-10-0-1-242 bristechsrm/frontend

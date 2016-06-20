@@ -12,10 +12,15 @@
       "Default": "null",
       "Description": "The VPC to put it in"
     },
-    "subnet": {
+    "servicesSubnetId": {
       "Type" : "String",
       "Default": "null",
-      "Description": "The subnet to put it in"
+      "Description": "The subnet Id to put it in"
+    },
+    "concourseSubnetCIDR": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The subnet CIDR Concourse runs in"
     },
     "authEIP": {
       "Type": "String",
@@ -197,6 +202,32 @@
       }
     },
 
+    "sg3376ConcourseSubnet": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 3376 from Concourse subnet",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "3376",
+            "ToPort": "3376",
+            "CidrIp": { "Ref": "concourseSubnetCIDR" }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-3376-concourse-subnet"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
     "consul" : {
       "Type": "AWS::EC2::Instance",
       "Description": "Consul host",
@@ -219,7 +250,7 @@
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
             "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref" : "sg8500Subnet" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }
@@ -246,8 +277,8 @@
           {
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
-            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref": "sg3376ConcourseSubnet" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }
@@ -275,7 +306,7 @@
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
             "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" },  { "Ref" : "sg8080Subnet" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }
@@ -303,7 +334,7 @@
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
             "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" },  { "Ref" : "sg8080Subnet" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }
@@ -331,7 +362,7 @@
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
             "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" },  { "Ref" : "sg8080Subnet" }, { "Ref" : "sg8080ScottLogic" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }
@@ -366,7 +397,7 @@
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
             "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref" : "sg8080ScottLogic" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }
@@ -401,7 +432,7 @@
             "AssociatePublicIpAddress": true,
             "DeviceIndex": 0,
             "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref" : "sg80ScottLogic" } ],
-            "SubnetId": { "Ref" : "subnet" }
+            "SubnetId": { "Ref" : "servicesSubnetId" }
           }
         ]
       }

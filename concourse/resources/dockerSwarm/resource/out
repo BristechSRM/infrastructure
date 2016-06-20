@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -u
 
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
@@ -11,19 +11,29 @@ nodeName=$(echo $buffer | jq -r '.source.nodeName')
 portNumber=$(echo $buffer | jq -r '.source.portNumber')
 swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 repository=$(echo $buffer | jq -r '.source.repository')
-overlay=$(echo $buffer | jq -r '.source.overlay')
+network=$(echo $buffer | jq -r '.source.network')
 accessKeyId=$(echo $buffer | jq -r '.source.accessKeyId')
 secretAccessKey=$(echo $buffer | jq -r '.source.secretAccessKey')
 
 export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
 
+echo --- SWARM INFO ---
+echo serviceName: ${serviceName}
+echo nodeName: ${nodeName}
+echo portNumber: ${portNumber}
+echo swarmMasterIp: ${swarmMasterIp}
+echo repository: ${repository}
+echo network: ${network}
+echo DOCKER_HOST: ${DOCKER_HOST}
+echo --- END ---
+
 docker stop ${serviceName}
 docker rm ${serviceName}
 
-set -eu
+set -e
 
 docker pull ${repository}
 
-docker run -d -p ${portNumber}:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} ${repository}
+docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

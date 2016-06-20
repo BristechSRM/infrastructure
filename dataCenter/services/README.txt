@@ -90,8 +90,8 @@ wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infr
 # ===============
 # Swarm Master startup
 # ===============
-docker run -d -p 8080:8080 --name=commms --net=bridge --env=constraint:node==ip-10-0-1-116 \
-    -v /home/ubuntu/prd.comms.config:/service/Comms.exe.config -v /home/ubuntu/secrets.comms.config:/service/secrets.config  bristechsrm/comms
+docker run -d -p 8080:8080 --name=comms --net=bridge --env=constraint:node==ip-10-0-1-116 \
+    -v /home/ubuntu/prd.comms.config:/service/Comms.exe.config -v /home/ubuntu/secrets.comms.config:/service/secrets.config bristechsrm/comms
 
 docker run -d -p 8080:8080 --name=sessions --net=bridge --env=constraint:node==ip-10-0-1-156 bristechsrm/sessions
 

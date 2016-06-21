@@ -16,15 +16,17 @@ accessKeyId=$(echo $buffer | jq -r '.source.accessKeyId')
 secretAccessKey=$(echo $buffer | jq -r '.source.secretAccessKey')
 
 export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
+export DOCKER_API_VERSION=1.21
 
-echo --- SWARM INFO ---
+echo --- SERVICE INFO ---
 echo serviceName: ${serviceName}
 echo nodeName: ${nodeName}
 echo portNumber: ${portNumber}
-echo swarmMasterIp: ${swarmMasterIp}
 echo repository: ${repository}
 echo network: ${network}
+echo swarmMasterIp: ${swarmMasterIp}
 echo DOCKER_HOST: ${DOCKER_HOST}
+echo DOCKER_API_VERSION: ${DOCKER_API_VERSION}
 echo --- END ---
 
 docker stop ${serviceName}

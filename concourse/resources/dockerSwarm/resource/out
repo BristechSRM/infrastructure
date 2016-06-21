@@ -7,20 +7,22 @@ buffer=$(cat)
 
 #Extract variables from json
 serviceName=$(echo $buffer | jq -r '.source.serviceName')
+repository=$(echo $buffer | jq -r '.source.repository')
+executableName=$(echo $buffer | jq -r '.source.executableName')
 nodeName=$(echo $buffer | jq -r '.source.nodeName')
 portNumber=$(echo $buffer | jq -r '.source.portNumber')
-swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
-repository=$(echo $buffer | jq -r '.source.repository')
 network=$(echo $buffer | jq -r '.source.network')
+swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 
 export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
 export DOCKER_API_VERSION=1.21
 
 echo --- SERVICE INFO ---
 echo serviceName: ${serviceName}
+echo repository: ${repository}
+echo executableName: ${executableName}
 echo nodeName: ${nodeName}
 echo portNumber: ${portNumber}
-echo repository: ${repository}
 echo network: ${network}
 echo swarmMasterIp: ${swarmMasterIp}
 echo DOCKER_HOST: ${DOCKER_HOST}
@@ -37,7 +39,7 @@ set -e
 docker pull ${repository}
 
 docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} \
-    -v /home/ubuntu/prd.${serviceName}.config:/service/${serviceName}.exe.config \
+    -v /home/ubuntu/prd.${serviceName}.config:/service/${executableName}.exe.config \
     -v /home/ubuntu/secrets.${serviceName}.config:/service/secrets.config \
     ${repository}
 

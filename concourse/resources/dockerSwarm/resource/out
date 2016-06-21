@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -u
 
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
@@ -7,23 +7,40 @@ buffer=$(cat)
 
 #Extract variables from json
 serviceName=$(echo $buffer | jq -r '.source.serviceName')
-nodeName=$(echo $buffer | jq -r '.source.nodeName')
-swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 repository=$(echo $buffer | jq -r '.source.repository')
-overlay=$(echo $buffer | jq -r '.source.overlay')
-accessKeyId=$(echo $buffer | jq -r '.source.accessKeyId')
-secretAccessKey=$(echo $buffer | jq -r '.source.secretAccessKey')
-
-#Remove surrounding quotes from repository
-#repository=$repository | sed -e 's/^"//'  -e 's/"$//'
+executableName=$(echo $buffer | jq -r '.source.executableName')
+nodeName=$(echo $buffer | jq -r '.source.nodeName')
+portNumber=$(echo $buffer | jq -r '.source.portNumber')
+network=$(echo $buffer | jq -r '.source.network')
+swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 
 export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
+export DOCKER_API_VERSION=1.21
+
+echo --- SERVICE INFO ---
+echo serviceName: ${serviceName}
+echo repository: ${repository}
+echo executableName: ${executableName}
+echo nodeName: ${nodeName}
+echo portNumber: ${portNumber}
+echo network: ${network}
+echo swarmMasterIp: ${swarmMasterIp}
+echo DOCKER_HOST: ${DOCKER_HOST}
+echo DOCKER_API_VERSION: ${DOCKER_API_VERSION}
+echo --- END ---
+
+set -v
 
 docker stop ${serviceName}
 docker rm ${serviceName}
 
+set -e
+
 docker pull ${repository}
 
-docker run -d -p 8080:8080 --restart=always --name=${serviceName} --net=${overlay} --env=constraint:node==${nodeName} --env AWS_ACCESS_KEY_ID=${accessKeyId} --env AWS_SECRET_ACCESS_KEY=${secretAccessKey} ${repository}
+docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} \
+    -v /home/ubuntu/prd.${executableName}.config:/service/${executableName}.exe.config \
+    -v /home/ubuntu/secrets.${executableName}.config:/service/secrets.config \
+    ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

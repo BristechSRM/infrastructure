@@ -39,8 +39,8 @@ set -e
 docker pull ${repository}
 
 docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} \
-    -v /home/ubuntu/prd.${serviceName}.config:/service/${executableName}.exe.config \
-    -v /home/ubuntu/secrets.${serviceName}.config:/service/secrets.config \
+    -v /home/ubuntu/prd.${executableName}.config:/service/${executableName}.exe.config \
+    -v /home/ubuntu/secrets.${executableName}.config:/service/secrets.config \
     ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

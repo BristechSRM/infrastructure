@@ -12,8 +12,6 @@ portNumber=$(echo $buffer | jq -r '.source.portNumber')
 swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
 repository=$(echo $buffer | jq -r '.source.repository')
 network=$(echo $buffer | jq -r '.source.network')
-accessKeyId=$(echo $buffer | jq -r '.source.accessKeyId')
-secretAccessKey=$(echo $buffer | jq -r '.source.secretAccessKey')
 
 export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
 export DOCKER_API_VERSION=1.21
@@ -29,6 +27,8 @@ echo DOCKER_HOST: ${DOCKER_HOST}
 echo DOCKER_API_VERSION: ${DOCKER_API_VERSION}
 echo --- END ---
 
+set -v
+
 docker stop ${serviceName}
 docker rm ${serviceName}
 
@@ -36,6 +36,9 @@ set -e
 
 docker pull ${repository}
 
-docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} ${repository}
+docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} \
+    -v /home/ubuntu/prd.${serviceName}.config:/service/${serviceName}.exe.config \
+    -v /home/ubuntu/secrets.${serviceName}.config:/service/secrets.config \
+    ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

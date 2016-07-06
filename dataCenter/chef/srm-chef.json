@@ -1,0 +1,212 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Bristech SRM chef testing",
+  "Parameters": {
+    "environment": {
+      "Type": "String",
+      "Default": "null",
+      "Description": "The environment tag"
+    },
+    "vpcId": {
+      "Type": "String",
+      "Default": "null",
+      "Description": "The VPC to put it in"
+    },
+    "servicesSubnetId": {
+      "Type": "String",
+      "Default": "null",
+      "Description": "The subnet Id to put it in"
+    }
+  },
+  "Resources": {
+    "sgSshScottLogic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow SSH from ScottLogic Bristol",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "90.155.100.125/32"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-ssh-ScottLogic"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "environment"
+            }
+          }
+        ],
+        "VpcId": {
+          "Ref": "vpcId"
+        }
+      }
+    },
+    "sgHttpsScottLogic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow HTTPS from ScottLogic Bristol",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "90.155.100.125/32"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-https-ScottLogic"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "environment"
+            }
+          }
+        ],
+        "VpcId": {
+          "Ref": "vpcId"
+        }
+      }
+    },
+    "sgHttpsSubnet": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow HTTPS from chef nodes",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "443",
+            "ToPort": "443",
+            "CidrIp": "10.0.1.0/24"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-https-subnet"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "environment"
+            }
+          }
+        ],
+        "VpcId": {
+          "Ref": "vpcId"
+        }
+      }
+    },
+    "chefMaster": {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Chef Master host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.small",
+        "KeyName": "pna-chef",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "chef-master"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "environment"
+            }
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [
+              {
+                "Ref": "sgSshScottLogic"
+              },
+              {
+                "Ref": "sgHttpsScottLogic"
+              },
+              {
+                "Ref": "sgHttpsSubnet"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "servicesSubnetId"
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/sh -eu\n",
+                "cd /tmp\n",
+                "wget -q https://packages.chef.io/stable/ubuntu/14.04/chef-server-core_12.7.0-1_amd64.deb\n",
+                "sudo dpkg -i chef-server-core_12.7.0-1_amd64.deb\n"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "chefNode": {
+      "Type": "AWS::EC2::Instance",
+      "Description": "A node with Chef Client on it",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "pna-node",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "chef-node"
+          },
+          {
+            "Key": "Environment",
+            "Value": {
+              "Ref": "environment"
+            }
+          }
+        ],
+        "NetworkInterfaces": [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [
+              {
+                "Ref": "sgSshScottLogic"
+              }
+            ],
+            "SubnetId": {
+              "Ref": "servicesSubnetId"
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/sh -eu\n",
+                "cd /tmp\n",
+                "wget -q https://packages.chef.io/stable/ubuntu/10.04/chef_12.7.2-1_amd64.deb\n",
+                "sudo dpkg -i chef_12.7.2-1_amd64.deb\n"
+              ]
+            ]
+          }
+        }
+      }
+    }
+  }
+}

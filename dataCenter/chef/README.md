@@ -94,8 +94,6 @@ Then load the cookbook with dependencies to the server, and set the run_list for
 ```
     > knife cookbook upload srm-docker --include-dependencies
 
-    > knife cookbook upload srm-comms
-
     > knife node run_list set <nodefqdn> 'apt::default,apt-docker::default,srm-docker::default'
 ```
 

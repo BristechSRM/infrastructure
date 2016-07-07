@@ -1,0 +1,5 @@
+source "https://supermarket.chef.io"
+
+metadata
+cookbook "apt-docker", "~> 0.3.0"
+cookbook "docker", "~> 2.0"

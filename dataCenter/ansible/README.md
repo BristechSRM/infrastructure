@@ -1,4 +1,7 @@
 
+Ansible only works on Unix, so we'll have a management VM and our nodes.
+
+
 Create the local VMs
 ------------------------
 ```
@@ -39,3 +42,9 @@ $ ansible-playbook nodes-apt-docker.yml
 $ docker ps
 ```
 
+```
+$ ansible-playbook nodes-srm-docker.yml
+
+> vagrant ssh comms
+$ sudo cat /etc/default/docker
+```

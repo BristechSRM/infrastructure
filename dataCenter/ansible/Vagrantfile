@@ -10,4 +10,49 @@ Vagrant.configure("2") do |config|
       end
       mgmt_config.vm.provision :shell, path: "bootstrap-mgmt.sh"
   end
+
+  config.vm.define :auth do |auth_config|
+      auth_config.vm.box = "ubuntu/trusty64"
+      auth_config.vm.hostname = "auth"
+      auth_config.vm.network :private_network, ip: "10.0.15.11"
+      auth_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "256"
+      end
+  end
+
+  config.vm.define :comms do |comms_config|
+      comms_config.vm.box = "ubuntu/trusty64"
+      comms_config.vm.hostname = "comms"
+      comms_config.vm.network :private_network, ip: "10.0.15.12"
+      comms_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "256"
+      end
+  end
+
+  config.vm.define :sessions do |sessions_config|
+      sessions_config.vm.box = "ubuntu/trusty64"
+      sessions_config.vm.hostname = "sessions"
+      sessions_config.vm.network :private_network, ip: "10.0.15.13"
+      sessions_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "256"
+      end
+  end
+
+  config.vm.define :gateway do |gateway_config|
+      gateway_config.vm.box = "ubuntu/trusty64"
+      gateway_config.vm.hostname = "gateway"
+      gateway_config.vm.network :private_network, ip: "10.0.15.14"
+      gateway_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "256"
+      end
+  end
+
+  config.vm.define :frontend do |frontend_config|
+      frontend_config.vm.box = "ubuntu/trusty64"
+      frontend_config.vm.hostname = "frontend"
+      frontend_config.vm.network :private_network, ip: "10.0.15.15"
+      frontend_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "256"
+      end
+  end
 end

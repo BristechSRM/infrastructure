@@ -29,3 +29,10 @@ password: isanopensecret
 $ ansible all -m ping
 ```
 
+
+Set up docker (all nodes the same)
+-----------------------
+```
+$ ansible-playbook nodes-apt-docker.yml
+```
+

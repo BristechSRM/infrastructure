@@ -46,5 +46,12 @@ $ docker ps
 $ ansible-playbook nodes-srm-docker.yml
 
 > vagrant ssh comms
-$ sudo cat /etc/default/docker
+$ cat /etc/default/docker
+```
+
+```
+$ ansible-playbook nodes-pip-docker-py.yml
+
+> vagrant ssh sessions
+$ pip list | grep docker-py
 ```

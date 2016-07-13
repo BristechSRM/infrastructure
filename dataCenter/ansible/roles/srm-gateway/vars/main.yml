@@ -1,4 +1,4 @@
 
-auth_ip: 10.0.15.11
-comms_ip: 10.0.15.12
-sessions_ip: 10.0.15.13
+auth_address: 10.0.15.11:8080
+comms_address: 10.0.15.12:8080
+sessions_address: 10.0.15.13:8080

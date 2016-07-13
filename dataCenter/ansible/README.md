@@ -66,3 +66,10 @@ $ ansible-playbook srm-auth.yml --step
 > vagrant ssh auth
 $ docker ps
 ```
+
+```
+$ ansible-playbook srm-comms.yml --step
+
+> vagrant ssh comms
+$ curl http://localhost:8080/last-contact
+```

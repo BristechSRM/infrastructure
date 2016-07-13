@@ -81,3 +81,10 @@ $ ansible-playbook srm-sessions.yml
 $ curl http://localhost:8080/sessions
 ```
 
+```
+$ ansible-playbook srm-gateway.yml
+
+> vagrant ssh gateway
+$ curl http://localhost:8080/sessions
+```
+

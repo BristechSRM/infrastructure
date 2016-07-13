@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+    <add key="serilog:minimum-level" value="Debug"/>
+    <add key="serilog:write-to:ColoredConsole"/>
+    <add key="BaseUrl" value="http://*:8080"/>
+    <add key="CorrespondenceUrl" value="http://{{ comms_address }}/correspondence"/>
+    <add key="LastContactUrl" value="http://{{ comms_address }}/last-contact/"/>
+    <add key="SessionsUrl" value="http://{{ sessions_address }}/sessions/"/>
+    <add key="ProfilesUrl" value="http://{{ sessions_address }}/profiles/"/>
+    <add key="AuthServiceUrl" value="http://{{ auth_address }}"/>
+  </appSettings>
+</configuration>

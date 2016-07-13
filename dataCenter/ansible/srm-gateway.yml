@@ -1,0 +1,6 @@
+
+- hosts: gateway
+  gather_facts: no
+
+  roles:
+    - srm-gateway

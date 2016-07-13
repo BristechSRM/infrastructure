@@ -1,0 +1,17 @@
+
+- name: pull
+  docker_image:
+    name: bristechsrm/api-gateway
+
+- name: configure
+  template: src=prd.ApiGateway.config.j2 dest=/home/vagrant/prd.ApiGateway.config
+
+- name: start
+  docker_container:
+    name: apigateway
+    image: bristechsrm/api-gateway
+    state: started
+    ports:
+     - "8080:8080"
+    volumes:
+     - /home/vagrant/prd.ApiGateway.config:/service/ApiGateway.exe.config

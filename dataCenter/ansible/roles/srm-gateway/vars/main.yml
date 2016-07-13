@@ -1,0 +1,4 @@
+
+auth_ip: 10.0.15.11
+comms_ip: 10.0.15.12
+sessions_ip: 10.0.15.13

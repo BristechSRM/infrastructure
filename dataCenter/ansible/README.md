@@ -55,3 +55,14 @@ $ ansible-playbook nodes-pip-docker-py.yml
 > vagrant ssh sessions
 $ pip list | grep docker-py
 ```
+
+
+Install the individual images
+-----------------------
+--step used so we can install the secrets manually before the 'start'
+```
+$ ansible-playbook srm-auth.yml --step
+
+> vagrant ssh auth
+$ docker ps
+```

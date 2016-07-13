@@ -73,3 +73,11 @@ $ ansible-playbook srm-comms.yml --step
 > vagrant ssh comms
 $ curl http://localhost:8080/last-contact
 ```
+
+```
+$ ansible-playbook srm-sessions.yml
+
+> vagrant ssh sessions
+$ curl http://localhost:8080/sessions
+```
+

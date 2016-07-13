@@ -1,0 +1,6 @@
+
+- hosts: sessions
+  gather_facts: no
+
+  roles:
+    - srm-sessions

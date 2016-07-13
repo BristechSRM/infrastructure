@@ -1,0 +1,21 @@
+
+- name: pull
+  docker_image:
+    name: bristechsrm/comms
+
+- name: configure
+  copy: src=prd.Comms.config dest=/home/vagrant/prd.Comms.config
+
+- name: secrets
+  copy: src=secrets.Comms.config dest=/home/vagrant/secrets.Comms.config
+
+- name: start
+  docker_container:
+    name: comms
+    image: bristechsrm/comms
+    state: started
+    ports:
+     - "8080:8080"
+    volumes:
+     - /home/vagrant/prd.Comms.config:/service/Comms.exe.config
+     - /home/vagrant/secrets.Comms.config:/service/secrets.config

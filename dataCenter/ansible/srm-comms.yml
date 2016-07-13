@@ -1,0 +1,6 @@
+
+- hosts: comms
+  gather_facts: no
+
+  roles:
+    - srm-comms

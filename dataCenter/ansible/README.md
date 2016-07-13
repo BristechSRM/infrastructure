@@ -88,3 +88,6 @@ $ ansible-playbook srm-gateway.yml
 $ curl http://localhost:8080/sessions
 ```
 
+```
+$ ansible-playbook srm-frontend.yml
+```

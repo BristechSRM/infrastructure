@@ -1,0 +1,21 @@
+
+- name: pull
+  docker_image:
+    name: bristechsrm/auth
+
+- name: configure
+  template: src=prd.Auth.config.j2 dest=/home/vagrant/prd.Auth.config
+
+- name: secrets
+  template: src=secrets.Auth.config dest=/home/vagrant/secrets.Auth.config
+
+- name: start
+  docker_container:
+    name: auth
+    image: bristechsrm/auth
+    state: started
+    ports:
+     - "8080:8080"
+    volumes:
+     - /home/vagrant/prd.Auth.config:/service/Auth.exe.config
+     - /home/vagrant/secrets.Auth.config:/service/secrets.config

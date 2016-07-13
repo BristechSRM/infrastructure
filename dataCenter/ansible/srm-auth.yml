@@ -1,0 +1,6 @@
+
+- hosts: auth
+  gather_facts: no
+
+  roles:
+    - srm-auth

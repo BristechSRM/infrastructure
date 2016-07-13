@@ -1,0 +1,17 @@
+
+- name: pull
+  docker_image:
+    name: bristechsrm/frontend
+
+- name: configure
+  copy: src=prd.frontend.json dest=/home/vagrant/prd.frontend.json
+
+- name: start
+  docker_container:
+    name: frontend
+    image: bristechsrm/frontend
+    state: started
+    ports:
+     - "80:8080"
+    volumes:
+     - /home/vagrant/prd.frontend.json:/frontend/public/js/config.json

@@ -4,10 +4,10 @@
     name: bristechsrm/auth
 
 - name: configure
-  template: src=prd.Auth.config.j2 dest=/home/vagrant/prd.Auth.config
+  copy: src=prd.Auth.config dest=/home/vagrant/prd.Auth.config
 
 - name: secrets
-  template: src=secrets.Auth.config dest=/home/vagrant/secrets.Auth.config
+  copy: src=secrets.Auth.config dest=/home/vagrant/secrets.Auth.config
 
 - name: start
   docker_container:

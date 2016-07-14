@@ -1,7 +1,0 @@
-{
-  "endpoints": {
-    "bristech-srm": "http://srm.bris.tech",
-    "api-gateway": "http://api.bris.tech:8080",
-    "auth": "http://auth.bris.tech:8080"
-  }
-}

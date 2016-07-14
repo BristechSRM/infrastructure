@@ -11,14 +11,19 @@ Create the local VMs
 
 Ansible mgmt node
 ------------------------
-Log in using ssh
+Log in using ssh and check Ansible is installed
 ```
 > vagrant ssh mgmt
 $ ansible --version
 ```
 
+Place the secrets files in /home/vagrant
+------------------------
+Auth.secrets.config
+Comms.secrets.config
 
-Install ssh key
+
+Install ssh key on nodes
 ------------------------
 Set us up for password-free use (i.e. generate a ssh key and install it on the nodes)
 ```
@@ -33,61 +38,36 @@ $ ansible all -m ping
 ```
 
 
-Set up docker (all nodes the same)
+Unleash DEV
+------------------------
+$ ansible-playbook srm-all.yml
+
+
+Smoke tests
 -----------------------
 ```
-$ ansible-playbook nodes-apt-docker.yml
-
 > vagrant ssh auth
-$ docker ps
+$ curl http://localhost:8080/
 ```
 
 ```
-$ ansible-playbook nodes-srm-docker.yml
-
-> vagrant ssh comms
-$ cat /etc/default/docker
-```
-
-```
-$ ansible-playbook nodes-pip-docker-py.yml
-
-> vagrant ssh sessions
-$ pip list | grep docker-py
-```
-
-
-Install the individual images
------------------------
---step used so we can install the secrets manually before the 'start'
-```
-$ ansible-playbook srm-auth.yml --step
-
-> vagrant ssh auth
-$ docker ps
-```
-
-```
-$ ansible-playbook srm-comms.yml --step
-
 > vagrant ssh comms
 $ curl http://localhost:8080/last-contact
 ```
 
 ```
-$ ansible-playbook srm-sessions.yml
-
 > vagrant ssh sessions
 $ curl http://localhost:8080/sessions
 ```
 
 ```
-$ ansible-playbook srm-gateway.yml
-
 > vagrant ssh gateway
 $ curl http://localhost:8080/sessions
 ```
 
 ```
-$ ansible-playbook srm-frontend.yml
+> vagrant ssh frontend
+$ curl http://localhost:8080/
 ```
+
+Try the website.

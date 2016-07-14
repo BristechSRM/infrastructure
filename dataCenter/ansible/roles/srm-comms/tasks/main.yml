@@ -4,10 +4,10 @@
     name: bristechsrm/comms
 
 - name: configure
-  copy: src=prd.Comms.config dest=/home/vagrant/prd.Comms.config
+  copy: src=dev.Comms.config dest=/home/vagrant/Comms.config
 
 - name: secrets
-  copy: src=secrets.Comms.config dest=/home/vagrant/secrets.Comms.config
+  copy: src=/home/vagrant/Comms.secrets.config dest=/home/vagrant/Comms.secrets.config
 
 - name: start
   docker_container:
@@ -17,5 +17,5 @@
     ports:
      - "8080:8080"
     volumes:
-     - /home/vagrant/prd.Comms.config:/service/Comms.exe.config
-     - /home/vagrant/secrets.Comms.config:/service/secrets.config
+     - /home/vagrant/Comms.config:/service/Comms.exe.config
+     - /home/vagrant/Comms.secrets.config:/service/secrets.config

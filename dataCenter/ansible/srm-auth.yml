@@ -1,5 +1,7 @@
 
 - hosts: auth
+  become: yes
+  become_method: sudo
   gather_facts: no
 
   roles:

@@ -4,7 +4,7 @@
     name: bristechsrm/sessions
 
 - name: configure
-  copy: src=prd.Sessions.config dest=/home/vagrant/prd.Sessions.config
+  copy: src=dev.Sessions.config dest=/home/vagrant/Sessions.config
 
 - name: start
   docker_container:
@@ -14,4 +14,4 @@
     ports:
      - "8080:8080"
     volumes:
-     - /home/vagrant/prd.Sessions.config:/service/Sessions.exe.config
+     - /home/vagrant/Sessions.config:/service/Sessions.exe.config

@@ -4,8 +4,5 @@
   become_method: sudo
   gather_facts: no
 
-  pre_tasks:
-   - debug: msg="environment is {{ env_name }}"
-
   roles:
-    - srm-sessions
+   - srm-sessions

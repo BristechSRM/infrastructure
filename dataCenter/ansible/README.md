@@ -1,5 +1,6 @@
 
 Ansible only works on Unix, so we'll have a management VM and our nodes.
+We'll be using -i PATH to select the environment root.
 
 
 Create the local VMs
@@ -9,7 +10,7 @@ Create the local VMs
 ```
 
 
-Ansible mgmt node
+Set up Ansible mgmt node
 ------------------------
 Log in using ssh and check Ansible is installed
 ```
@@ -17,30 +18,28 @@ Log in using ssh and check Ansible is installed
 $ ansible --version
 ```
 
-Place the secrets files in /home/vagrant
-------------------------
-Auth.secrets.config
-Comms.secrets.config
-
-
-Install ssh key on nodes
-------------------------
 Set us up for password-free use (i.e. generate a ssh key and install it on the nodes)
 ```
 $ ssh-keygen -t rsa -b 2048
 $ ssh-keyscan auth comms sessions gateway frontend >> ~/.ssh/known_hosts
 
 $ cd /vagrant
-$ ansible-playbook nodes-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
 password: isanopensecret
 
-$ ansible all -m ping
+$ ansible -i env_local all -m ping
 ```
+
+
+Place the secrets files in /home/vagrant
+------------------------
+Auth.secrets.config
+Comms.secrets.config
 
 
 Unleash DEV
 ------------------------
-$ ansible-playbook srm-all.yml
+$ ansible-playbook -i env_local srm-all.yml
 
 
 Smoke tests

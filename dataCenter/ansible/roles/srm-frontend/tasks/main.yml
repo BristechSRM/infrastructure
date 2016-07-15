@@ -4,7 +4,7 @@
     name: bristechsrm/frontend
 
 - name: configure
-  copy: src=dev.frontend.json dest=/home/vagrant/frontend.json
+  template: src=frontend.json.j2 dest=/home/vagrant/frontend.json
 
 - name: start
   docker_container:

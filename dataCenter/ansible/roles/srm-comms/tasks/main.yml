@@ -4,7 +4,7 @@
     name: bristechsrm/comms
 
 - name: configure
-  copy: src=dev.Comms.config dest=/home/vagrant/Comms.config
+  copy: src=Comms.config dest=/home/vagrant/Comms.config
 
 - name: secrets
   copy: src=/home/vagrant/Comms.secrets.config dest=/home/vagrant/Comms.secrets.config

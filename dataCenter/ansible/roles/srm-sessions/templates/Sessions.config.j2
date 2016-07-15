@@ -2,7 +2,7 @@
 <configuration>
   <connectionStrings>
     <!-- Security provided by AWS security groups -->
-    <add name="DefaultConnection" connectionString="SERVER=talksdev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=;" providerName="System.Data.SqlClient"/>
+    <add name="DefaultConnection" connectionString="{{ dynamodb_str }}" providerName="System.Data.SqlClient"/>
   </connectionStrings>
   <system.data>
     <DbProviderFactories>

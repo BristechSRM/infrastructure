@@ -1,37 +1,29 @@
 
-# ---------------
-# Create Stack
-# ---------------
-./createStack.sh SRM vpc-d8c5debd subnet-488a9f11 subnet-379a686f 52.51.54.255 52.50.88.117 52.50.27.136
+Manual Build instructions
+=================
 
 
-
-
-# ---------------
-# SSH onto Consul host and...
-# ---------------
+SSH onto Consul host and...
+-----------------
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/installDocker.sh | sh
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runConsul.sh | sh
 
 > curl http://localhost:8500/v1/kv
 
-# ---------------
-# SSH onto SwarmMaster and...
-# ---------------
+SSH onto SwarmMaster and...
+-----------------
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/installDockerCluster.sh | sh -s --xxx--
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runSwarmMaster.sh | sh -s --xxx--
 
 > docker -H tcp://localhost:3376 info
 
-# ---------------
-# SSH onto all nodes and...
-# ---------------
+SSH onto all nodes and...
+-----------------
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/installDockerCluster.sh | sh -s --xxx--
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runSwarmAgent.sh | sh -s --xxx--
 
-# ---------------
-# On any node...
-# ---------------
+On any node...
+-----------------
 docker network create --driver overlay overlay
 
 > docker network ls
@@ -39,47 +31,38 @@ docker network create --driver overlay overlay
 
 
 
-# ===============
-# Manual startup
-# ===============
-
-# ---------------
-# SSH onto Comms host and...
-# ---------------
+SSH onto Comms host and...
+-----------------
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.comms.config
 # ADD SECRETS FILE!
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runComms.sh | sh
 
 > curl http://localhost:8080/last-contact
 
-# ---------------
-# SSH onto Sessions host and...
-# ---------------
+SSH onto Sessions host and...
+-----------------
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runSessions.sh | sh
 
 > curl http://localhost:8080/sessions
 
-# ---------------
-# SSH onto Auth host and...
-# ---------------
+SSH onto Auth host and...
+-----------------
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.auth.config
 # ADD SECRETS FILE!
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runAuth.sh | sh
 
 > curl http://localhost:8080/.well-known/openid-configuration
 
-# ---------------
-# SSH onto ApiGateway host and...
-# ---------------
+SSH onto ApiGateway host and...
+-----------------
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.api.config
 # CHECK URLs for nodes
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runApiGateway.sh | sh
 
 > curl http://localhost:8080/sessions
 
-# ---------------
-# SSH onto Frontend host and...
-# ---------------
+SSH onto Frontend host and...
+-----------------
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.frontend.json
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runFrontend.sh | sh
 
@@ -87,9 +70,8 @@ wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infr
 
 
 
-# ===============
-# Swarm Master startup
-# ===============
+Swarm Master startup
+-----------------
 docker run -d -p 8080:8080 --name=comms --net=bridge --env=constraint:node==ip-10-0-1-116 \
     -v /home/ubuntu/prd.comms.config:/service/Comms.exe.config -v /home/ubuntu/secrets.comms.config:/service/secrets.config bristechsrm/comms
 

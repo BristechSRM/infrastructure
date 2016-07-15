@@ -5,22 +5,22 @@ Manual Build instructions
 
 SSH onto Consul host and...
 -----------------
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/installDocker.sh | sh
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runConsul.sh | sh
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/installDocker.sh | sh
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runConsul.sh | sh
 
 > curl http://localhost:8500/v1/kv
 
-SSH onto SwarmMaster and...
+SSH onto SwarmdataCenter and...
 -----------------
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/installDockerCluster.sh | sh -s --xxx--
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runSwarmMaster.sh | sh -s --xxx--
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/installDockerCluster.sh | sh -s --xxx--
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runSwarmdataCenter.sh | sh -s --xxx--
 
 > docker -H tcp://localhost:3376 info
 
 SSH onto all nodes and...
 -----------------
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/installDockerCluster.sh | sh -s --xxx--
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runSwarmAgent.sh | sh -s --xxx--
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/installDockerCluster.sh | sh -s --xxx--
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runSwarmAgent.sh | sh -s --xxx--
 
 On any node...
 -----------------
@@ -33,38 +33,38 @@ docker network create --driver overlay overlay
 
 SSH onto Comms host and...
 -----------------
-wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.comms.config
+wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.comms.config
 # ADD SECRETS FILE!
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runComms.sh | sh
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runComms.sh | sh
 
 > curl http://localhost:8080/last-contact
 
 SSH onto Sessions host and...
 -----------------
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runSessions.sh | sh
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runSessions.sh | sh
 
 > curl http://localhost:8080/sessions
 
 SSH onto Auth host and...
 -----------------
-wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.auth.config
+wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.auth.config
 # ADD SECRETS FILE!
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runAuth.sh | sh
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runAuth.sh | sh
 
 > curl http://localhost:8080/.well-known/openid-configuration
 
 SSH onto ApiGateway host and...
 -----------------
-wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.api.config
+wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.api.config
 # CHECK URLs for nodes
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runApiGateway.sh | sh
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runApiGateway.sh | sh
 
 > curl http://localhost:8080/sessions
 
 SSH onto Frontend host and...
 -----------------
-wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/prd.frontend.json
-wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/cloudFormation/runFrontend.sh | sh
+wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.frontend.json
+wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runFrontend.sh | sh
 
 > docker ps
 

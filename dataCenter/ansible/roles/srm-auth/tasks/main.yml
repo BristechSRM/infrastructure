@@ -4,7 +4,7 @@
     name: bristechsrm/auth
 
 - name: configure
-  copy: src=dev.Auth.config dest=/home/vagrant/Auth.config
+  template: src=Auth.config.j2 dest=/home/vagrant/Auth.config
 
 - name: secrets
   copy: src=/home/vagrant/Auth.secrets.config dest=/home/vagrant/Auth.secrets.config

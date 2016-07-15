@@ -1,0 +1,7 @@
+
+[nodes]
+auth
+comms
+sessions
+gateway
+frontend

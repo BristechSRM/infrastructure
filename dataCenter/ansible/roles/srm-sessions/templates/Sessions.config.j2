@@ -2,7 +2,7 @@
 <configuration>
   <connectionStrings>
     <!-- Security provided by AWS security groups -->
-    <add name="DefaultConnection" connectionString="{{ dynamodb_str }}" providerName="System.Data.SqlClient"/>
+    <add name="DefaultConnection" connectionString="{{ mysqldb_str }}" providerName="System.Data.SqlClient"/>
   </connectionStrings>
   <system.data>
     <DbProviderFactories>

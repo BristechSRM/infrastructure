@@ -1,5 +1,5 @@
 
-dynamodb_str: "SERVER=talksdev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=;"
+mysqldb_str: "SERVER=talksdev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=;"
 auth_address: "10.0.15.11:8080"
 comms_address: "10.0.15.12:8080"
 sessions_address: "10.0.15.13:8080"

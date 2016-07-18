@@ -1,11 +1,11 @@
 
-Manual Build instructions
+Manual Setup instructions
 =================
 
 
 Consul host
 -----------------
-ssh in, needs docker (no cluser) and consul
+ssh in, needs docker (no cluster) and consul
 ```
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/installDocker.sh | sh
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runConsul.sh | sh
@@ -16,7 +16,7 @@ $ curl http://localhost:8500/v1/kv
 
 SwarmMaster
 -----------------
-ssh in, needs docker cluser and Swarm Master
+ssh in, needs docker cluster and Swarm Master
 ```
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/installDockerCluster.sh | sh -s --xxx--
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runSwarmMaster.sh | sh -s --xxx--
@@ -27,7 +27,7 @@ $ docker -H tcp://localhost:3376 info
 
 All nodes
 -----------------
-ssh in, need docker cluser and Swarm Agent
+ssh in, need docker cluster and Swarm Agent
 ```
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/installDockerCluster.sh | sh -s --xxx--
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runSwarmAgent.sh | sh -s --xxx--
@@ -47,7 +47,7 @@ $ docker network ls
 
 Auth
 -----------------
-Add secrets file
+ssh in, add secrets file and...
 ```
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.auth.config
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runAuth.sh | sh
@@ -58,7 +58,7 @@ $ curl http://localhost:8080/.well-known/openid-configuration
 
 Comms
 -----------------
-Add secrets file
+ssh in, add secrets file and...
 ```
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.comms.config
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runComms.sh | sh
@@ -69,6 +69,7 @@ $ curl http://localhost:8080/last-contact
 
 Sessions
 -----------------
+ssh in, and...
 ```
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runSessions.sh | sh
 
@@ -78,7 +79,7 @@ $ curl http://localhost:8080/sessions
 
 ApiGateway
 -----------------
-Set config file URLs
+ssh in, set urls in config file, and...
 ```
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.api.config
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runApiGateway.sh | sh
@@ -89,6 +90,7 @@ $ curl http://localhost:8080/sessions
 
 Frontend
 -----------------
+ssh in, and...
 ```
 wget --quiet --cache off https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/prd.frontend.json
 wget --quiet --cache off -O - https://raw.githubusercontent.com/BristechSRM/infrastructure/master/dataCenter/manual/runFrontend.sh | sh

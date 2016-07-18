@@ -12,4 +12,6 @@ cat << EOF >> /etc/hosts
 10.0.15.13 sessions
 10.0.15.14 gateway
 10.0.15.15 frontend
+
+10.0.15.20 consul
 EOF

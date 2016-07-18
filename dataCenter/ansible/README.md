@@ -24,7 +24,7 @@ $ ssh-keygen -t rsa -b 2048
 $ ssh-keyscan auth comms sessions gateway frontend consul >> ~/.ssh/known_hosts
 
 $ cd /vagrant
-$ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_local all-ssh-addkey.yml --ask-pass
 password: isanopensecret
 
 $ ansible -i env_local all -m ping
@@ -70,3 +70,8 @@ $ curl http://localhost:8080/
 ```
 
 Try the website.
+
+```
+> vagrant ssh consul
+$ curl http://localhost:8500/v1/kv
+```

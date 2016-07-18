@@ -5,3 +5,6 @@ comms
 sessions
 gateway
 frontend
+
+[consul]
+consul

@@ -1,5 +1,6 @@
 
 - include: nodes-docker-cluster.yml
+- include: nodes-swarm-agent.yml
 - include: srm-auth.yml
 - include: srm-comms.yml
 - include: srm-sessions.yml

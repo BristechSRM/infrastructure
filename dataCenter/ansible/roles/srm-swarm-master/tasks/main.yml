@@ -1,0 +1,7 @@
+
+- name: pull
+  docker_image:
+    name: swarm
+
+- name: start
+  command: docker run -d -p 3376:2375 swarm manage consul://{{ consul_address }}

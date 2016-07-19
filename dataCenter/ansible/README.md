@@ -47,6 +47,9 @@ Start Consul
 ------------------------
 $ ansible-playbook -i env_local srm-consul.yml
 
+Swarm Master
+------------------------
+$ ansible-playbook -i env_local srm-master.yml
 
 Unleash DEV
 ------------------------

@@ -1,0 +1,9 @@
+
+- hosts: master
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  roles:
+   - srm-docker-cluster
+   - srm-swarm-master

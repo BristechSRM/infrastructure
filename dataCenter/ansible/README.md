@@ -50,6 +50,7 @@ $ ansible-playbook -i env_local srm-consul.yml
 
 Unleash DEV
 ------------------------
+$ ansible-playbook -i env_local nodes-docker-cluster.yml
 $ ansible-playbook -i env_local srm-nodes.yml
 
 Try the website.

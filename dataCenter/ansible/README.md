@@ -37,13 +37,31 @@ Auth.secrets.config
 Comms.secrets.config
 
 
+Prepare all (docker and docker-py)
+------------------------
+$ ansible-playbook -i env_local all-apt-docker.yml
+$ ansible-playbook -i env_local all-pip-docker-py.yml
+
+
+Start Consul
+------------------------
+$ ansible-playbook -i env_local srm-consul.yml
+
+
 Unleash DEV
 ------------------------
-$ ansible-playbook -i env_local srm-all.yml
+$ ansible-playbook -i env_local srm-nodes.yml
+
+Try the website.
 
 
 Smoke tests
 -----------------------
+```
+> vagrant ssh consul
+$ curl http://localhost:8500/v1/kv
+```
+
 ```
 > vagrant ssh auth
 $ curl http://localhost:8080/
@@ -69,9 +87,4 @@ $ curl http://localhost:8080/sessions
 $ curl http://localhost:8080/
 ```
 
-Try the website.
 
-```
-> vagrant ssh consul
-$ curl http://localhost:8500/v1/kv
-```

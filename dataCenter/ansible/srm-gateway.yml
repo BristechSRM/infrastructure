@@ -5,4 +5,5 @@
   gather_facts: no
 
   roles:
+   - srm-docker-cluster
    - srm-gateway

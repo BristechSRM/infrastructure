@@ -3,6 +3,7 @@ mysqldb_str: "SERVER=talksdev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=
 auth_address: "10.0.15.11:8080"
 comms_address: "10.0.15.12:8080"
 sessions_address: "10.0.15.13:8080"
+consul_address: "10.0.15.20:8500"
 frontend_url: "http://localhost:8080"
 gateway_url: "http://localhost:9090"
 auth_url: "http://localhost:9003"

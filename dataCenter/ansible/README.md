@@ -21,7 +21,7 @@ $ ansible --version
 Set us up for password-free use (i.e. generate a ssh key and install it on the nodes)
 ```
 $ ssh-keygen -t rsa -b 2048
-$ ssh-keyscan auth comms sessions gateway frontend consul >> ~/.ssh/known_hosts
+$ ssh-keyscan auth comms sessions gateway frontend consul master >> ~/.ssh/known_hosts
 
 $ cd /vagrant
 $ ansible-playbook -i env_local all-ssh-addkey.yml --ask-pass

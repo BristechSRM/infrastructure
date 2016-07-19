@@ -14,4 +14,5 @@ cat << EOF >> /etc/hosts
 10.0.15.15 frontend
 
 10.0.15.20 consul
+10.0.15.21 master
 EOF

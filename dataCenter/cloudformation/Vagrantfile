@@ -1,0 +1,12 @@
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define :driver do |vmconfig|
+      vmconfig.vm.box = "ubuntu/trusty64"
+      vmconfig.vm.hostname = "driver"
+      vmconfig.vm.provider "virtualbox" do |vb|
+        vb.memory = "256"
+      end
+      vmconfig.vm.provision :shell, path: "bootstrap-driver.sh"
+  end
+end

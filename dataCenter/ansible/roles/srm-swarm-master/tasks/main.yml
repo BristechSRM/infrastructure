@@ -4,4 +4,4 @@
     name: swarm
 
 - name: start
-  command: docker run -d -p 3376:2375 swarm manage consul://{{ consul_address }}
+  command: docker run -d -p 3376:3376 swarm manage -H :3376 consul://{{ consul_address }}

@@ -1,0 +1,407 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description" : "Bristech SRM stack-in-a-box",
+  "Parameters": {
+    "environment": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The environment tag"
+    },
+    "vpcId": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The VPC to put it in"
+    },
+    "servicesSubnetId": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The subnet Id to put it in"
+    },
+    "concourseSubnetCIDR": {
+      "Type" : "String",
+      "Default": "null",
+      "Description": "The subnet CIDR Concourse runs in"
+    }
+  },
+
+  "Resources": {
+    "sgsshScottLogic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow SSH from ScottLogic Bristol",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "90.155.100.125/32"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-ssh-ScottLogic"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "sg2375Subnet": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 2375 from subnet",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "2375",
+            "ToPort": "2375",
+            "CidrIp": "10.0.1.0/24"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-2375-subnet"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "sg8500Subnet": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 8500 from subnet",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "8500",
+            "ToPort": "8500",
+            "CidrIp": "10.0.1.0/24"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-8500-subnet"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "sg8080Subnet": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 8080 from subnet",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "8080",
+            "ToPort": "8080",
+            "CidrIp": "10.0.1.0/24"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-8080-subnet"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "sg8080ScottLogic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 8080 from ScottLogic Bristol",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "8080",
+            "ToPort": "8080",
+            "CidrIp": "90.155.100.125/32"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-8080-ScottLogic"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "sg80ScottLogic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 80 from ScottLogic Bristol",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "90.155.100.125/32"
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-80-ScottLogic"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "sg3376ConcourseSubnet": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Allow 3376 from Concourse subnet",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "3376",
+            "ToPort": "3376",
+            "CidrIp": { "Ref": "concourseSubnetCIDR" }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sg-3376-concourse-subnet"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "VpcId": { "Ref":"vpcId" }
+      }
+    },
+
+    "consul" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Consul host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "pna-consul",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "consul"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref" : "sg8500Subnet" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    },
+
+    "swarmMaster" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Swarm Master host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "swarm-master",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "swarm-master"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref": "sg3376ConcourseSubnet" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    },
+
+    "comms" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Comms service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "comms",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "comms"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" },  { "Ref" : "sg8080Subnet" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    },
+
+    "sessions" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Sessions service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "sessions",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "sessions"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" },  { "Ref" : "sg8080Subnet" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    },
+
+    "auth" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Auth service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "auth",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "auth"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" },  { "Ref" : "sg8080Subnet" }, { "Ref" : "sg8080ScottLogic" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    },
+
+    "apiGateway" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "ApiGateway service",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "api-gateway",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "api-gateway"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref" : "sg8080ScottLogic" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    },
+
+    "frontend" : {
+      "Type": "AWS::EC2::Instance",
+      "Description": "Frontend host",
+      "Properties": {
+        "ImageId": "ami-f95ef58a",
+        "InstanceType": "t2.micro",
+        "KeyName": "frontend",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "frontend"
+          },
+          {
+            "Key": "Environment",
+            "Value": { "Ref": "environment" }
+          }
+        ],
+        "NetworkInterfaces" : [
+          {
+            "AssociatePublicIpAddress": true,
+            "DeviceIndex": 0,
+            "GroupSet": [ { "Ref" : "sgsshScottLogic" }, { "Ref" : "sg2375Subnet" }, { "Ref" : "sg80ScottLogic" } ],
+            "SubnetId": { "Ref" : "servicesSubnetId" }
+          }
+        ]
+      }
+    }
+
+  }
+}

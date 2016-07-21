@@ -4,4 +4,4 @@
     name: swarm
 
 - name: start
-  command: docker run -d swarm join --advertise {{ ansible_eth1.ipv4.address }}:2375 consul://{{ consul_address }}
+  command: docker run -d swarm join --advertise {{ ansible_eth0.ipv4.address }}:2375 consul://{{ consul_address }}

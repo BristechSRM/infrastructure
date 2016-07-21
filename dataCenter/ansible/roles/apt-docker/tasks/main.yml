@@ -9,4 +9,4 @@
   apt: pkg=docker-engine update_cache=yes
 
 - name: add user group
-  shell: usermod -aG docker vagrant
+  shell: usermod -aG docker {{ user }}

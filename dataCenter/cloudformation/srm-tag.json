@@ -235,7 +235,7 @@
       }
     },
 
-    "swarmMaster" : {
+    "master" : {
       "Type": "AWS::EC2::Instance",
       "Description": "Swarm Master host",
       "Properties": {
@@ -245,7 +245,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "swarm-master"
+            "Value": "master"
           },
           {
             "Key": "Environment",
@@ -347,9 +347,9 @@
       }
     },
 
-    "apiGateway" : {
+    "gateway" : {
       "Type": "AWS::EC2::Instance",
-      "Description": "ApiGateway service",
+      "Description": "Gateway service",
       "Properties": {
         "ImageId": "ami-f95ef58a",
         "InstanceType": "t2.micro",
@@ -357,7 +357,7 @@
         "Tags": [
           {
             "Key": "Name",
-            "Value": "api-gateway"
+            "Value": "gateway"
           },
           {
             "Key": "Environment",

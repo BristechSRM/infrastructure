@@ -56,7 +56,7 @@ Auth.secrets.config
 Comms.secrets.config
 
 
-Just checkin'
+Check connectivity (and get any "add known_hosts" prompts over with)
 ------------------------
 ```
 $ ansible -i env_TAG all -m ping

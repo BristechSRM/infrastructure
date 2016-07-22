@@ -12,6 +12,6 @@
     image: bristechsrm/frontend
     state: started
     ports:
-     - "8080:8080"
+     - "{{ frontend_port }}:8080"
     volumes:
      - /home/{{ user }}/frontend.json:/frontend/public/js/config.json

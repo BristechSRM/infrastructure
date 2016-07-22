@@ -8,7 +8,7 @@ http://toja.io/using-host-and-group-vars-files-in-ansible/
 
 
 
-Local development
+On multiple local VMs
 ========================
 
 Create the local VMs
@@ -36,21 +36,21 @@ $ ansible-playbook -i env_local all-ssh-addkey.yml --ask-pass
 password: isanopensecret
 ```
 
-AWS
+On AWS
 ========================
 
 You'll need a unix host to drive this.  "mgmt" will do.
 
-Create the AWS stack under cloudFormation
-Make sure the private keys for ssh to the AWS Instances are available
-Update the addresses in the env_TAG variables and inventory
+Create the AWS stack under "cloudFormation"
+Make sure the private keys for ssh to the AWS Instances are available on your host
+Update the locations and urls in the env_SRM variables and inventory
 
 
 
 Go!
 ========================
 
-Place the secrets files in /home/vagrant
+Place the secrets files in /home/vagrant (ubuntu on AWS)
 ------------------------
 Auth.secrets.config
 Comms.secrets.config
@@ -59,69 +59,69 @@ Comms.secrets.config
 Check connectivity (and get any "add known_hosts" prompts over with)
 ------------------------
 ```
-$ ansible -i env_TAG all -m ping
+$ ansible -i env_SRM all -m ping
 ```
 
 
 Docker and docker-py are universal
 ------------------------
-$ ansible-playbook -i env_TAG all-apt-docker.yml
-$ ansible-playbook -i env_TAG all-pip-docker-py.yml
+$ ansible-playbook -i env_SRM all-apt-docker.yml
+$ ansible-playbook -i env_SRM all-pip-docker-py.yml
+
+Infra just gets docker, nodes are a docker cluster
+------------------------
+$ ansible-playbook -i env_SRM infra-docker.yml
+$ ansible-playbook -i env_SRM nodes-docker-swarm.yml
 
 Consul and Master
 ------------------------
-$ ansible-playbook -i env_TAG infra-docker.yml
-
-$ ansible-playbook -i env_TAG srm-consul.yml
-$ ansible-playbook -i env_TAG srm-master.yml
+$ ansible-playbook -i env_SRM srm-consul.yml
+$ ansible-playbook -i env_SRM srm-master.yml
 
 Unleash Microservices
 ------------------------
-$ ansible-playbook -i env_TAG nodes-docker-swarm.yml
-
-$ ansible-playbook -i env_TAG srm-auth.yml
-$ ansible-playbook -i env_TAG srm-comms.yml
-$ ansible-playbook -i env_TAG srm-sessions.yml
-$ ansible-playbook -i env_TAG srm-gateway.yml
-$ ansible-playbook -i env_TAG srm-frontend.yml
-
+$ ansible-playbook -i env_SRM srm-auth.yml
+$ ansible-playbook -i env_SRM srm-comms.yml
+$ ansible-playbook -i env_SRM srm-sessions.yml
+$ ansible-playbook -i env_SRM srm-gateway.yml
+$ ansible-playbook -i env_SRM srm-frontend.yml
 
 Try the website.
 
 
 Smoke tests
 -----------------------
+consul
 ```
-> vagrant ssh consul
 $ curl http://localhost:8500/v1/kv
 ```
 
+master
 ```
-> vagrant ssh master
 $ docker info
 ```
 
+auth
 ```
-> vagrant ssh auth
 $ curl http://localhost:8080/
 ```
 
+comms
 ```
-> vagrant ssh comms
 $ curl http://localhost:8080/last-contact
 ```
 
+sessions
 ```
-> vagrant ssh sessions
 $ curl http://localhost:8080/sessions
 ```
 
+gateway
 ```
-> vagrant ssh gateway
 $ curl http://localhost:8080/sessions
 ```
 
+frontend
 ```
-> vagrant ssh frontend
 $ curl http://localhost:8080/
 ```

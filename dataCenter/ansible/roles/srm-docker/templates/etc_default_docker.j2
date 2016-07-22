@@ -1,4 +1,4 @@
 # Docker Upstart and SysVinit configuration file
 # {{ ansible_managed }}
 
-DOCKER_OPTS="-H tcp://{{ ansible_eth0.ipv4.address }}:2375 -H unix:///var/run/docker.sock"
+DOCKER_OPTS="-H tcp://{{ ansible_default_ipv4.address }}:2375 -H unix:///var/run/docker.sock"

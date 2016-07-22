@@ -4,10 +4,10 @@
     name: bristechsrm/auth
 
 - name: configure
-  template: src=Auth.config.j2 dest=/home/vagrant/Auth.config
+  template: src=Auth.config.j2 dest=/home/{{ user }}/Auth.config
 
 - name: secrets
-  copy: src=/home/vagrant/Auth.secrets.config dest=/home/vagrant/Auth.secrets.config
+  copy: src=/home/vagrant/Auth.secrets.config dest=/home/{{ user }}/Auth.secrets.config
 
 - name: start
   docker_container:
@@ -17,5 +17,5 @@
     ports:
      - "8080:8080"
     volumes:
-     - /home/vagrant/Auth.config:/service/Auth.exe.config
-     - /home/vagrant/Auth.secrets.config:/service/secrets.config
+     - /home/{{ user }}/Auth.config:/service/Auth.exe.config
+     - /home/{{ user }}/Auth.secrets.config:/service/secrets.config

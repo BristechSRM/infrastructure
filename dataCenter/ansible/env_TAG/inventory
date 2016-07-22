@@ -1,0 +1,13 @@
+
+[nodes]
+auth ansible_host=ec2-54-154-205-44.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/auth.pem
+comms ansible_host=ec2-54-154-209-151.eu-west-1.compute.amazonaws.com  ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/comms.pem
+sessions ansible_host=ec2-54-171-110-252.eu-west-1.compute.amazonaws.com  ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/sessions.pem
+gateway ansible_host=ec2-54-171-107-166.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/api-gateway.pem
+frontend ansible_host=ec2-54-171-113-255.eu-west-1.compute.amazonaws.com  ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/frontend.pem
+
+[master]
+master ansible_host=ec2-54-154-210-14.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/swarm-master.pem
+
+[consul]
+consul ansible_host=ec2-54-154-209-244.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/pna-consul.pem

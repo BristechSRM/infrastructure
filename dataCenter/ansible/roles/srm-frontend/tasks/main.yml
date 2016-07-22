@@ -4,7 +4,7 @@
     name: bristechsrm/frontend
 
 - name: configure
-  template: src=frontend.json.j2 dest=/home/vagrant/frontend.json
+  template: src=frontend.json.j2 dest=/home/{{ user }}/frontend.json
 
 - name: start
   docker_container:
@@ -14,4 +14,4 @@
     ports:
      - "8080:8080"
     volumes:
-     - /home/vagrant/frontend.json:/frontend/public/js/config.json
+     - /home/{{ user }}/frontend.json:/frontend/public/js/config.json

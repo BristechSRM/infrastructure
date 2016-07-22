@@ -5,4 +5,5 @@
   gather_facts: yes
 
   roles:
+   - srm-docker-cluster
    - srm-swarm-agent

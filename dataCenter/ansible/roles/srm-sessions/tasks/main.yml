@@ -4,7 +4,7 @@
     name: bristechsrm/sessions
 
 - name: configure
-  template: src=Sessions.config.j2 dest=/home/{{ user }}/Sessions.config
+  template: src=Sessions.config.j2 dest=/home/{{ user }}/prd.Sessions.config
 
 - name: start
   docker_container:
@@ -14,4 +14,4 @@
     ports:
      - "8080:8080"
     volumes:
-     - /home/{{ user }}/Sessions.config:/service/Sessions.exe.config
+     - /home/{{ user }}/prd.Sessions.config:/service/Sessions.exe.config

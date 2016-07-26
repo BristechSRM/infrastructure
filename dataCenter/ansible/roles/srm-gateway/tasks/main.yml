@@ -1,17 +1,17 @@
 
 - name: pull
   docker_image:
-    name: bristechsrm/api-gateway
+    name: bristechsrm/gateway
 
 - name: configure
-  template: src=Gateway.config.j2 dest=/home/{{ user }}/Gateway.config
+  template: src=Gateway.config.j2 dest=/home/{{ user }}/prd.Gateway.config
 
 - name: start
   docker_container:
     name: gateway
-    image: bristechsrm/api-gateway
+    image: bristechsrm/gateway
     state: started
     ports:
      - "8080:8080"
     volumes:
-     - /home/{{ user }}/Gateway.config:/service/ApiGateway.exe.config
+     - /home/{{ user }}/prd.Gateway.config:/service/Gateway.exe.config

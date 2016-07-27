@@ -52,8 +52,8 @@ Go!
 
 Place the secrets files in /home/vagrant (ubuntu on AWS)
 ------------------------
-Auth.secrets.config
-Comms.secrets.config
+secrets.Auth.config
+secrets.Comms.config
 
 
 Check connectivity (and get any "add known_hosts" prompts over with)

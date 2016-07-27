@@ -7,7 +7,7 @@
   copy: src=Comms.config dest=/home/{{ user }}/prd.Comms.config
 
 - name: secrets
-  copy: src=/home/vagrant/Comms.secrets.config dest=/home/{{ user }}/secrets.Comms.config
+  copy: src=/home/vagrant/secrets.Comms.config dest=/home/{{ user }}/secrets.Comms.config
 
 - name: start
   docker_container:

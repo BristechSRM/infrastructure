@@ -6,6 +6,9 @@
 - name: configure
   template: src=Auth.config.j2 dest=/home/{{ user }}/prd.Auth.config
 
+- name: certificate
+  copy: src=/home/vagrant/AuthCertificate.pfx dest=/home/{{ user }}/AuthCertificate.pfx
+
 - name: secrets
   copy: src=/home/vagrant/secrets.Auth.config dest=/home/{{ user }}/secrets.Auth.config
 
@@ -19,3 +22,4 @@
     volumes:
      - /home/{{ user }}/prd.Auth.config:/service/Auth.exe.config
      - /home/{{ user }}/secrets.Auth.config:/service/secrets.config
+     - /home/{{ user }}/AuthCertificate.pfx:/AuthCertificate.pfx

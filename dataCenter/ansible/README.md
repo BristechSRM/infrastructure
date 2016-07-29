@@ -52,6 +52,7 @@ Go!
 
 Place the secrets files in /home/vagrant (ubuntu on AWS)
 ------------------------
+AuthCertificate.pfx
 secrets.Auth.config
 secrets.Comms.config
 

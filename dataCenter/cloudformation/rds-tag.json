@@ -105,6 +105,7 @@
                 "Engine": "MySQL",
                 "AllocatedStorage": "5",
                 "DBInstanceClass": "db.t2.micro",
+                "PubliclyAccessible" : true,
                 "DBInstanceIdentifier": {
                     "Ref": "instanceName"
                 },

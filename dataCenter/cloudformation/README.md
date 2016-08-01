@@ -2,6 +2,12 @@
 Cloud Formation instructions
 =================
 
+
+Create Rds DB
+-----------------
+./rds-tag.sh TAG vpc-d8c5debd default-vpc-d8c5debd
+
+
 Create Stack
 -----------------
 Use a Unix box with aws cli,

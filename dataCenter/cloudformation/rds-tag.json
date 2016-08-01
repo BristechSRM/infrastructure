@@ -11,6 +11,11 @@
             "Type": "String",
             "Default": "null",
             "Description": "The VPC to put it in"
+        },
+        "subnetGroupName": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The db subnet group name"
         }
     },
     "Resources": {
@@ -59,6 +64,15 @@
                         "Value": {
                             "Ref": "environment"
                         }
+                    }
+                ],
+                "DBSubnetGroupName": { "Ref": "subnetGroupName" },
+                "VPCSecurityGroups": [
+                    {
+                        "Fn::GetAtt": [
+                            "sgMySqlScottLogic",
+                            "GroupId"
+                        ]
                     }
                 ]
             },

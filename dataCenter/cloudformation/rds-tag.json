@@ -7,15 +7,35 @@
             "Default": "null",
             "Description": "The environment tag"
         },
+        "instanceName": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The db instance name"
+        },
+        "masterUsername": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The db master username"
+        },
+        "masterPassword": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The db master password"
+        },
         "vpcId": {
             "Type": "String",
             "Default": "null",
             "Description": "The VPC to put it in"
         },
-        "subnetGroupName": {
+        "dbSubnetGroupName": {
             "Type": "String",
             "Default": "null",
             "Description": "The db subnet group name"
+        },
+        "servicesSubnetCIDR": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The subnet with the services in CIDR"
         }
     },
     "Resources": {
@@ -48,16 +68,53 @@
                 }
             }
         },
-        "sessionsDB": {
+        "sgMySqlSubnet": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow MySql from Services Subnet",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "3306",
+                        "ToPort": "3306",
+                        "CidrIp": {
+                            "Ref": "servicesSubnetCIDR"
+                        }
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "sg-MySql-Subnet"
+                    },
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "environment"
+                        }
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "vpcId"
+                }
+            }
+        },
+        "dbSessions": {
             "Type": "AWS::RDS::DBInstance",
             "Properties": {
-                "DBSecurityGroups": [],
+                "Engine": "MySQL",
                 "AllocatedStorage": "5",
                 "DBInstanceClass": "db.t2.micro",
+                "DBInstanceIdentifier": {
+                    "Ref": "instanceName"
+                },
                 "DBName": "sessions",
-                "Engine": "MySQL",
-                "MasterUsername": "paul",
-                "MasterUserPassword": "chickens",
+                "MasterUsername": {
+                    "Ref": "masterUsername"
+                },
+                "MasterUserPassword": {
+                    "Ref": "masterPassword"
+                },
                 "Tags": [
                     {
                         "Key": "Environment",
@@ -66,13 +123,16 @@
                         }
                     }
                 ],
-                "DBSubnetGroupName": { "Ref": "subnetGroupName" },
+                "DBSecurityGroups": [],
+                "DBSubnetGroupName": {
+                    "Ref": "dbSubnetGroupName"
+                },
                 "VPCSecurityGroups": [
                     {
-                        "Fn::GetAtt": [
-                            "sgMySqlScottLogic",
-                            "GroupId"
-                        ]
+                        "Ref": "sgMySqlScottLogic"
+                    },
+                    {
+                        "Ref": "sgMySqlSubnet"
                     }
                 ]
             },

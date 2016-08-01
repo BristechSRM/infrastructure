@@ -1,0 +1,68 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Bristech SRM MySql",
+    "Parameters": {
+        "environment": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The environment tag"
+        },
+        "vpcId": {
+            "Type": "String",
+            "Default": "null",
+            "Description": "The VPC to put it in"
+        }
+    },
+    "Resources": {
+        "sgMySqlScottLogic": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow MySql from ScottLogic Bristol",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "3306",
+                        "ToPort": "3306",
+                        "CidrIp": "90.155.100.125/32"
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "sg-MySql-ScottLogic"
+                    },
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "environment"
+                        }
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "vpcId"
+                }
+            }
+        },
+        "sessionsDB": {
+            "Type": "AWS::RDS::DBInstance",
+            "Properties": {
+                "DBSecurityGroups": [],
+                "AllocatedStorage": "5",
+                "DBInstanceClass": "db.t2.micro",
+                "DBName": "sessions",
+                "Engine": "MySQL",
+                "MasterUsername": "paul",
+                "MasterUserPassword": "chickens",
+                "Tags": [
+                    {
+                        "Key": "Environment",
+                        "Value": {
+                            "Ref": "environment"
+                        }
+                    }
+                ]
+            },
+            "DeletionPolicy": "Delete"
+        }
+    }
+}

@@ -9,6 +9,7 @@ CREATE TABLE `profiles` (
   `rating` int(11) NOT NULL,
   `imageUrl` varchar(255) DEFAULT NULL,
   `bio` text,
+  `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

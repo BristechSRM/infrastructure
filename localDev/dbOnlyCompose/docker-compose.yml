@@ -1,0 +1,14 @@
+version: "2"
+services:
+  mysql:
+    image: bristechsrm/srm-mysql-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=localdev
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+  dynamodb:
+    image: bristechsrm/srm-dynamo-db
+    ports:
+      - "7000:7000"
+    restart: unless-stopped

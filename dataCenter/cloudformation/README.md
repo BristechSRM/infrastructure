@@ -2,6 +2,7 @@
 Cloud Formation instructions
 =================
 
+
 Create Stack
 -----------------
 Use a Unix box with aws cli,
@@ -14,7 +15,18 @@ or make one...
 $ aws configure
 ```
 
-Run the wrapper script with appropriate TAG
+
+Create Rds DB
+-----------------
+```
+$ cd /vagrant
+./rds-tag.sh TAG sessions-TAG dbo grapefruit vpc-d8c5debd default-vpc-d8c5debd 10.0.1.0/24
+```
+
+
+Create the microservices instances
+-----------------
+
 ```
 $ cd /vagrant
 ./srm-tag.sh TAG vpc-d8c5debd subnet-488a9f11 10.0.5.0/24

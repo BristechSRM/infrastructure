@@ -1,4 +1,16 @@
 
+- name: stop
+  docker_container:
+    name: auth
+    image: bristechsrm/auth
+    state: stopped
+
+- name: remove
+  docker_container:
+    name: auth
+    image: bristechsrm/auth
+    state: absent
+
 - name: pull
   docker_image:
     name: bristechsrm/auth

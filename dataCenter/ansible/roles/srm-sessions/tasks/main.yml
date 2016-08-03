@@ -1,4 +1,16 @@
 
+- name: stop
+  docker_container:
+    name: sessions
+    image: bristechsrm/sessions
+    state: stopped
+
+- name: remove
+  docker_container:
+    name: sessions
+    image: bristechsrm/sessions
+    state: absent
+
 - name: pull
   docker_image:
     name: bristechsrm/sessions

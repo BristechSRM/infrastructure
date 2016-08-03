@@ -32,7 +32,7 @@ $ ssh-keyscan auth comms sessions gateway frontend consul master >> ~/.ssh/known
 
 $ ssh-keygen -t rsa -b 2048
 $ cd /vagrant
-$ ansible-playbook -i env_local all-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_SRM all-ssh-addkey.yml --ask-pass
 password: isanopensecret
 ```
 
@@ -76,16 +76,11 @@ $ ansible-playbook -i env_SRM nodes-docker-swarm.yml
 
 Consul and Master
 ------------------------
-$ ansible-playbook -i env_SRM srm-consul.yml
-$ ansible-playbook -i env_SRM srm-master.yml
+$ ansible-playbook -i env_SRM srm-do-infra.yml
 
 Unleash Microservices
 ------------------------
-$ ansible-playbook -i env_SRM srm-auth.yml
-$ ansible-playbook -i env_SRM srm-comms.yml
-$ ansible-playbook -i env_SRM srm-sessions.yml
-$ ansible-playbook -i env_SRM srm-gateway.yml
-$ ansible-playbook -i env_SRM srm-frontend.yml
+$ ansible-playbook -i env_SRM srm-do-nodes.yml
 
 Try the website.
 

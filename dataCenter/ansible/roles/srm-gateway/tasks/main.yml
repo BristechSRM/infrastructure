@@ -1,4 +1,16 @@
 
+- name: stop
+  docker_container:
+    name: gateway
+    image: bristechsrm/gateway
+    state: stopped
+
+- name: remove
+  docker_container:
+    name: gateway
+    image: bristechsrm/gateway
+    state: absent
+
 - name: pull
   docker_image:
     name: bristechsrm/gateway

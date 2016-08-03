@@ -1,4 +1,16 @@
 
+- name: stop
+  docker_container:
+    name: frontend
+    image: bristechsrm/frontend
+    state: stopped
+
+- name: remove
+  docker_container:
+    name: frontend
+    image: bristechsrm/frontend
+    state: absent
+
 - name: pull
   docker_image:
     name: bristechsrm/frontend

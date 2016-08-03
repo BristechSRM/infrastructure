@@ -1,0 +1,6 @@
+
+- include: srm-auth.yml
+- include: srm-comms.yml
+- include: srm-sessions.yml
+- include: srm-gateway.yml
+- include: srm-frontend.yml

@@ -1,0 +1,3 @@
+
+- include: srm-consul.yml
+- include: srm-master.yml

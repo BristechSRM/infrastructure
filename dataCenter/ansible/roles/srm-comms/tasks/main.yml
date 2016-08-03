@@ -1,4 +1,16 @@
 
+- name: stop
+  docker_container:
+    name: comms
+    image: bristechsrm/comms
+    state: stopped
+
+- name: remove
+  docker_container:
+    name: comms
+    image: bristechsrm/comms
+    state: absent
+
 - name: pull
   docker_image:
     name: bristechsrm/comms

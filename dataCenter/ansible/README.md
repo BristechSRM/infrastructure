@@ -32,7 +32,7 @@ $ ssh-keyscan auth comms sessions gateway frontend consul master >> ~/.ssh/known
 
 $ ssh-keygen -t rsa -b 2048
 $ cd /vagrant
-$ ansible-playbook -i env_local all-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_SRM all-ssh-addkey.yml --ask-pass
 password: isanopensecret
 ```
 
@@ -43,7 +43,7 @@ You'll need a unix host to drive this.  "mgmt" will do.
 
 Create the AWS stack under "cloudFormation"
 Make sure the private keys for ssh to the AWS Instances are available on your host
-Update the locations and urls in the env_local variables and inventory
+Update the locations and urls in the env_SRM variables and inventory
 
 
 
@@ -60,27 +60,27 @@ secrets.Comms.config
 Check connectivity (and get any "add known_hosts" prompts over with)
 ------------------------
 ```
-$ ansible -i env_local all -m ping
+$ ansible -i env_SRM all -m ping
 ```
 
 
 Docker and docker-py are universal
 ------------------------
-$ ansible-playbook -i env_local all-apt-docker.yml
-$ ansible-playbook -i env_local all-pip-docker-py.yml
+$ ansible-playbook -i env_SRM all-apt-docker.yml
+$ ansible-playbook -i env_SRM all-pip-docker-py.yml
 
 Infra just gets docker, nodes are a docker cluster
 ------------------------
-$ ansible-playbook -i env_local infra-docker.yml
-$ ansible-playbook -i env_local nodes-docker-swarm.yml
+$ ansible-playbook -i env_SRM infra-docker.yml
+$ ansible-playbook -i env_SRM nodes-docker-swarm.yml
 
 Consul and Master
 ------------------------
-$ ansible-playbook -i env_local srm-do-infra.yml
+$ ansible-playbook -i env_SRM srm-do-infra.yml
 
 Unleash Microservices
 ------------------------
-$ ansible-playbook -i env_local srm-do-nodes.yml
+$ ansible-playbook -i env_SRM srm-do-nodes.yml
 
 Try the website.
 

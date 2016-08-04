@@ -38,9 +38,12 @@ set -e
 
 docker pull ${repository}
 
+# This treats all nodes the same, so it is necessarily a superset
+# The extra volume mounts are harmless, if annoying
 docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} \
     -v /home/ubuntu/prd.${executableName}.config:/service/${executableName}.exe.config \
     -v /home/ubuntu/secrets.${executableName}.config:/service/secrets.config \
+    -v /home/ubuntu/AuthCertificate.pfx:/AuthCertificate.pfx \
     ${repository}
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

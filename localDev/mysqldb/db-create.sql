@@ -35,3 +35,16 @@ CREATE TABLE `sessions` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `events` (
+  `id` char(36) NOT NULL,
+  `date` datetime NOT NULL,
+  `name` varchar(256) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+CREATE USER 'sessions'@'%' IDENTIFIED BY 'apassword';
+GRANT ALL PRIVILEGES ON sessions. * TO 'sessions'@'%';
+FLUSH PRIVILEGES

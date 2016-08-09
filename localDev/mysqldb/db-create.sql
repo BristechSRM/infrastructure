@@ -38,7 +38,7 @@ CREATE TABLE `sessions` (
 
 CREATE TABLE `events` (
   `id` char(36) NOT NULL,
-  `date` datetime NOT NULL,
+  `date` datetime DEFAULT NULL,
   `name` varchar(256) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)

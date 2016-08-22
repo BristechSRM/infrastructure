@@ -1,0 +1,32 @@
+
+- name: auth config
+  template: src=Auth.config.j2 dest=/home/{{ user }}/Auth.exe.config
+
+- name: auth secrets
+  copy: src=/home/vagrant/secrets.Auth.config dest=/home/{{ user }}/secrets.Auth.config
+
+- name: auth certificate
+  copy: src=/home/vagrant/AuthCertificate.pfx dest=/home/{{ user }}/AuthCertificate.pfx
+
+
+
+- name: comms config
+  copy: src=Comms.config dest=/home/{{ user }}/Comms.exe.config
+
+- name: comms secrets
+  copy: src=/home/vagrant/secrets.Comms.config dest=/home/{{ user }}/secrets.Comms.config
+
+
+
+- name: sessions config
+  template: src=Sessions.config.j2 dest=/home/{{ user }}/Sessions.exe.config
+
+
+
+- name: gateway config
+  copy: src=Gateway.config dest=/home/{{ user }}/Gateway.exe.config
+
+
+
+- name: frontend config
+  template: src=frontend.json.j2 dest=/home/{{ user }}/frontend.json

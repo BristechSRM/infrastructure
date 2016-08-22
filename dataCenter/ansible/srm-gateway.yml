@@ -1,5 +1,5 @@
 
-- hosts: gateway
+- hosts: box3
   become: yes
   become_method: sudo
   gather_facts: no

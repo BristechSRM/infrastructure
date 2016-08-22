@@ -28,12 +28,12 @@ $ ansible --version
 
 Set us up for password-free use (i.e. generate a ssh key and install it on the nodes)
 ```
-$ ssh-keyscan auth comms sessions gateway frontend consul master >> ~/.ssh/known_hosts
+$ ssh-keyscan box1 box2 box3 >> ~/.ssh/known_hosts
 
 $ ssh-keygen -t rsa -b 2048
 $ cd /vagrant
-$ ansible-playbook -i env_SRM all-ssh-addkey.yml --ask-pass
-password: isanopensecret
+$ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
+password: <isanopensecret>
 ```
 
 On AWS
@@ -41,83 +41,104 @@ On AWS
 
 You'll need a unix host to drive this.  "mgmt" will do.
 
-Create the AWS stack under "cloudFormation"
-Make sure the private keys for ssh to the AWS Instances are available on your host
-Update the locations and urls in the env_SRM variables and inventory
+Create the AWS stack under "cloudFormation".
+Make sure the private keys for ssh to the AWS Instances are available on your host.
+Update the locations and urls in the env_local variables and inventory.
 
 
 
 Go!
 ========================
 
-Place the secrets files in /home/vagrant (ubuntu on AWS)
-------------------------
-AuthCertificate.pfx
-secrets.Auth.config
-secrets.Comms.config
-
 
 Check connectivity (and get any "add known_hosts" prompts over with)
 ------------------------
 ```
-$ ansible -i env_SRM all -m ping
+$ ansible -i env_local all -m ping
 ```
 
-
-Docker and docker-py are universal
+Install and configure docker
 ------------------------
-$ ansible-playbook -i env_SRM all-apt-docker.yml
-$ ansible-playbook -i env_SRM all-pip-docker-py.yml
+```
+$ ansible-playbook -i env_local nodes-apt-docker.yml
+$ ansible-playbook -i env_local nodes-srm-docker.yml
+```
 
-Infra just gets docker, nodes are a docker cluster
+Place the secrets files in /home/vagrant (ubuntu on AWS)
 ------------------------
-$ ansible-playbook -i env_SRM infra-docker.yml
-$ ansible-playbook -i env_SRM nodes-docker-swarm.yml
+```
+AuthCertificate.pfx
+secrets.Auth.config
+secrets.Comms.config
+```
 
-Consul and Master
+All config/secrets must go on all nodes
 ------------------------
-$ ansible-playbook -i env_SRM srm-do-infra.yml
+```
+$ ansible-playbook -i env_local nodes-srm-config.yml
+```
+
+Set up the swarm
+------------------------
+```
+$ ansible-playbook -i env_local srm-master.yml
+```
+cut and paste the token and master address into variables, then
+```
+$ ansible-playbook -i env_local srm-agents.yml
+$ ansible-playbook -i env_local srm-overlay.yml
+```
 
 Unleash Microservices
 ------------------------
-$ ansible-playbook -i env_SRM srm-do-nodes.yml
+```
+$ ansible-playbook -i env_local srm-auth.yml
+$ ansible-playbook -i env_local srm-comms.yml
+$ ansible-playbook -i env_local srm-sessions.yml
+$ ansible-playbook -i env_local srm-gateway.yml
+$ ansible-playbook -i env_local srm-frontend.yml
+```
 
 Try the website.
 
 
+
 Smoke tests
 -----------------------
-consul
-```
-$ curl http://localhost:8500/v1/kv
-```
-
-master
-```
-$ docker info
-```
 
 auth
 ```
-$ curl http://localhost:8080/
-```
-
-comms
-```
-$ curl http://localhost:8080/last-contact
-```
-
-sessions
-```
-$ curl http://localhost:8080/sessions
+$ curl http://localhost:9003/
 ```
 
 gateway
 ```
-$ curl http://localhost:8080/sessions
+$ curl http://localhost:9090/sessions
 ```
 
 frontend
 ```
 $ curl http://localhost:8080/
+```
+
+Diagnostics
+-----------------------
+
+On the swarm master:
+```
+$ docker network ls
+
+$ docker service ls
+$ docker service ps <serviceName>
+```
+
+On a node:
+```
+$ docker network inspect <networkName>
+
+$ docker ps
+$ docker logs <containerId>
+
+$ docker exec -it <containerId> /bin/bash
+$ ping <microserviceName>
 ```

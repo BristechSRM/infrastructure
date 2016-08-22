@@ -1,0 +1,6 @@
+
+- name: start
+  command: docker swarm init --advertise-addr eth1
+  register: swarm_init_output
+
+- debug: var=swarm_init_output.stdout_lines

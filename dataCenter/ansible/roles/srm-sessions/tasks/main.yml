@@ -1,29 +1,7 @@
 
-- name: stop
-  docker_container:
-    name: sessions
-    image: bristechsrm/sessions
-    state: stopped
-
-- name: remove
-  docker_container:
-    name: sessions
-    image: bristechsrm/sessions
-    state: absent
-
-- name: pull
-  docker_image:
-    name: bristechsrm/sessions
-
-- name: configure
-  template: src=Sessions.config.j2 dest=/home/{{ user }}/prd.Sessions.config
-
 - name: start
-  docker_container:
-    name: sessions
-    image: bristechsrm/sessions
-    state: started
-    ports:
-     - "8080:8080"
-    volumes:
-     - /home/{{ user }}/prd.Sessions.config:/service/Sessions.exe.config
+  command: docker service create \
+    --network {{ overlay_network }} \
+    --mount type=bind,source=/home/{{ user }}/Sessions.exe.config,target=/service/Sessions.exe.config \
+    --name sessions \
+    bristechsrm/sessions

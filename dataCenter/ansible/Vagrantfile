@@ -1,79 +1,43 @@
 
 Vagrant.configure("2") do |config|
 
-  config.vm.define :mgmt do |mgmt_config|
+  config.vm.define "mgmt" do |mgmt_config|
       mgmt_config.vm.box = "ubuntu/trusty64"
       mgmt_config.vm.hostname = "mgmt"
-      mgmt_config.vm.network :private_network, ip: "10.0.15.10"
+      mgmt_config.vm.network "private_network", ip: "10.0.15.20"
       mgmt_config.vm.provider "virtualbox" do |vb|
         vb.memory = "256"
       end
       mgmt_config.vm.provision :shell, path: "bootstrap-mgmt.sh"
   end
 
-  config.vm.define :auth do |auth_config|
-      auth_config.vm.box = "ubuntu/trusty64"
-      auth_config.vm.hostname = "auth"
-      auth_config.vm.network :private_network, ip: "10.0.15.11"
-      auth_config.vm.network "forwarded_port", guest: 8080, host: 9003
-      auth_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
+  config.vm.define "box1" do |box1_config|
+      box1_config.vm.box = "ubuntu/trusty64"
+      box1_config.vm.hostname = "box1"
+      box1_config.vm.network "private_network", ip: "10.0.15.11"
+      box1_config.vm.network "forwarded_port", guest: 8080, host: 8080
+      box1_config.vm.network "forwarded_port", guest: 9090, host: 9090
+      box1_config.vm.network "forwarded_port", guest: 9003, host: 9003
+      box1_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "512"
       end
   end
 
-  config.vm.define :comms do |comms_config|
-      comms_config.vm.box = "ubuntu/trusty64"
-      comms_config.vm.hostname = "comms"
-      comms_config.vm.network :private_network, ip: "10.0.15.12"
-      comms_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
+  config.vm.define "box2" do |box2_config|
+      box2_config.vm.box = "ubuntu/trusty64"
+      box2_config.vm.hostname = "box2"
+      box2_config.vm.network "private_network", ip: "10.0.15.12"
+      box2_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "512"
       end
   end
 
-  config.vm.define :sessions do |sessions_config|
-      sessions_config.vm.box = "ubuntu/trusty64"
-      sessions_config.vm.hostname = "sessions"
-      sessions_config.vm.network :private_network, ip: "10.0.15.13"
-      sessions_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
-      end
-  end
-
-  config.vm.define :gateway do |gateway_config|
-      gateway_config.vm.box = "ubuntu/trusty64"
-      gateway_config.vm.hostname = "gateway"
-      gateway_config.vm.network :private_network, ip: "10.0.15.14"
-      gateway_config.vm.network "forwarded_port", guest: 8080, host: 9090
-      gateway_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
-      end
-  end
-
-  config.vm.define :frontend do |frontend_config|
-      frontend_config.vm.box = "ubuntu/trusty64"
-      frontend_config.vm.hostname = "frontend"
-      frontend_config.vm.network :private_network, ip: "10.0.15.15"
-      frontend_config.vm.network "forwarded_port", guest: 8080, host: 8080
-      frontend_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
-      end
-  end
-
-  config.vm.define :consul do |consul_config|
-      consul_config.vm.box = "ubuntu/trusty64"
-      consul_config.vm.hostname = "consul"
-      consul_config.vm.network :private_network, ip: "10.0.15.20"
-      consul_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
-      end
-  end
-
-  config.vm.define :master do |master_config|
-      master_config.vm.box = "ubuntu/trusty64"
-      master_config.vm.hostname = "master"
-      master_config.vm.network :private_network, ip: "10.0.15.21"
-      master_config.vm.provider "virtualbox" do |vb|
-        vb.memory = "256"
+  config.vm.define "box3" do |box3_config|
+      box3_config.vm.box = "ubuntu/trusty64"
+      box3_config.vm.hostname = "box3"
+      box3_config.vm.network "private_network", ip: "10.0.15.13"
+      box3_config.vm.provider "virtualbox" do |vb|
+        vb.memory = "512"
       end
   end
 end

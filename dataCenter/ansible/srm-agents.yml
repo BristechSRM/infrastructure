@@ -1,8 +1,8 @@
 
-- hosts: consul
+- hosts: box1, box2
   become: yes
   become_method: sudo
   gather_facts: no
 
   roles:
-   - srm-consul
+   - srm-agent

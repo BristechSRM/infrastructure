@@ -1,5 +1,5 @@
 
-- hosts: all
+- hosts: nodes
   become_method: sudo
   become_user: vagrant
   gather_facts: no

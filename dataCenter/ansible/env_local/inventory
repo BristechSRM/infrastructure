@@ -1,13 +1,5 @@
 
 [nodes]
-auth
-comms
-sessions
-gateway
-frontend
-
-[master]
-master
-
-[consul]
-consul
+box1
+box2
+box3

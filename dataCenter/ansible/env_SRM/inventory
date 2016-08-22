@@ -1,13 +1,13 @@
 
 [nodes]
-auth ansible_host=ec2-52-51-54-255.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/auth.pem
-comms ansible_host=ec2-54-154-210-225.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/comms.pem
+auth     ansible_host=ec2-52-51-54-255.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/auth.pem
+comms    ansible_host=ec2-54-154-210-225.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/comms.pem
 sessions ansible_host=ec2-54-229-79-135.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/sessions.pem
-gateway ansible_host=ec2-52-50-88-117.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/api-gateway.pem
+gateway  ansible_host=ec2-52-50-88-117.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/api-gateway.pem
 frontend ansible_host=ec2-52-50-27-136.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/frontend.pem
 
 [master]
-master ansible_host=ec2-54-171-1-185.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/swarm-master.pem
+master   ansible_host=ec2-54-171-1-185.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/swarm-master.pem
 
 [consul]
-consul ansible_host=ec2-54-229-69-156.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/pna-consul.pem
+consul   ansible_host=ec2-54-229-69-156.eu-west-1.compute.amazonaws.com ansible_user=ubuntu ansible_ssh_private_key_file=/home/vagrant/pna-consul.pem

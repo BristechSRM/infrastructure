@@ -1,0 +1,8 @@
+
+#- name: leave
+#  command: docker swarm leave
+
+- name: join
+  command: docker swarm join \
+    --token {{ swarm_agent_token }} \
+    {{ swarm_manager_address }}

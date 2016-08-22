@@ -1,33 +1,8 @@
 
-- name: stop
-  docker_container:
-    name: comms
-    image: bristechsrm/comms
-    state: stopped
-
-- name: remove
-  docker_container:
-    name: comms
-    image: bristechsrm/comms
-    state: absent
-
-- name: pull
-  docker_image:
-    name: bristechsrm/comms
-
-- name: configure
-  copy: src=Comms.config dest=/home/{{ user }}/prd.Comms.config
-
-- name: secrets
-  copy: src=/home/vagrant/secrets.Comms.config dest=/home/{{ user }}/secrets.Comms.config
-
 - name: start
-  docker_container:
-    name: comms
-    image: bristechsrm/comms
-    state: started
-    ports:
-     - "8080:8080"
-    volumes:
-     - /home/{{ user }}/prd.Comms.config:/service/Comms.exe.config
-     - /home/{{ user }}/secrets.Comms.config:/service/secrets.config
+  command: docker service create \
+    --network {{ overlay_network }} \
+    --mount type=bind,source=/home/{{ user }}/Comms.exe.config,target=/service/Comms.exe.config \
+    --mount type=bind,source=/home/{{ user }}/secrets.Comms.config,target=/service/Comms.config \
+    --name comms \
+    bristechsrm/comms

@@ -1,4 +1,0 @@
-# Docker Upstart and SysVinit configuration file
-# {{ ansible_managed }}
-
-DOCKER_OPTS="-H tcp://{{ ansible_default_ipv4.address }}:2375 -H unix:///var/run/docker.sock --cluster-advertise={{ ansible_default_ipv4.address }}:2375 --cluster-store=consul://{{ consul_address }}"

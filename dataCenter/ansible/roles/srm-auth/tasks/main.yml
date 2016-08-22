@@ -1,37 +1,10 @@
 
-- name: stop
-  docker_container:
-    name: auth
-    image: bristechsrm/auth
-    state: stopped
-
-- name: remove
-  docker_container:
-    name: auth
-    image: bristechsrm/auth
-    state: absent
-
-- name: pull
-  docker_image:
-    name: bristechsrm/auth
-
-- name: configure
-  template: src=Auth.config.j2 dest=/home/{{ user }}/prd.Auth.config
-
-- name: certificate
-  copy: src=/home/vagrant/AuthCertificate.pfx dest=/home/{{ user }}/AuthCertificate.pfx
-
-- name: secrets
-  copy: src=/home/vagrant/secrets.Auth.config dest=/home/{{ user }}/secrets.Auth.config
-
 - name: start
-  docker_container:
-    name: auth
-    image: bristechsrm/auth
-    state: started
-    ports:
-     - "8080:8080"
-    volumes:
-     - /home/{{ user }}/prd.Auth.config:/service/Auth.exe.config
-     - /home/{{ user }}/secrets.Auth.config:/service/secrets.config
-     - /home/{{ user }}/AuthCertificate.pfx:/AuthCertificate.pfx
+  command: docker service create \
+    --network {{ overlay_network }} \
+    --publish {{ auth_port }}:8080 \
+    --mount type=bind,source=/home/{{ user }}/Auth.exe.config,target=/service/Auth.exe.config \
+    --mount type=bind,source=/home/{{ user }}/secrets.Auth.config,target=/service/secrets.config \
+    --mount type=bind,source=/home/{{ user }}/AuthCertificate.pfx,target=/AuthCertificate.pfx \
+    --name auth \
+    bristechsrm/auth

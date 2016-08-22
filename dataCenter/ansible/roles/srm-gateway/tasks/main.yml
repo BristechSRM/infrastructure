@@ -1,29 +1,8 @@
 
-- name: stop
-  docker_container:
-    name: gateway
-    image: bristechsrm/gateway
-    state: stopped
-
-- name: remove
-  docker_container:
-    name: gateway
-    image: bristechsrm/gateway
-    state: absent
-
-- name: pull
-  docker_image:
-    name: bristechsrm/gateway
-
-- name: configure
-  template: src=Gateway.config.j2 dest=/home/{{ user }}/prd.Gateway.config
-
 - name: start
-  docker_container:
-    name: gateway
-    image: bristechsrm/gateway
-    state: started
-    ports:
-     - "8080:8080"
-    volumes:
-     - /home/{{ user }}/prd.Gateway.config:/service/Gateway.exe.config
+  command: docker service create \
+    --network {{ overlay_network }} \
+    --publish {{ gateway_port }}:8080 \
+    --mount type=bind,source=/home/{{ user }}/Gateway.exe.config,target=/service/Gateway.exe.config \
+    --name gateway \
+    bristechsrm/gateway

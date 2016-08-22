@@ -1,8 +1,8 @@
 
-- hosts: all
+- hosts: box3
   become: yes
   become_method: sudo
   gather_facts: no
 
   roles:
-    - pip-docker-py
+   - srm-overlay

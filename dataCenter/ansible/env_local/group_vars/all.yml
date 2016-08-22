@@ -1,11 +1,16 @@
 
 user: "vagrant"
+overlay_network: srmoverlay
+
+swarm_agent_token: <editme>
+swarm_manager_address: <editme>
+
 sessionsdb_str: "SERVER=sessions-dev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=apassword;"
-consul_address: "10.0.15.20:8500"
-auth_address: "10.0.15.11:8080"
-comms_address: "10.0.15.12:8080"
-sessions_address: "10.0.15.13:8080"
+
+auth_port: 9003
+gateway_port: 9090
 frontend_port: 8080
+
 auth_url: "http://localhost:9003"
 gateway_url: "http://localhost:9090"
 frontend_url: "http://localhost:8080"

@@ -24,7 +24,7 @@
 
 
 - name: gateway config
-  template: src=Gateway.config.j2 dest=/home/{{ user }}/Gateway.exe.config
+  copy: src=Gateway.config dest=/home/{{ user }}/Gateway.exe.config
 
 
 

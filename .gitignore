@@ -261,8 +261,9 @@ concourse/credentials.yml
 bristech-speakers-export.json
 TrelloSync/trello-import.json
 
-TrelloCreds.config
-
 node_modules
 credentials
 localDev/compose/build
+TrelloCreds.config
+secrets.Auth.config
+secrets.Comms.config

@@ -3,6 +3,11 @@
 The scripts and configuration in this folder will allow you to bring up the full BristechSRM system as a local docker swarm, and access frontend from windows on `http://localhost:8080`.
 The Api gateway will also be avaiable on `localhost:8081` and the auth service on `localhost:9003`.
 
+## Install Requirements 
+You will require git bash or an equivalent installed, as well as Docker. On windows 7, we have used docker toolbox : https://www.docker.com/products/docker-toolbox. 
+
+Tested on docker version 1.12.0.
+
 ## Setup 
 
 Before running, all secrets config and general config must be created / modified. All config files are contained in ./configs/{application} The following lists what is required (Alphabetical order).

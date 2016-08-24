@@ -15,6 +15,8 @@ Before running, all secrets config and general config must be created / modified
 ### Auth
  - The secrets config file for Auth must be placed under ./configs/auth/ as secrets.Auth.config. 
     - Note, the certificateFile setting value must be of the format "/certFileName.pfx" (There is an issue around the location of the file, so it will be place in the file system root for the service)
+    - Note, for the settings for the AWSAccessKey and AWSSecretKey: Although credentials will not be used for the local dynamoDb, a value is still required. 
+  Either enter valid values or enter "FAKE" in the value for the AWSAccessKey and AWSSecretKey.
  - The corresponding certificate file must be placed under ./configs/auth/ . E.g. if the certificateFile specfied is "/certFileName.pfx", the file needs to be "certFileName.pfx".
    A template is ready at ./configs/comms/template.secrets.Auth.config
 

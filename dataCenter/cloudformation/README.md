@@ -29,7 +29,7 @@ Create the microservices instances
 
 ```
 $ cd /vagrant
-./srm-tag.sh TAG vpc-d8c5debd subnet-488a9f11 10.0.5.0/24
+./srm-tag.sh TAG vpc-d8c5debd subnet-488a9f11 10.0.1.0/24 10.0.5.0/24
 ```
 
 For PRD, set up the Elastic IPs as follows:

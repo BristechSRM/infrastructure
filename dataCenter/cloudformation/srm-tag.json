@@ -316,7 +316,8 @@
               },
               {
                 "Ref": "sgSrmScottLogic"
-              }            ],
+              }
+            ],
             "SubnetId": {
               "Ref": "servicesSubnetId"
             }

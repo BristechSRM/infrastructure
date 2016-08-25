@@ -1,0 +1,17 @@
+
+user: "ubuntu"
+overlay_network: ethel
+overlay_subnet: 10.0.2.0/24
+
+swarm_join_token: SWMTKN-1-611omyx7i6ekk8mg5mniundhw2txloot4qc0jcuz1n0dekcwl5-avqmqfl7qmuqiljeoq2pugf4r
+swarm_manager_address: 10.0.1.235:2377
+
+sessionsdb_str: "SERVER=sessions-dev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=apassword;"
+
+auth_port: 9003
+gateway_port: 8081
+frontend_port: 8080
+
+auth_url:     ec2-54-154-182-220.eu-west-1.compute.amazonaws.com:{{ auth_port }}
+gateway_url:  ec2-54-154-182-220.eu-west-1.compute.amazonaws.com:{{ gateway_port }}
+frontend_url: ec2-54-154-182-220.eu-west-1.compute.amazonaws.com:{{ frontend_port }}

@@ -1,6 +1,0 @@
-
-- name: configure docker
-  template: src=etc_default_docker.j2 dest=/etc/default/docker
-
-- name: restart docker
-  service: name=docker state=restarted

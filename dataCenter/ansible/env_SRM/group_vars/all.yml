@@ -8,10 +8,10 @@ swarm_manager_address: <placeholder>
 
 sessionsdb_str: "SERVER=sessions.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=apassword;"
 
-auth_port: 9003
+auth_port: 8080
 gateway_port: 8081
-frontend_port: 8080
+frontend_port: 80
 
-auth_url:     ec2-54-154-182-220.eu-west-1.compute.amazonaws.com:{{ auth_port }}
-gateway_url:  ec2-54-154-182-220.eu-west-1.compute.amazonaws.com:{{ gateway_port }}
-frontend_url: ec2-54-154-182-220.eu-west-1.compute.amazonaws.com:{{ frontend_port }}
+auth_url:     http://auth.bris.tech:{{ auth_port }}
+gateway_url:  http://api.bris.tech:{{ gateway_port }}
+frontend_url: http://srm.bris.tech

@@ -6,7 +6,7 @@ The Api gateway will also be avaiable on `localhost:8081` and the auth service o
 ## Install Requirements 
 You will require git bash or an equivalent installed, as well as Docker. On windows 7, we have used docker toolbox : https://www.docker.com/products/docker-toolbox. 
 Note for git bash, you either need to use the executable "C:\Program Files\Git\git-bash.exe", or call bash or sh (found in "C:\Program Files\Git\bin\") with the -l (--login) flag. 
-This makes sure that the shell environment is setup properly
+This makes sure that the shell environment is setup properly.
 Tested on docker version 1.12.0.
 
 ## Setup 

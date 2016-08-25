@@ -1,4 +1,4 @@
-#!/bin/sh -euv
+#!/bin/bash -euv
 
 echo "Setting up data and user login"
 docker-machine ssh manager0 "~/addAuthUser.sh"

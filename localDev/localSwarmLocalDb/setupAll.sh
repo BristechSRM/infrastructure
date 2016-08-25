@@ -1,4 +1,4 @@
-#!/bin/sh -euv
+#!/bin/bash -euv
 
 #Create machines
 docker-machine create --driver virtualbox manager0

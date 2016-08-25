@@ -1,4 +1,4 @@
-#!/bin/sh -euv
+#!/bin/bash -euv
 
 docker service create \
     --replicas 1 \

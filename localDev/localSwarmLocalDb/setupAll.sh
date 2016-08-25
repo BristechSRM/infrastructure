@@ -17,20 +17,20 @@ docker-machine scp -r configs/ worker1:/service/
 #Setup the master as swarm master and get the masterIp and Join token
 masterIp=$(docker-machine ip manager0)
 
-eval $(docker-machine env manager0)
+eval $(docker-machine env --shell bash manager0)
 
 docker swarm init --advertise-addr $masterIp
 joinToken=$(docker swarm join-token -q worker)
 
 #Add worker0 to swarm
-eval $(docker-machine env worker0)
+eval $(docker-machine env --shell bash worker0)
 docker swarm join --token $joinToken "$masterIp:2377"
 
 #Add worker01 to swarm
-eval $(docker-machine env worker1)
+eval $(docker-machine env --shell bash worker1)
 docker swarm join --token $joinToken "$masterIp:2377"
 
-eval $(docker-machine env manager0)
+eval $(docker-machine env --shell bash manager0)
 
 docker network create --driver overlay srm-network
 
@@ -43,7 +43,7 @@ docker-machine scp -r masterScripts/ manager0:~/ && docker-machine ssh manager0 
 echo "SSHing into manager0 and bringing up services"
 docker-machine ssh manager0 "sleep 30; ~/setupServices.sh"
 
-eval $(docker-machine env manager0)
+eval $(docker-machine env --shell bash manager0)
 
 echo "Wait until services are running. This may take several minutes."
 echo "Run 'docker service ls' and ensure all service have the correct number of replicas, e.g. 1/1"

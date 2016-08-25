@@ -1,0 +1,7 @@
+{
+  "endpoints": {
+    "bristech-srm": "http://localhost:8080",
+    "api-gateway": "http://localhost:8081",
+    "auth": "http://localhost:9003"
+  }
+}

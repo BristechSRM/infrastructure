@@ -4,5 +4,5 @@
 
 - name: join
   command: docker swarm join \
-    --token {{ swarm_agent_token }} \
+    --token {{ swarm_join_token }} \
     {{ swarm_manager_address }}

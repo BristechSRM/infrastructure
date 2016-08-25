@@ -1,6 +1,9 @@
 
 - name: start
-  command: docker swarm init --advertise-addr eth1
-  register: swarm_init_output
+  command: docker swarm init --advertise-addr eth0
 
-- debug: var=swarm_init_output.stdout_lines
+- name: get token
+  command: docker swarm join-token -q worker
+  register: swarm_join_token
+
+- debug: var=swarm_join_token.stdout

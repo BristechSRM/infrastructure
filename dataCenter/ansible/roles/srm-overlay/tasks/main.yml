@@ -1,3 +1,5 @@
 
 - name: start
-  command: docker network create --driver overlay {{ overlay_network }}
+  command: docker network create --driver overlay \
+    --subnet {{ overlay_subnet }} \
+    {{ overlay_network }}

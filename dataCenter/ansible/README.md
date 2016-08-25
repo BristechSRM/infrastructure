@@ -32,7 +32,7 @@ $ ssh-keyscan box1 box2 box3 >> ~/.ssh/known_hosts
 
 $ ssh-keygen -t rsa -b 2048
 $ cd /vagrant
-$ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_SRM nodes-ssh-addkey.yml --ask-pass
 password: <isanopensecret>
 ```
 
@@ -43,26 +43,12 @@ You'll need a unix host to drive this.  "mgmt" will do.
 
 Create the AWS stack under "cloudFormation".
 Make sure the private keys for ssh to the AWS Instances are available on your host.
-Update the locations and urls in the env_local variables and inventory.
+Update the locations and urls in the env_SRM variables and inventory.
 
 
 
 Go!
 ========================
-
-
-Check connectivity (and get any "add known_hosts" prompts over with)
-------------------------
-```
-$ ansible -i env_local all -m ping
-```
-
-Install and configure docker
-------------------------
-```
-$ ansible-playbook -i env_local nodes-apt-docker.yml
-$ ansible-playbook -i env_local nodes-srm-docker.yml
-```
 
 Place the secrets files in /home/vagrant (ubuntu on AWS)
 ------------------------
@@ -72,31 +58,44 @@ secrets.Auth.config
 secrets.Comms.config
 ```
 
+Check connectivity (and get any "add known_hosts" prompts over with)
+------------------------
+```
+$ ansible -i env_SRM all -m ping
+```
+
+Install and configure docker
+------------------------
+```
+$ ansible-playbook -i env_SRM nodes-apt-docker.yml
+```
+
+
 All config/secrets must go on all nodes
 ------------------------
 ```
-$ ansible-playbook -i env_local nodes-srm-config.yml
+$ ansible-playbook -i env_SRM nodes-srm-config.yml
 ```
 
 Set up the swarm
 ------------------------
 ```
-$ ansible-playbook -i env_local srm-master.yml
+$ ansible-playbook -i env_SRM srm-master.yml
 ```
 cut and paste the token and master address into variables, then
 ```
-$ ansible-playbook -i env_local srm-agents.yml
-$ ansible-playbook -i env_local srm-overlay.yml
+$ ansible-playbook -i env_SRM srm-agents.yml
+$ ansible-playbook -i env_SRM srm-overlay.yml
 ```
 
 Unleash Microservices
 ------------------------
 ```
-$ ansible-playbook -i env_local srm-auth.yml
-$ ansible-playbook -i env_local srm-comms.yml
-$ ansible-playbook -i env_local srm-sessions.yml
-$ ansible-playbook -i env_local srm-gateway.yml
-$ ansible-playbook -i env_local srm-frontend.yml
+$ ansible-playbook -i env_SRM srm-auth.yml
+$ ansible-playbook -i env_SRM srm-comms.yml
+$ ansible-playbook -i env_SRM srm-sessions.yml
+$ ansible-playbook -i env_SRM srm-gateway.yml
+$ ansible-playbook -i env_SRM srm-frontend.yml
 ```
 
 Try the website.

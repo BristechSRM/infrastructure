@@ -5,8 +5,6 @@ The Api gateway will also be avaiable on `localhost:8081` and the auth service o
 
 ## Install Requirements 
 You will require git bash or an equivalent installed, as well as Docker. On windows 7, we have used docker toolbox : https://www.docker.com/products/docker-toolbox. 
-Note for git bash, you either need to use the executable "C:\Program Files\Git\git-bash.exe", or call bash or sh (found in "C:\Program Files\Git\bin\") with the -l (--login) flag. 
-This makes sure that the shell environment is setup properly.
 Tested on docker version 1.12.0.
 
 ## Setup 
@@ -22,11 +20,6 @@ Before running, all secrets config and general config must be created / modified
 ### Comms
  - The secrets config file for Comms must be placed under ./configs/comms/ as secrets.Comms.config. 
   A template is ready at ./configs/comms/template.secrets.Comms.config
-
-### TrelloMigrate 
- - The trello credentials config file for TrelloMigrate must be placed under ./configs/trelloMigrate as TrelloCreds.config. 
- To create this, see the readMe of the TrelloMigrate project : <https://github.com/BristechSRM/TrelloMigrate>.
- A template is ready at ./configs/trelloMigrate/template.TrelloCreds.config
 
 ## Running
 To run the application, run `./setupAll.sh` and follow all instructions as prompted. You will also be required to run `./setupData.sh` after verifying that all services are running

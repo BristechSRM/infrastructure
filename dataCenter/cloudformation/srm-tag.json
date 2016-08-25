@@ -124,7 +124,7 @@
     "sgSrmScottLogic": {
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
-        "GroupDescription": "Allow 80, 8080, 9090, 9003 from ScottLogic Bristol",
+        "GroupDescription": "Allow 80, 8080, 8081, 9003 from ScottLogic Bristol",
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
@@ -140,8 +140,8 @@
           },
           {
             "IpProtocol": "tcp",
-            "FromPort": "9090",
-            "ToPort": "9090",
+            "FromPort": "8081",
+            "ToPort": "8081",
             "CidrIp": "90.155.100.125/32"
           },
           {

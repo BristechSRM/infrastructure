@@ -1,4 +1,4 @@
-#!/bin/bash -euv
+#!/bin/sh -euv
 docker service create \
  --replicas 1 \
  --network srm-network \

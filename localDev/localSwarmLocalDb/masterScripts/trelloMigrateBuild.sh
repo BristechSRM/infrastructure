@@ -1,4 +1,4 @@
-#!/bin/bash -euv
+#!/bin/sh -euv
 
 cd source
 cp -R /code/.nuget/ .

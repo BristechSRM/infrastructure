@@ -1,4 +1,4 @@
-#!/bin/bash -euv
+#!/bin/sh -euv
 sudo rm -rf ~/source
 sudo rm -rf ~/binaries
 mkdir -p ~/source

@@ -1,4 +1,4 @@
-#!/bin/bash -euv
+#!/bin/sh -euv
 UUID=$(uuidgen)
 
 echo "Email (to be used with google OAUTH Login. E.g. Scottlogic email):"

@@ -42,5 +42,3 @@ docker-machine scp setupServices.sh manager0:~/setupServices.sh
 
 echo "SSHing into manager0 and bringing up services"
 docker-machine ssh manager0 "sleep 30; ./setupServices.sh"
-
-eval $(docker-machine env --shell bash manager0)

@@ -4,7 +4,7 @@
     --network {{ overlay_network }} \
     --publish {{ auth_port }}:8080 \
     --mount type=bind,source=/home/{{ user }}/Auth.exe.config,target=/service/Auth.exe.config \
-    --mount type=bind,source=/home/{{ user }}/secrets.Auth.config,target=/service/secrets.config \
+    --mount type=bind,source=/home/{{ user }}/Auth.exe.secrets,target=/service/Auth.exe.secrets \
     --mount type=bind,source=/home/{{ user }}/AuthCertificate.pfx,target=/AuthCertificate.pfx \
     --name auth \
     bristechsrm/auth

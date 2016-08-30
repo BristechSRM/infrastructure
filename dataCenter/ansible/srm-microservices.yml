@@ -1,4 +1,13 @@
 
+- hosts: nodes
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  roles:
+    - srm-config
+
+
 - hosts: box3
   become: yes
   become_method: sudo

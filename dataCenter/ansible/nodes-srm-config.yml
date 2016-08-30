@@ -1,8 +1,0 @@
-
-- hosts: nodes
-  become: yes
-  become_method: sudo
-  gather_facts: no
-
-  roles:
-    - srm-config

@@ -3,6 +3,6 @@
   command: docker service create \
     --network {{ overlay_network }} \
     --mount type=bind,source=/home/{{ user }}/Comms.exe.config,target=/service/Comms.exe.config \
-    --mount type=bind,source=/home/{{ user }}/secrets.Comms.config,target=/service/Comms.config \
+    --mount type=bind,source=/home/{{ user }}/Comms.exe.secrets,target=/service/Comms.exe.secrets \
     --name comms \
     bristechsrm/comms

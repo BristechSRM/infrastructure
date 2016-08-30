@@ -3,10 +3,10 @@
   template: src=Auth.config.j2 dest=/home/{{ user }}/Auth.exe.config
 
 - name: auth secrets
-  copy: src=/home/vagrant/secrets.Auth.config dest=/home/{{ user }}/secrets.Auth.config
+  copy: src=/vagrant/Auth.exe.secrets dest=/home/{{ user }}/Auth.exe.secrets
 
 - name: auth certificate
-  copy: src=/home/vagrant/AuthCertificate.pfx dest=/home/{{ user }}/AuthCertificate.pfx
+  copy: src=/vagrant/AuthCertificate.pfx dest=/home/{{ user }}/AuthCertificate.pfx
 
 
 
@@ -14,7 +14,7 @@
   copy: src=Comms.config dest=/home/{{ user }}/Comms.exe.config
 
 - name: comms secrets
-  copy: src=/home/vagrant/secrets.Comms.config dest=/home/{{ user }}/secrets.Comms.config
+  copy: src=/vagrant/Comms.exe.secrets dest=/home/{{ user }}/Comms.exe.secrets
 
 
 

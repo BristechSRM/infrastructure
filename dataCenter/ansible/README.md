@@ -8,7 +8,7 @@ http://toja.io/using-host-and-group-vars-files-in-ansible/
 
 
 
-On multiple local VMs
+On a local swarm
 ========================
 
 Create the local VMs
@@ -50,24 +50,18 @@ Update the locations and urls in the env_local variables and inventory.
 Go!
 ========================
 
-Place the approporiate secrets files in /home/vagrant:
+Place the appropriate secrets files in the folder with this README.
 ------------------------
 ```
 AuthCertificate.pfx
-secrets.Auth.config
-secrets.Comms.config
+Auth.exe.secrets
+Comms.exe.secrets
 ```
 
 Check connectivity (and get any "add known_hosts" prompts over with)
 ------------------------
 ```
 $ ansible -i env_local all -m ping
-```
-
-Push the secrets to all nodes
-------------------------
-```
-$ ansible-playbook -i env_local nodes-srm-config.yml
 ```
 
 Set up the docker swarm and the overlay
@@ -124,4 +118,11 @@ $ docker logs <containerId>
 
 $ docker exec -it <containerId> /bin/bash
 $ ping <microserviceName>
+```
+
+
+Bringing it all down
+========================
+```
+> vagrant destroy -f
 ```

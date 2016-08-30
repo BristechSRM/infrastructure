@@ -1,8 +1,8 @@
 
 #- name: leave
-#  command: docker swarm leave
+#  command: docker swarm leave --force
 
 - name: join
   command: docker swarm join \
-    --token {{ swarm_join_token }} \
-    {{ swarm_manager_address }}
+    --token {{ hostvars['box3']['swarm_join_token'] }} \
+    {{ hostvars['box3']['swarm_master_address'] }}

@@ -1,0 +1,36 @@
+
+- hosts: nodes
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  roles:
+    - apt-docker
+
+
+- hosts: box3
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+
+  roles:
+   - srm-master
+
+
+- hosts: box1, box2
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  roles:
+   - srm-agent
+
+
+
+- hosts: box3
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  roles:
+   - srm-overlay

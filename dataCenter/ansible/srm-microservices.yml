@@ -5,4 +5,8 @@
   gather_facts: no
 
   roles:
+   - srm-auth
    - srm-comms
+   - srm-sessions
+   - srm-gateway
+   - srm-frontend

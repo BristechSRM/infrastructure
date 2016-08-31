@@ -3,12 +3,12 @@ Ansible
 
 Ansible only works on Unix, so we'll have a management VM and our nodes.
 
-We'll be using -i PATH to select the environment root as suggested here:
-http://toja.io/using-host-and-group-vars-files-in-ansible/
+We will be using -i PATH to select the environment root directory as suggested here:
+http://toja.io/using-host-and-group-vars-files-in-ansible/.  Valid values are
+"env\_local" and "env\_SRM".
 
 
-
-On a local swarm
+For a local development swarm
 ========================
 
 Create the local VMs
@@ -18,28 +18,34 @@ Create the local VMs
 ```
 
 
-Set up a VM to run Ansible on - "mgmt"
+Set up the VM to run Ansible on - "mgmt"
 ------------------------
 Log in using ssh and check Ansible is installed
 ```
 > vagrant ssh mgmt
 $ ansible --version
+$ cd /vagrant
 ```
 
-Set us up for password-free use (i.e. generate a ssh key and install it on the nodes)
+We don't want to type a password each time, so we will set up ssh known hosts and authorized keys.
+Get the host keys for the nodes:
 ```
 $ ssh-keyscan box1 box2 box3 >> ~/.ssh/known_hosts
-
+```
+Create an RSA key for this host.  You can accept the defaults for the keygen questions.
+```
 $ ssh-keygen -t rsa -b 2048
-$ cd /vagrant
+```
+And push it to all the nodes with Ansible using a password.  You will be prompted for vagrant's
+password.  Ask someone what that is.  Anyone at all.
+```
 $ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
-password: <isanopensecret>
 ```
 
-On AWS
+For production on AWS
 ========================
 
-You'll need a unix host to drive this.  The "mgmt" VM will do.
+You will need a unix host to drive this.  The "mgmt" VM will do.
 
 Create the AWS stack under "cloudFormation".
 Make sure the private keys for ssh to the AWS Instances are available on your host.
@@ -50,16 +56,19 @@ Update the locations and urls in the env_local variables and inventory.
 Go!
 ========================
 
-Place the appropriate secrets files in the folder with this README.
-------------------------
+The setup relies on secrets files that must not be checked in.  Ask a team member where to get them.
+You need to put them in the folder with this README, with these names:
 ```
 AuthCertificate.pfx
 Auth.exe.secrets
 Comms.exe.secrets
 ```
 
-Check connectivity (and get any "add known_hosts" prompts over with)
+Check you understand "-i env\_local" vs. "-i env\_SRM"
+
+Check connectivity
 ------------------------
+(and get any "add known_hosts" prompts over with)
 ```
 $ ansible -i env_local all -m ping
 ```
@@ -76,12 +85,15 @@ Unleash Microservices
 $ ansible-playbook -i env_local srm-microservices.yml
 ```
 
-Try the website.  Well, wait a bit and try the website.
+Try the website at http://localhost:8080/.  Well, wait a bit and try the website.
+
 
 
 
 Smoke tests
 -----------------------
+If the website is not working, checking the individual services with curl may narrow down the cause.
+Just a response vs. no response is a clue.  You can do these on any of the VMs or the PC host.
 
 auth
 ```
@@ -98,10 +110,10 @@ frontend
 $ curl http://localhost:8080/
 ```
 
+
 Diagnostics
 -----------------------
-
-On the swarm master:
+On the swarm master (box3):
 ```
 $ docker network ls
 

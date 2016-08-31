@@ -29,6 +29,7 @@ CREATE TABLE `sessions` (
   `status` varchar(31) DEFAULT 'unassigned',
   `speakerId` char(36) NOT NULL,
   `adminId` char(36) DEFAULT NULL,
+  `eventId` char(36) DEFAULT NULL,
   `dateAdded` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date` datetime DEFAULT NULL,
   `description` text,
@@ -44,7 +45,6 @@ CREATE TABLE `events` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 CREATE USER 'sessions'@'%' IDENTIFIED BY 'apassword';
 GRANT ALL PRIVILEGES ON sessions. * TO 'sessions'@'%';
-FLUSH PRIVILEGES
+FLUSH PRIVILEGES;

@@ -87,31 +87,32 @@ $ ansible-playbook -i env_local srm-microservices.yml
 
 Try the website at http://localhost:8080/.  Well, wait a bit and try the website.
 
+The site is password protected, so you will be redirected to a Google sign-on and back.
+If you type your password correctly and still get a Login ERROR, ask an admin about being
+granted access.
 
 
 
-Smoke tests
+Diagnostics
 -----------------------
 If the website is not working, checking the individual services with curl may narrow down the cause.
-Just a response vs. no response is a clue.  You can do these on any of the VMs or the PC host.
+Just a response vs. no response is your first clue.  You can do these on any of the nodes.
 
-auth
+auth service
 ```
 $ curl http://localhost:9003/
 ```
 
-gateway
+gateway service
 ```
 $ curl http://localhost:9090/sessions
 ```
 
-frontend
+frontend service
 ```
 $ curl http://localhost:8080/
 ```
 
-
-Diagnostics
 -----------------------
 On the swarm master (box3):
 ```

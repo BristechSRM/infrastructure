@@ -1,9 +1,15 @@
 
+#- name: leave
+#  command: docker swarm leave --force
+
 - name: start
-  command: docker swarm init --advertise-addr eth0
+  command: docker swarm init --advertise-addr eth1
+  register: swarm_init_output
 
 - name: get token
   command: docker swarm join-token -q worker
   register: swarm_join_token
 
-- debug: var=swarm_join_token.stdout
+- set_fact:
+    swarm_join_token: "{{ swarm_join_token.stdout }}"
+    swarm_master_address: "{{ ansible_eth1.ipv4.address }}:2377"

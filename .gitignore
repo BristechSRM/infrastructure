@@ -267,3 +267,4 @@ localDev/compose/build
 TrelloCreds.config
 secrets.Auth.config
 secrets.Comms.config
+*.secrets

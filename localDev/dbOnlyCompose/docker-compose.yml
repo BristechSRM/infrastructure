@@ -3,7 +3,9 @@ services:
   mysql:
     image: bristechsrm/srm-mysql-db
     environment:
-      - MYSQL_ROOT_PASSWORD=localdev
+      - MYSQL_ROOT_PASSWORD=apassword
+      - MYSQL_USER=sessions
+      - MYSQL_PASSWORD=apassword
     ports:
       - "3306:3306"
     restart: unless-stopped

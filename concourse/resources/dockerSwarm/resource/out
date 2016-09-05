@@ -12,38 +12,49 @@ executableName=$(echo $buffer | jq -r '.source.executableName')
 nodeName=$(echo $buffer | jq -r '.source.nodeName')
 portNumber=$(echo $buffer | jq -r '.source.portNumber')
 network=$(echo $buffer | jq -r '.source.network')
-swarmMasterIp=$(echo $buffer | jq -r '.source.swarmMasterIp')
+swarmMaster=$(echo $buffer | jq -r '.source.swarmMaster')
 
-export DOCKER_HOST="tcp://${swarmMasterIp}:3376"
-export DOCKER_API_VERSION=1.21
+export DOCKER_HOST="${swarmMaster}"
 
 echo --- SERVICE INFO ---
 echo serviceName: ${serviceName}
 echo repository: ${repository}
 echo executableName: ${executableName}
-echo nodeName: ${nodeName}
 echo portNumber: ${portNumber}
 echo network: ${network}
-echo swarmMasterIp: ${swarmMasterIp}
+echo swarmMaster: ${swarmMaster}
 echo DOCKER_HOST: ${DOCKER_HOST}
-echo DOCKER_API_VERSION: ${DOCKER_API_VERSION}
 echo --- END ---
 
 set -v
 
-docker stop ${serviceName}
-docker rm ${serviceName}
+docker version
 
-set -e
+docker service rm ${serviceName}
 
 docker pull ${repository}
 
 # This treats all nodes the same, so it is necessarily a superset
 # The extra volume mounts are harmless, if annoying
-docker run -d -p ${portNumber}:8080 --name=${serviceName} --net=${network} --env=constraint:node==${nodeName} \
-    -v /home/ubuntu/prd.${executableName}.config:/service/${executableName}.exe.config \
-    -v /home/ubuntu/secrets.${executableName}.config:/service/secrets.config \
-    -v /home/ubuntu/AuthCertificate.pfx:/AuthCertificate.pfx \
-    ${repository}
+if [ -n "${portNumber%null}" ]; then
+
+    docker service create \
+        --name=${serviceName} \
+        --publish ${portNumber}:8080 \
+        --network=${network} \
+        --mount type=bind,source=/home/ubuntu/${executableName}.exe.config,target=/service/${executableName}.exe.config \
+        --mount type=bind,source=/home/ubuntu/${executableName}.exe.secrets,target=/service/${executableName}.exe.secrets \
+        --mount type=bind,source=/home/ubuntu/AuthCertificate.pfx,target=/AuthCertificate.pfx \
+        ${repository}
+else
+
+    docker service create \
+        --name=${serviceName} \
+        --network=${network} \
+        --mount type=bind,source=/home/ubuntu/${executableName}.exe.config,target=/service/${executableName}.exe.config \
+        --mount type=bind,source=/home/ubuntu/${executableName}.exe.secrets,target=/service/${executableName}.exe.secrets \
+        --mount type=bind,source=/home/ubuntu/AuthCertificate.pfx,target=/AuthCertificate.pfx \
+        ${repository}
+fi
 
 echo '{ "version": { "ref": "'$BUILD_ID'" } }' >&3

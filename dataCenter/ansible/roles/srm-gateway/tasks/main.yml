@@ -1,8 +1,10 @@
 
+- name: stop
+  shell: docker service rm gateway || exit 0
+
 - name: start
   command: docker service create \
     --network {{ overlay_network }} \
     --publish {{ gateway_port }}:8080 \
-    --mount type=bind,source=/home/{{ user }}/Gateway.exe.config,target=/service/Gateway.exe.config \
     --name gateway \
     bristechsrm/gateway

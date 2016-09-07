@@ -2,7 +2,7 @@
 - hosts: nodes
   become: yes
   become_method: sudo
-  gather_facts: no
+  gather_facts: yes
 
   roles:
     - apt-docker
@@ -24,7 +24,6 @@
 
   roles:
    - srm-agent
-
 
 
 - hosts: box3

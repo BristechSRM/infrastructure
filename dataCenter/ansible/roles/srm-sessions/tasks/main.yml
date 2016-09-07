@@ -1,4 +1,7 @@
 
+- name: stop
+  shell: docker service rm sessions || exit 0
+
 - name: start
   command: docker service create \
     --network {{ overlay_network }} \

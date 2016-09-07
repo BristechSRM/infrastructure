@@ -10,3 +10,10 @@
 
 - name: add user group
   shell: usermod -aG docker {{ user }}
+
+- name: configure docker
+  template: src=docker.j2 dest=/etc/default/docker
+
+- name: restart docker
+  service: name=docker state=restarted
+

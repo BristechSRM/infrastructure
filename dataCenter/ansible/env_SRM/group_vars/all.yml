@@ -3,9 +3,6 @@ user: "ubuntu"
 overlay_network: srm-swarm
 overlay_subnet: 10.0.2.0/24
 
-swarm_join_token: <placeholder>
-swarm_manager_address: <placeholder>
-
 sessionsdb_str: "SERVER=sessions.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=apassword;"
 
 auth_port: 8080

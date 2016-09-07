@@ -6,9 +6,9 @@ overlay_subnet: 10.0.16.0/24
 sessionsdb_str: "SERVER=sessions-dev.ch20oh3elz3t.eu-west-1.rds.amazonaws.com;Database=sessions;UID=sessions;Password=apassword;"
 
 auth_port: 9003
-gateway_port: 9090
+gateway_port: 8081
 frontend_port: 8080
 
-auth_url: "http://localhost:{{ auth_port }}"
-gateway_url: "http://localhost:{{ gateway_port }}"
-frontend_url: "http://localhost:{{ frontend_port }}"
+auth_url:     http://localhost:{{ auth_port }}
+gateway_url:  http://localhost:{{ gateway_port }}
+frontend_url: http://localhost:{{ frontend_port }}

@@ -39,7 +39,7 @@ $ ssh-keygen -t rsa -b 2048
 And push it to all the nodes with Ansible using a password.  You will be prompted for vagrant's
 password.  Ask someone what that is.  Anyone at all.
 ```
-$ ansible-playbook -i env_SRM nodes-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
 ```
 
 Search and change eth0 to eth1 in the roles.  This is due to the VM's Host only network being eth0.

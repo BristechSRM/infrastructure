@@ -39,7 +39,7 @@ $ ssh-keygen -t rsa -b 2048
 And push it to all the nodes with Ansible using a password.  You will be prompted for vagrant's
 password.  Ask someone what that is.  Anyone at all.
 ```
-$ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
+$ ansible-playbook -i env_SRM nodes-ssh-addkey.yml --ask-pass
 ```
 
 Search and change eth0 to eth1 in the roles.  This is due to the VM's Host only network being eth0.
@@ -54,7 +54,7 @@ You will need a unix host to drive this.  The "mgmt" VM will do.
 
 Create the AWS stack under "cloudFormation".
 Make sure the private keys for ssh to the AWS Instances are available on your host.
-Update the locations and urls in the env_local variables and inventory.
+Update the locations and urls in the env_SRM variables and inventory.
 
 
 
@@ -71,26 +71,26 @@ Comms.exe.secrets
 ```
 
 Check you understand "-i env\_local" vs. "-i env\_SRM"
-Check that the docker roles use eth1 (local) or eth0 (AWS).
+Check that the docker roles use eth1 (local swarm) or eth0 (AWS).
 
 
 Check connectivity
 ------------------------
 (and get any "add known_hosts" prompts over with)
 ```
-$ ansible -i env_local all -m ping
+$ ansible -i env_SRM all -m ping
 ```
 
 Set up the docker swarm and the overlay
 ------------------------
 ```
-$ ansible-playbook -i env_local srm-swarm.yml
+$ ansible-playbook -i env_SRM srm-swarm.yml
 ```
 
 Unleash Microservices
 ------------------------
 ```
-$ ansible-playbook -i env_local srm-microservices.yml
+$ ansible-playbook -i env_SRM srm-microservices.yml
 ```
 
 Try the website at http://localhost:8080/.  Well, wait a bit and try the website.

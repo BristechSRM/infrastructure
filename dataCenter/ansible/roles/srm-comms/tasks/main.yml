@@ -1,8 +1,10 @@
 
+- name: stop
+  shell: docker service rm comms || exit 0
+
 - name: start
   command: docker service create \
     --network {{ overlay_network }} \
-    --mount type=bind,source=/home/{{ user }}/Comms.exe.config,target=/service/Comms.exe.config \
     --mount type=bind,source=/home/{{ user }}/Comms.exe.secrets,target=/service/Comms.exe.secrets \
     --name comms \
     bristechsrm/comms

@@ -42,6 +42,11 @@ password.  Ask someone what that is.  Anyone at all.
 $ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
 ```
 
+Search and change eth0 to eth1 in the roles.  This is due to the VM's Host only network being eth0.
+It should be possible to fix this with some python and a flag in the group_vars...
+
+
+
 For production on AWS
 ========================
 
@@ -50,6 +55,7 @@ You will need a unix host to drive this.  The "mgmt" VM will do.
 Create the AWS stack under "cloudFormation".
 Make sure the private keys for ssh to the AWS Instances are available on your host.
 Update the locations and urls in the env_local variables and inventory.
+
 
 
 
@@ -65,6 +71,8 @@ Comms.exe.secrets
 ```
 
 Check you understand "-i env\_local" vs. "-i env\_SRM"
+Check that the docker roles use eth1 (local) or eth0 (AWS).
+
 
 Check connectivity
 ------------------------

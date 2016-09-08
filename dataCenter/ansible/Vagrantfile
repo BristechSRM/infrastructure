@@ -16,7 +16,7 @@ Vagrant.configure("2") do |config|
       box1_config.vm.hostname = "box1"
       box1_config.vm.network "private_network", ip: "10.0.15.11"
       box1_config.vm.network "forwarded_port", guest: 8080, host: 8080
-      box1_config.vm.network "forwarded_port", guest: 9090, host: 8081
+      box1_config.vm.network "forwarded_port", guest: 8081, host: 8081
       box1_config.vm.network "forwarded_port", guest: 9003, host: 9003
       box1_config.vm.provider "virtualbox" do |vb|
         vb.memory = "512"

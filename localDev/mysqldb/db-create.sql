@@ -46,6 +46,16 @@ CREATE TABLE `events` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `meetupEvents` (
+  `id` char(36) NOT NULL,
+  `eventId` char(36) NOT NULL,
+  `meetupId` char(36) NULL,
+  `publishedDate` datetime DEFAULT NULL,
+  `meetupUrl` char(255) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 CREATE USER 'sessions'@'%' IDENTIFIED BY 'apassword';
 GRANT ALL PRIVILEGES ON sessions. * TO 'sessions'@'%';
 FLUSH PRIVILEGES;

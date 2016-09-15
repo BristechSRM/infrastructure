@@ -25,6 +25,13 @@ docker service create \
 docker service create \
     --replicas 1 \
     --network srm-network \
+    --mount type=bind,source=/service/configs/publish/Publish.exe.secrets,target=/service/Publish.exe.secrets \
+    --name publish \
+    bristechsrm/publish
+
+docker service create \
+    --replicas 1 \
+    --network srm-network \
     --mount type=bind,source=/service/configs/comms/secrets.Comms.config,target=/service/secrets.config \
     --mount type=bind,source=/service/configs/comms/comms.app.config,target=/service/Comms.exe.config \
     --name comms \

@@ -26,6 +26,10 @@ Before running, all secrets config and general config must be created / modified
   Either enter valid values or enter "FAKE" in the value for the AWSAccessKey and AWSSecretKey.
   A template is ready at ./configs/comms/template.secrets.Comms.config
 
+### Publish
+- The secrets config file for Publish must be placed under ./configs/publish as Publish.exe.secrets. The meetup Api Key must be set. 
+  A template is ready at ./configs/comms/template.Publish.exe.secrets.
+
 ### TrelloMigrate 
  - The trello credentials config file for TrelloMigrate must be placed under ./configs/trelloMigrate as TrelloCreds.config. 
  To create this, see the readMe of the TrelloMigrate project : <https://github.com/BristechSRM/TrelloMigrate>.

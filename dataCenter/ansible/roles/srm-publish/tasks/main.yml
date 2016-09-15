@@ -1,0 +1,10 @@
+
+- name: stop
+  shell: docker service rm publish || exit 0
+
+- name: start
+  command: docker service create \
+    --network {{ overlay_network }} \
+    --mount type=bind,source=/home/{{ user }}/Publish.exe.secrets,target=/service/Publish.exe.secrets \
+    --name publish \
+    bristechsrm/publish

@@ -42,7 +42,7 @@ password.  Ask someone what that is.  Anyone at all.
 $ ansible-playbook -i env_local nodes-ssh-addkey.yml --ask-pass
 ```
 
-Search and change eth0 to eth1 in the roles.  This is due to the VM's Host only network being eth0.
+Search and change ansible_eth0 to ansible_eth1 in the roles.  This is due to the VM's Host only network being eth0.
 It should be possible to fix this with some python and a flag in the group_vars...
 
 
@@ -68,9 +68,10 @@ You need to put them in the folder with this README, with these names:
 AuthCertificate.pfx
 Auth.exe.secrets
 Comms.exe.secrets
+Publish.exe.secrets
 ```
 
-Check you understand "-i env\_local" vs. "-i env\_SRM"
+Check you understand "-i env_local" vs. "-i env_SRM"
 Check that the docker roles use eth1 (local swarm) or eth0 (AWS).
 
 

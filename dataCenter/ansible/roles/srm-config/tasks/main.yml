@@ -15,6 +15,11 @@
 
 
 
+- name: publish secrets
+  copy: src=/vagrant/Publish.exe.secrets dest=/home/{{ user }}/Publish.exe.secrets
+
+
+
 - name: sessions config
   template: src=Sessions.config.j2 dest=/home/{{ user }}/Sessions.exe.config
 

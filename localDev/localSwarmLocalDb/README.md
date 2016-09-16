@@ -19,7 +19,7 @@ Before running, all secrets config and general config must be created / modified
     - Note, for the settings for the AWSAccessKey and AWSSecretKey: Although credentials will not be used for the local dynamoDb, a value is still required. 
   Either enter valid values or enter "FAKE" in the value for the AWSAccessKey and AWSSecretKey.
  - The corresponding certificate file must be placed under ./configs/auth/ . E.g. if the certificateFile specfied is "/certFileName.pfx", the file needs to be "certFileName.pfx".
-   A template is ready at ./configs/comms/template.secrets.Auth.config
+   A template is ready at ./configs/auth/template.secrets.Auth.config
 
 ### Comms
  - The secrets config file for Comms must be placed under ./configs/comms/ as secrets.Comms.config. Although credentials will not be used for the local dynamoDb, a value is still required. 
@@ -28,7 +28,7 @@ Before running, all secrets config and general config must be created / modified
 
 ### Publish
 - The secrets config file for Publish must be placed under ./configs/publish as Publish.exe.secrets. The meetup Api Key must be set. 
-  A template is ready at ./configs/comms/template.Publish.exe.secrets.
+  A template is ready at ./configs/publish/template.Publish.exe.secrets.
 
 ### TrelloMigrate 
  - The trello credentials config file for TrelloMigrate must be placed under ./configs/trelloMigrate as TrelloCreds.config. 

@@ -14,6 +14,13 @@ docker service create \
     --name comms \
     bristechsrm/comms
 
+docker service create \
+    --replicas 1 \
+    --network srm-network \
+    --mount type=bind,source=/service/configs/publish/Publish.exe.secrets,target=/service/Publish.exe.secrets \
+    --name publish \
+    bristechsrm/publish
+
 docker service create --publish 9003:8080 \
         --replicas 1 \
         --network srm-network \

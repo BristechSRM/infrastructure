@@ -15,11 +15,15 @@ Before running, all secrets config and general config must be created / modified
  - The secrets config file for Auth must be placed under ./configs/auth/ as secrets.Auth.config. 
     - Note, the certificateFile setting value must be of the format "/certFileName.pfx" (There is an issue around the location of the file, so it will be place in the file system root for the service)
  - The corresponding certificate file must be placed under ./configs/auth/ . E.g. if the certificateFile specfied is "/certFileName.pfx", the file needs to be "certFileName.pfx".
-   A template is ready at ./configs/comms/template.secrets.Auth.config
+   A template is ready at ./configs/auth/template.secrets.Auth.config
 
 ### Comms
  - The secrets config file for Comms must be placed under ./configs/comms/ as secrets.Comms.config. 
   A template is ready at ./configs/comms/template.secrets.Comms.config
+
+### Publish
+- The secrets config file for Publish must be placed under ./configs/publish as Publish.exe.secrets. The meetup Api Key must be set. 
+  A template is ready at ./configs/publish/template.Publish.exe.secrets.
 
 ## Running
 To run the application, run `./setupAll.sh` and follow all instructions as prompted. You will also be required to run `./setupData.sh` after verifying that all services are running

@@ -50,10 +50,11 @@ It should be possible to fix this with some python and a flag in the group_vars.
 For production on AWS
 ========================
 
-You will need a unix host to drive this.  The "mgmt" VM will do.
+You will need a unix host to drive this.  The "mgmt" VM will do. You can using vagrant to bring up that specific VM by using 
+`vagrant up mgmt`.
 
 Create the AWS stack under "cloudFormation".
-Make sure the private keys for ssh to the AWS Instances are available on your host. Copy them to the location specified in the inventory file specified by `ansible_ssh_private_key_file` (or update the location). 
+Make sure the private keys for ssh to the AWS Instances are available on your host. Copy them to the location specified in the inventory file specified by `ansible_ssh_private_key_file` (or update the location). Example: from within the vagrant vm, with the private key in the shared directory from the host, the command `cp /vagrant/nodes.pem ~/home/vagrant/nodes.pem` will copy the key file to the location specified by default in the inventory file. 
 
 NOTE: If using vagrant to create the mgmt box, you will need to use a different location than the default shared `/vagrant`, as you will not be able to set the permissions of the key file correctly. 
 If necessary, limit the permissions on the key file with `chmod 400 nodes.pem`.
@@ -104,6 +105,13 @@ The site is password protected, so you will be redirected to a Google sign-on an
 If you type your password correctly and still get a Login ERROR, ask an admin about being
 granted access.
 
+Prod Restart
+------------------------
+In the event that you need to restart prod, rerun the swarm and overlay setup, and the microservices start commands:
+```
+$ ansible-playbook -i env_SRM srm-swarm.yml
+$ ansible-playbook -i env_SRM srm-microservices.yml
+```
 
 
 Diagnostics

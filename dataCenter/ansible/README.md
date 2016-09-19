@@ -53,7 +53,11 @@ For production on AWS
 You will need a unix host to drive this.  The "mgmt" VM will do.
 
 Create the AWS stack under "cloudFormation".
-Make sure the private keys for ssh to the AWS Instances are available on your host.
+Make sure the private keys for ssh to the AWS Instances are available on your host. Copy them to the location specified in the inventory file specified by `ansible_ssh_private_key_file` (or update the location). 
+
+NOTE: If using vagrant to create the mgmt box, you will need to use a different location than the default shared `/vagrant`, as you will not be able to set the permissions of the key file correctly. 
+If necessary, limit the permissions on the key file with `chmod 400 nodes.pem`.
+
 Update the locations and urls in the env_SRM variables and inventory.
 
 

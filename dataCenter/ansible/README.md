@@ -51,10 +51,10 @@ For production on AWS
 ========================
 
 You will need a unix host to drive this.  The "mgmt" VM will do. You can using vagrant to bring up that specific VM by using 
-`vagrant up mgmt`.
+`vagrant up mgmt`. Ssh and move to the working folder as above.
 
 Create the AWS stack under "cloudFormation".
-Make sure the private keys for ssh to the AWS Instances are available on your host. Copy them to the location specified in the inventory file specified by `ansible_ssh_private_key_file` (or update the location). Example: from within the vagrant vm, with the private key in the shared directory from the host, the command `cp /vagrant/nodes.pem ~/home/vagrant/nodes.pem` will copy the key file to the location specified by default in the inventory file. 
+Make sure the private keys for ssh to the AWS Instances are available on your host. Copy them to the location specified in the inventory file specified by `ansible_ssh_private_key_file` (or update the location). Example: from within the vagrant vm, with the private key in the shared directory from the host, the command `cp /vagrant/nodes.pem /home/vagrant/nodes.pem` will copy the key file to the location specified by default in the inventory file. 
 
 NOTE: If using vagrant to create the mgmt box, you will need to use a different location than the default shared `/vagrant`, as you will not be able to set the permissions of the key file correctly. 
 If necessary, limit the permissions on the key file with `chmod 400 nodes.pem`.
@@ -112,6 +112,8 @@ In the event that you need to restart prod, rerun the swarm and overlay setup, a
 $ ansible-playbook -i env_SRM srm-swarm.yml
 $ ansible-playbook -i env_SRM srm-microservices.yml
 ```
+
+Note, for a safe restart after an update. Use both commands. 
 
 
 Diagnostics

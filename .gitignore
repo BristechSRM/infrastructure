@@ -268,3 +268,4 @@ TrelloCreds.config
 secrets.Auth.config
 secrets.Comms.config
 *.secrets
+*.pem

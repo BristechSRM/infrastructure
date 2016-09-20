@@ -107,16 +107,8 @@ granted access.
 
 Prod Restart
 ------------------------
-In the event that you need to restart prod, run the following commands.
-First, check connectivity, then rerun the swarm and overlay setup, and the microservices start commands:
-```
-$ ansible -i env_SRM all -m ping
-$ ansible-playbook -i env_SRM srm-swarm.yml
-$ ansible-playbook -i env_SRM srm-microservices.yml
-```
-
-Note, for a safe restart after an update. Use both commands. 
-
+In the event that you need to restart prod, the three commands above must be run again. 
+First, check connectivity, then rerun the swarm and overlay setup, and the microservices start commands. Do not skip any steps! At the moment, there is a chance that running the microservices start command by itself will not setup everything properly. 
 
 Diagnostics
 -----------------------

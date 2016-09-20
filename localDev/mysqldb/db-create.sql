@@ -41,7 +41,6 @@ CREATE TABLE `events` (
   `id` char(36) NOT NULL,
   `date` datetime DEFAULT NULL,
   `name` varchar(256) NOT NULL,
-  `publishedDate` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

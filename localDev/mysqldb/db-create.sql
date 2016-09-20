@@ -31,7 +31,6 @@ CREATE TABLE `sessions` (
   `adminId` char(36) DEFAULT NULL,
   `eventId` char(36) DEFAULT NULL,
   `dateAdded` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `date` datetime DEFAULT NULL,
   `description` text,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)

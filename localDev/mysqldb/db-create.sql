@@ -40,6 +40,7 @@ CREATE TABLE `events` (
   `id` char(36) NOT NULL,
   `date` datetime DEFAULT NULL,
   `name` varchar(256) NOT NULL,
+  `meetupEventId` char(36) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -47,7 +48,7 @@ CREATE TABLE `events` (
 CREATE TABLE `meetupEvents` (
   `id` char(36) NOT NULL,
   `eventId` char(36) NOT NULL,
-  `meetupId` char(36) NULL,
+  `meetupId` char(18) DEFAULT NULL,
   `publishedDate` datetime DEFAULT NULL,
   `meetupUrl` char(255) NULL,
   PRIMARY KEY (`id`),

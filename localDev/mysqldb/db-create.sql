@@ -65,7 +65,6 @@ CREATE TABLE `notes` (
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 CREATE USER 'sessions'@'%' IDENTIFIED BY 'apassword';
 GRANT ALL PRIVILEGES ON sessions. * TO 'sessions'@'%';
 FLUSH PRIVILEGES;

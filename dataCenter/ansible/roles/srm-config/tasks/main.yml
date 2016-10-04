@@ -8,13 +8,6 @@
 - name: auth certificate
   copy: src=/vagrant/AuthCertificate.pfx dest=/home/{{ user }}/AuthCertificate.pfx
 
-
-
-- name: comms secrets
-  copy: src=/vagrant/Comms.exe.secrets dest=/home/{{ user }}/Comms.exe.secrets
-
-
-
 - name: publish secrets
   copy: src=/vagrant/Publish.exe.secrets dest=/home/{{ user }}/Publish.exe.secrets
 

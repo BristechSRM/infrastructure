@@ -46,6 +46,6 @@ docker-machine ssh manager0 "sleep 30; ~/setupServices.sh"
 echo "Wait until services are running. This may take several minutes."
 echo "Run 'docker service ls' and ensure all service have the correct number of replicas, e.g. 1/1"
 echo "For final confirmation before the next step, copy and run the command below. All services should be in a running state: "
-echo "docker service ps sessions && docker service ps comms && docker service ps sessions-mysql"
+echo "docker service ps sessions && docker service ps sessions-mysql"
 
 echo "Final Step: Run ./setupData.sh from windows"

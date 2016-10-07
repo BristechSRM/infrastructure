@@ -6,7 +6,7 @@ CREATE TABLE `profiles` (
   `id` char(36) NOT NULL,
   `forename` varchar(255) NOT NULL,
   `surname` varchar(255) NOT NULL,
-  `imageUrl` varchar(255) DEFAULT NULL,
+  `imageUrl` varchar(2000) DEFAULT NULL,
   `bio` text,
   `isAdmin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
